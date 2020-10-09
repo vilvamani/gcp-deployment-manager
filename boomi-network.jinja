@@ -76,5 +76,5 @@ resources:
       natIpAllocateOption: "AUTO_ONLY"
       sourceSubnetworkIpRangesToNat: "LIST_OF_SUBNETWORKS"
       subnetworks: 
-      - name: privateSubnet
+      - name: $(ref.{{ privateSubnet }}.selfLink)
         sourceIpRangesToNat: ["PRIMARY_IP_RANGE"]
