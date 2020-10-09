@@ -49,6 +49,6 @@ properties:
     default: https://www.googleapis.com/compute/v1/projects/centos-cloud/global/images/family/centos-7
 
   targetSize:
-    type: string
+    type: integer
     description: "No of Boomi Instance type"
-    default: "1"
+    default: 1
