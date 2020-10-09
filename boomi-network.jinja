@@ -2,8 +2,8 @@
 {% set deployment = env["deployment"] %}
 {% set vpcName = "%s-network" % env["deployment"] %}
 {% set region = properties["region"] %}
-{% set publicSubnet= "publicSubnet" %}
-{% set privateSubnet= "privateSubnet" %}
+{% set publicSubnet= "public" %}
+{% set privateSubnet= "private" %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 
