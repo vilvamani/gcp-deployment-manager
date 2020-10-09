@@ -3,6 +3,7 @@
 {% set region = properties["region"] %}
 {% set vpcName = "%s-gke-network" % env["deployment"] %}
 {% set publicSubnet= "public" %}
+{% set bastionVM = "bastion-vm" %}
 
 resources:
 - name: {{ deployment }}-it
@@ -57,5 +58,5 @@ resources:
     region: {{ region }}
     failoverAction: NO_FAILOVER
     targetSize: {{ properties["targetSize"] }}
-    baseInstanceName: "Boomi-Bastion-VM"
+    baseInstanceName: {{ bastionVM }}
     instanceTemplate: $(ref.{{ deployment }}-it.selfLink)

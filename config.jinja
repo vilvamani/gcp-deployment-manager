@@ -8,7 +8,7 @@ resources:
   type: network.jinja
   properties:
     region: {{ properties["region"] }}
-    publicSubnetCIDR: {{ privateSubnetCIDR }}
+    publicSubnetCIDR: {{ publicSubnetCIDR }}
     privateSubnetCIDR: {{ privateSubnetCIDR }}
 
 - name: boomi-gke-bastion
