@@ -11,11 +11,13 @@ resources:
 - name: {{ vpcName }}
   type: compute.v1.network
   properties:
+    name: {{ vpcName }}
     autoCreateSubnetworks: false
 
 - name: {{ publicSubnetName }}
   type: compute.v1.subnetwork
   properties:
+    name: {{ publicSubnetName }}
     network: $(ref.{{ vpcName }}.selfLink)
     ipCidrRange: {{ publicSubnetCIDR }}
     region: {{ region }}
@@ -23,6 +25,7 @@ resources:
 - name: {{ privateSubnetName }}
   type: compute.v1.subnetwork
   properties:
+    name: {{ privateSubnetName }}
     network: $(ref.{{ vpcName }}.selfLink)
     ipCidrRange: {{ privateSubnetCIDR }}
     region: {{ region }}
