@@ -1,8 +1,6 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
 {% set vpcName = "%s-network" % env["deployment"] %}
-{% set publicSubnetName = "%s-public-subnet" % env["deployment"] %}
-{% set privateSubnetName = "%s-private-subnet" % env["deployment"] %}
 {% set region = properties["region"] %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
@@ -16,19 +14,19 @@ resources:
     autoCreateSubnetworks: false
 
 # GCP Public Subnets
-- name: {{ publicSubnetName }}
+- name: publicSubnet
   type: compute.v1.subnetwork
   properties:
-    name: {{ publicSubnetName }}
+    name: publicSubnet
     network: $(ref.{{ vpcName }}.selfLink)
     ipCidrRange: {{ publicSubnetCIDR }}
     region: {{ region }}
 
 # GCP Private Subnets
-- name: {{ privateSubnetName }}
+- name: privateSubnet
   type: compute.v1.subnetwork
   properties:
-    name: {{ privateSubnetName }}
+    name: privateSubnet
     network: $(ref.{{ vpcName }}.selfLink)
     ipCidrRange: {{ privateSubnetCIDR }}
     region: {{ region }}
@@ -71,12 +69,12 @@ resources:
   properties:
     name: {{ deployment }}-{{ region }}-cloud-router
     description: route with default internet gateway
-    network: {{ properties["network"] }}
+    network: $(ref.{{ vpcName }}.selfLink)
     region: {{ region }}
     nats:
     - name: {{ env["name"] }}-{{ region }}-nat
       natIpAllocateOption: "AUTO_ONLY"
       sourceSubnetworkIpRangesToNat: "LIST_OF_SUBNETWORKS"
       subnetworks: 
-      - name: {{ privateSubnetCIDR }}
+      - name: privateSubnet
         sourceIpRangesToNat: ["PRIMARY_IP_RANGE"]
