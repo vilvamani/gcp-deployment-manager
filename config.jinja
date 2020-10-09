@@ -9,3 +9,6 @@ resources:
   properties:
     region: {{ properties["region"] }}
     zone: {{ properties["zone"] }}
+  metadata:
+    dependsOn:
+      - boomi-gke-network

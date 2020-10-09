@@ -18,22 +18,4 @@ properties:
     description: "Google Cloud Region to deploy Boomi Molecule stack"
     default: us-central1
 
-  zone:
-    type: string
-    description: "Google Cloud Zone to deploy Boomi Molecule stack"
-    default: us-central1-a
 
-  machineType:
-    type: string
-    description: "Boomi Molecule Bastion Machine type"
-    default: f1-micro
-
-  machineImage:
-    type: string
-    description: "Boomi Molecule Bastion Machine Image"
-    default: https://www.googleapis.com/compute/v1/projects/centos-cloud/global/images/family/centos-7
-
-  targetSize:
-    type: string
-    description: "No of Boomi Instance type"
-    default: 1
