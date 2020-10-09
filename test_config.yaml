@@ -2,8 +2,8 @@ imports:
 - path: boomi-network.jinja
 
 resources:
-- name: boomi-network
-  type: boomi-network.jinja
+- name: boomi-gke-quickstart
+  type: config.jinja
   properties:
     region: us-central1
     #publicSubnetCIDR: 102.0.0.0/20
