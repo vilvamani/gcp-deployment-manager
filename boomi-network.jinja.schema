@@ -1,0 +1,22 @@
+imports:
+  - name: default.py
+    path: common/default.py
+
+info:
+  version: '1.0'
+  title: LAMP Stack Template
+
+required:
+  - region
+  - publicSubnetCIDR
+  - privateSubnetCIDR
+
+properties:
+  region:
+    type: string
+    x-googleProperty:
+      type: GCE_REGION
+
+outputs:
+  vpcName:
+    type: string

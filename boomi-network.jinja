@@ -1,0 +1,14 @@
+{% import "path_utils.jinja" as path_utils with context %}
+
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+{% set vpcName = "%s-network" % env["deployment"] %}
+{% set region = properties["region"] %}
+{% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
+{% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
+
+resources:
+- name: {{ vpcName }}
+  type: compute.v1.network
+  properties:
+    autoCreateSubnetworks: false

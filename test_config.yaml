@@ -1,8 +1,10 @@
 imports:
-- path: lamp.jinja
+- path: boomi-network.jinja
 
 resources:
-- name: lamp
-  type: lamp.jinja
+- name: boomi-network
+  type: boomi-network.jinja
   properties:
-    zone: us-central1-f
+    region: us-central1
+    publicSubnetCIDR: 101.0.0.0/20
+    privateSubnetCIDR: 101.0.16.0/20
