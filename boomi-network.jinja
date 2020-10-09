@@ -1,6 +1,8 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
 {% set vpcName = "%s-network" % env["deployment"] %}
+{% set publicSubnetName = "%s-public-subnet" % env["deployment"] %}
+{% set privateSubnetName = "%s-private-subnet" % env["deployment"] %}
 {% set region = properties["region"] %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
@@ -10,3 +12,17 @@ resources:
   type: compute.v1.network
   properties:
     autoCreateSubnetworks: false
+
+- name: {{ publicSubnetName }}
+  type: compute.v1.subnetwork
+  properties:
+    network: $(ref.{{ vpcName }}.selfLink)
+    ipCidrRange: {{ publicSubnetCIDR }}
+    region: {{ region }}
+
+- name: {{ privateSubnetName }}
+  type: compute.v1.subnetwork
+  properties:
+    network: $(ref.{{ vpcName }}.selfLink)
+    ipCidrRange: {{ privateSubnetCIDR }}
+    region: {{ region }}
