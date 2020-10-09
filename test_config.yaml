@@ -6,3 +6,5 @@ resources:
   type: boomi-network.jinja
   properties:
     region: us-central1
+    publicSubnetCIDR: 101.0.0.0/20
+    privateSubnetCIDR: 101.0.16.0/20
