@@ -66,17 +66,3 @@ resources:
     - IPProtocol: ICMP
       ports: []
 
-- name: {{ deployment }}-{{ region }}-cloud-router
-  type: compute.v1.router
-  properties:
-    name: {{ deployment }}-{{ region }}-cloud-router
-    description: route with default internet gateway
-    network: $(ref.{{ vpcName }}.selfLink)
-    region: {{ region }}
-    nats:
-    - name: {{ env["name"] }}-{{ region }}-nat
-      natIpAllocateOption: "AUTO_ONLY"
-      sourceSubnetworkIpRangesToNat: "LIST_OF_SUBNETWORKS"
-      subnetworks: 
-      - name: $(ref.{{ privateSubnet }}.selfLink)
-        sourceIpRangesToNat: ["PRIMARY_IP_RANGE"]
