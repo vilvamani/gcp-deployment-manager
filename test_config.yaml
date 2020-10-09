@@ -1,0 +1,8 @@
+imports:
+- path: lamp.jinja
+
+resources:
+- name: lamp
+  type: lamp.jinja
+  properties:
+    zone: us-central1-f
