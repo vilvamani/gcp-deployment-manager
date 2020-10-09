@@ -4,6 +4,7 @@
 {% set vpcName = "%s-gke-network" % env["deployment"] %}
 {% set publicSubnet= "public" %}
 
+resources:
 - name: {{ deployment }}-it
   type: compute.v1.instanceTemplate
   properties:
