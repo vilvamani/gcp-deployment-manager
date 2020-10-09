@@ -8,12 +8,14 @@
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 
 resources:
+# GCP Custom Network
 - name: {{ vpcName }}
   type: compute.v1.network
   properties:
     name: {{ vpcName }}
     autoCreateSubnetworks: false
 
+# GCP Public Subnets
 - name: {{ publicSubnetName }}
   type: compute.v1.subnetwork
   properties:
@@ -22,6 +24,7 @@ resources:
     ipCidrRange: {{ publicSubnetCIDR }}
     region: {{ region }}
 
+# GCP Private Subnets
 - name: {{ privateSubnetName }}
   type: compute.v1.subnetwork
   properties:
@@ -29,3 +32,36 @@ resources:
     network: $(ref.{{ vpcName }}.selfLink)
     ipCidrRange: {{ privateSubnetCIDR }}
     region: {{ region }}
+
+# GCP Firewall Rules
+- name: {{ deployment + '-firewall-allow-bastion' }}
+  type: compute.v1.firewall
+  properties:
+    name: {{ deployment + '-firewall-allow-bastion' }}
+    network: $(ref.{{ vpcName }}.selfLink)
+    sourceRanges: ["0.0.0.0/0"]
+    allowed:
+    - IPProtocol: TCP
+      ports: [22, 3389]
+    targetTags: 
+    - bastion-machine
+
+- name: {{ deployment + '-firewall-allow-http-https' }}
+  type: compute.v1.firewall
+  properties:
+    name: {{ deployment + '-firewall-allow-http-https' }}
+    network: $(ref.{{ vpcName }}.selfLink)
+    sourceRanges: ["0.0.0.0/0"]
+    allowed:
+    - IPProtocol: TCP
+      ports: [80, 443]
+
+- name: {{ deployment + '-firewall-allow-icmp' }}
+  type: compute.v1.firewall
+  properties:
+    name: {{ deployment + '-firewall-allow-icmp' }}
+    network: $(ref.{{ vpcName }}.selfLink)
+    sourceRanges: ["0.0.0.0/0"]
+    allowed:
+    - IPProtocol: ICMP
+      ports: []
