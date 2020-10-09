@@ -1,0 +1,9 @@
+info:
+  title: Boomi GKE Molecule
+  author: Vilvamani Arumugam <vilvamani007@gmail.com>
+  description: Deploy Dell Boomi Molecule in GKE
+  version: 1.0
+
+imports:
+- name: boomi-gke-network
+  path: templates/network/boomi-network.jinja

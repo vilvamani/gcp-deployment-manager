@@ -1,6 +1,6 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
-{% set vpcName = "%s-network" % env["deployment"] %}
+{% set vpcName = "%s-gke-network" % env["deployment"] %}
 {% set region = properties["region"] %}
 {% set publicSubnet= "public" %}
 {% set privateSubnet= "private" %}
