@@ -8,9 +8,12 @@ imports:
 - path: config.jinja
 - name: network.jinja
   path: templates/network/network.jinja
+- name: bastion.jinja
+  path: templates/bastion-instance/bastion.jinja
 
 required:
   - region
+  - zone
   - publicSubnetCIDR
   - privateSubnetCIDR
 
@@ -19,6 +22,11 @@ properties:
     type: string
     description: "Google Cloud Region to deploy Boomi Molecule stack"
     default: us-central1
+
+  zone:
+    type: string
+    description: "Google Cloud Zone to deploy Boomi Molecule stack"
+    default: us-central1-a
 
   publicSubnetCIDR:
     type: string

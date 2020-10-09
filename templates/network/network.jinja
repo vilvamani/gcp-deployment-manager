@@ -1,7 +1,7 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
-{% set vpcName = "%s-gke-network" % env["deployment"] %}
 {% set region = properties["region"] %}
+{% set vpcName = "%s-gke-network" % env["deployment"] %}
 {% set publicSubnet= "public" %}
 {% set privateSubnet= "private" %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
@@ -34,17 +34,17 @@ resources:
     region: {{ region }}
 
 # GCP Firewall Rules
-- name: {{ deployment + '-firewall-allow-bastion' }}
+- name: {{ deployment + '-firewall-allow-ssh-rdp' }}
   type: compute.v1.firewall
   properties:
-    name: {{ deployment + '-firewall-allow-bastion' }}
+    name: {{ deployment + '-firewall-allow-ssh-rdp' }}
     network: $(ref.{{ vpcName }}.selfLink)
     sourceRanges: ["0.0.0.0/0"]
     allowed:
     - IPProtocol: TCP
       ports: [22, 3389]
     targetTags: 
-    - bastion-machine
+    - allow-ssh-rpd
 
 - name: {{ deployment + '-firewall-allow-http-https' }}
   type: compute.v1.firewall

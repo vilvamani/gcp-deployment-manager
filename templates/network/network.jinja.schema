@@ -1,5 +1,5 @@
 info:
-  title: Boomi GKE Molecule
+  title: Boomi GKE Molecule Network
   author: Vilvamani Arumugam <vilvamani007@gmail.com>
   description: Deploy Dell Boomi Molecule in GKE
   version: 1.0

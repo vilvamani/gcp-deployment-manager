@@ -1,0 +1,60 @@
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+{% set region = properties["region"] %}
+{% set vpcName = "%s-gke-network" % env["deployment"] %}
+{% set publicSubnet= "public" %}
+
+- name: {{ deployment }}-it
+  type: compute.v1.instanceTemplate
+  properties:
+    zone: {{ properties["zone"] }}
+    properties:
+      serviceAccounts:
+      - email: default
+        scopes:
+        - https://www.googleapis.com/auth/compute
+        - https://www.googleapis.com/auth/logging.write
+        - https://www.googleapis.com/auth/monitoring.write
+        - https://www.googleapis.com/auth/devstorage.full_control
+      tags:
+        items:
+        - bastion-machine
+        - allow-ssh-rpd
+        - {{ deployment }}
+      machineType: {{ properties["machineType"] }}
+      networkInterfaces:
+      - network: $(ref.{{ vpcName }}.selfLink)
+        subnetwork: $(ref.{{ publicSubnet }}.selfLink)
+        accessConfigs:
+        - name: External NAT
+          type: ONE_TO_ONE_NAT
+      disks:
+      - deviceName: boot
+        type: PERSISTENT
+        boot: true
+        autoDelete: true
+        diskType: pd-ssd
+        diskSizeGb: 30
+        mode: READ_WRITE
+        initializeParams:
+          diskName: {{ deployment }}-vm-disk
+          sourceImage: {{ properties["machineImage"] }}
+      metadata:
+        items:
+        - key: startup-script
+          value: |
+            #!/bin/bash
+            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+            chmod +x ./kubectl
+            sudo mv ./kubectl /usr/local/bin/kubectl
+            kubectl version --client
+
+- name: {{ deployment }}-igm
+  type: compute.v1.regionInstanceGroupManager
+  properties:
+    name: {{ deployment }}-igm
+    region: {{ region }}
+    failoverAction: NO_FAILOVER
+    targetSize: {{ properties["targetSize"] }}
+    baseInstanceName: "Boomi-Bastion-VM"
+    instanceTemplate: $(ref.{{ deployment }}-it.selfLink)
