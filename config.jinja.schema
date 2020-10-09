@@ -6,8 +6,8 @@ info:
 
 imports:
 - path: config.jinja
-- name: boomi-network.jinja
-  path: templates/boomi-network.jinja
+- name: boomi-gke-network
+  path: templates/network/network.jinja
 
 required:
   - region

@@ -1,5 +1,5 @@
 imports:
-- path: boomi-network.jinja
+- path: config.jinja
 
 resources:
 - name: boomi-gke-quickstart
