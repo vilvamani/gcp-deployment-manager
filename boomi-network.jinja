@@ -2,6 +2,8 @@
 {% set deployment = env["deployment"] %}
 {% set vpcName = "%s-network" % env["deployment"] %}
 {% set region = properties["region"] %}
+{% set publicSubnet= "publicSubnet" %}
+{% set privateSubnet= "privateSubnet" %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 
@@ -14,7 +16,7 @@ resources:
     autoCreateSubnetworks: false
 
 # GCP Public Subnets
-- name: publicSubnet
+- name: {{ publicSubnet }}
   type: compute.v1.subnetwork
   properties:
     name: publicSubnet
@@ -23,7 +25,7 @@ resources:
     region: {{ region }}
 
 # GCP Private Subnets
-- name: privateSubnet
+- name: {{ privateSubnet }}
   type: compute.v1.subnetwork
   properties:
     name: privateSubnet
