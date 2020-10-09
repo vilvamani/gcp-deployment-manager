@@ -1,14 +1,24 @@
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+{% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
+{% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
+
 resources:
 - name: boomi-gke-network
   type: network.jinja
   properties:
-    region: {{ properties["region"] }}
+    region: properties["region"]
+    publicSubnetCIDR: {{ privateSubnetCIDR }}
+    privateSubnetCIDR: {{ privateSubnetCIDR }}
 
 - name: boomi-gke-bastion
   type: bastion.jinja
   properties:
-    region: {{ properties["region"] }}
-    zone: {{ properties["zone"] }}
+    region: properties["region"]
+    zone: properties["zone"]
+    machineType: properties["machineType"]
+    machineImage: properties["machineImage"]
+    targetSize: properties["targetSize"]
   metadata:
     dependsOn:
       - boomi-gke-network

@@ -51,4 +51,4 @@ properties:
   targetSize:
     type: string
     description: "No of Boomi Instance type"
-    default: 1
+    default: "1"
