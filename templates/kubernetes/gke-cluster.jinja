@@ -5,7 +5,59 @@
 
 {% set VM_OAUTH_SCOPES = ['https://www.googleapis.com/auth/compute', 'https://www.googleapis.com/auth/devstorage.read_only', 'https://www.googleapis.com/auth/logging.write', 'https://www.googleapis.com/auth/monitoring', 'https://www.googleapis.com/auth/cloud_debugger'] %}
 
+{% set KF_ADMIN_NAME = deployment + '-admin' %}
+{% set KF_USER_NAME = deployment + '-user' %}
+{% set KF_VM_SA_NAME = deployment + '-vm' %}
+
 resources:
+- name: {{ KF_ADMIN_NAME }}
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: {{ KF_ADMIN_NAME }}
+    displayName: Service Account used for Kubeflow admin actions.
+
+- name: {{ KF_USER_NAME }}
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: {{ KF_USER_NAME }}
+    displayName: Service Account used for Kubeflow user actions.
+
+- name: {{ KF_VM_SA_NAME }}
+  type: gcp-types/iam-v1:projects.serviceAccounts
+  properties:
+    accountId: {{ KF_VM_SA_NAME }}
+    displayName: Service Account used for Kubeflow admin actions.
+  accessControl:
+    gcpIamPolicy:
+    bindings:
+    - role: roles/container.admin
+      members:
+      - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
+    - role: roles/container.admin
+      members:
+      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+    - role: roles/servicemanagement.admin
+      members:
+      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+    - role: roles/container.admin
+      members:
+      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+    - role: roles/compute.instanceAdmin
+      members:
+      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+    - role: roles/storage.admin
+      members:
+      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+    - role: roles/dataflow.admin
+      members:
+      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+    - role: roles/logging.logWriter
+      members:
+      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+    - role: roles/monitoring.metricWriter
+      members:
+      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+
 - name: {{ CLUSTER_NAME }}
   {% if properties['gkeApiVersion'] == 'v1beta1' %}
   type: gcp-types/container-v1beta1:projects.locations.clusters
@@ -68,3 +120,7 @@ resources:
           machineType: {{ properties["gkeMachineType"] }}
           diskSizeGb: 20
           oauthScopes: {{ VM_OAUTH_SCOPES }}
+          serviceAccount: {{ KF_VM_SA_NAME }}@{{ env['project'] }}.iam.gserviceaccount.com
+  metadata:
+    dependsOn:
+    - {{ KF_VM_SA_NAME }}
