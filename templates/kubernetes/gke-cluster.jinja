@@ -1,0 +1,69 @@
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+{% set region = properties["region"] %}
+{% set CLUSTER_NAME = deployment + '-gke-cluster' %}
+
+
+resources:
+- name: {{ CLUSTER_NAME }}
+  {% if properties['gkeApiVersion'] == 'v1beta1' %}
+  type: gcp-types/container-v1beta1:projects.locations.clusters
+  {% else %}
+  type: container.v1.cluster
+  {% endif %}
+  properties:
+    parent: projects/{{ env['project'] }}/locations/{{ properties['region'] }}
+    # zone: {{ properties['zone'] }}
+    cluster:
+      name: {{ CLUSTER_NAME }}
+
+      network: {{ properties["network"] }}
+      subnetwork: {{ properties["subnet"] }}
+
+      initialClusterVersion: 1.17.9-gke.6300
+      currentMasterVersion: 1.17.9-gke.6300
+
+      loggingService: logging.googleapis.com/kubernetes
+      monitoringService: monitoring.googleapis.com/kubernetes
+
+      addonsConfig:
+        httpLoadBalancing:
+          disabled: false
+        horizontalPodAutoscaling:
+          disabled: false
+        gcePersistentDiskCsiDriverConfig:
+          enabled: true
+        
+      {% if properties['gkeApiVersion'] == 'v1beta1' %}
+      podSecurityPolicyConfig:
+        enabled: {{ properties['securityConfig']['podSecurityPolicy'] }}
+      {% endif %}
+
+      {% if properties['securityConfig']['privatecluster'] %}
+      ipAllocationPolicy:
+        createSubnetwork: false
+        useIpAliases: true
+      masterIpv4CidrBlock: {{ properties['securityConfig']['masterIpv4CidrBlock'] }}
+      privateCluster: {{ properties['securityConfig']['privatecluster'] }}
+      masterAuthorizedNetworksConfig: {{ properties['securityConfig']['masterAuthorizedNetworksConfig'] }}
+      {% endif %}
+
+      nodePools:
+      - name: {{ CLUSTER_NAME }}-node-pool-1
+        version: 1.17.9-gke.6300
+        autoscaling:
+          enabled: true
+          minNodeCount: {{ properties["minNodeCount"] }}
+          maxNodeCount: {{ properties["maxNodeCount"] }}
+        initialNodeCount: {{ properties["desiredNodeCount"] }}
+        management:
+          autoUpgrade: true
+          autoRepair: true
+        config:
+          {% if properties['securityConfig']['secureNodeMetadata'] %}
+          workloadMetadataConfig:
+            nodeMetadata: SECURE
+          {% endif %}
+          machineType: {{ properties["gkeMachineType"] }}
+          diskSizeGb: 20
+          oauthScopes: {{ VM_OAUTH_SCOPES }}

@@ -1,8 +1,5 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
-{% set region = properties["region"] %}
-{% set vpcName = "%s-gke-network" % env["deployment"] %}
-{% set publicSubnet= "public" %}
 {% set bastionVM = "bastion-vm" %}
 
 resources:
@@ -18,6 +15,7 @@ resources:
         - https://www.googleapis.com/auth/logging.write
         - https://www.googleapis.com/auth/monitoring.write
         - https://www.googleapis.com/auth/devstorage.full_control
+        - https://www.googleapis.com/auth/cloud-platform
       tags:
         items:
         - bastion-machine
@@ -25,8 +23,8 @@ resources:
         - {{ deployment }}
       machineType: {{ properties["machineType"] }}
       networkInterfaces:
-      - network: $(ref.{{ vpcName }}.selfLink)
-        subnetwork: $(ref.{{ publicSubnet }}.selfLink)
+      - network: {{ properties["network"] }}
+        subnetwork: {{ properties["subnet"] }}
         accessConfigs:
         - name: External NAT
           type: ONE_TO_ONE_NAT
@@ -55,7 +53,7 @@ resources:
   type: compute.v1.regionInstanceGroupManager
   properties:
     name: {{ deployment }}-igm
-    region: {{ region }}
+    region: {{ properties["region"] }}
     failoverAction: NO_FAILOVER
     targetSize: {{ properties["targetSize"] }}
     baseInstanceName: {{ bastionVM }}
