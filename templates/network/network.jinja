@@ -66,6 +66,17 @@ resources:
     - IPProtocol: ICMP
       ports: []
 
+- name: {{ deployment }}-route
+  type: compute.v1.route
+  properties:
+    name: {{ deployment }}-route
+    description: route with default internet gateway
+    network: $(ref.{{ vpcName }}.selfLink)
+    priority: 1
+    destRange: 0.0.0.0/0
+    nextHopGateway: https://www.googleapis.com/compute/v1/projects/{{ env["project"] }}/global/gateways/default-internet-gateway
+
+
 - name: {{ deployment }}-{{ region }}-cloud-router
   type: compute.v1.router
   properties:
