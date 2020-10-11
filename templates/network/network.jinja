@@ -85,7 +85,7 @@ resources:
     network: $(ref.{{ vpcName }}.selfLink)
     region: {{ region }}
     nats:
-    - name: {{ env["name"] }}-{{ region }}-nat
+    - name: {{ deployment }}-{{ region }}-nat
       natIpAllocateOption: "AUTO_ONLY"
       sourceSubnetworkIpRangesToNat: "LIST_OF_SUBNETWORKS"
       subnetworks: 
