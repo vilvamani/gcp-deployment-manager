@@ -10,14 +10,6 @@
 {# A dictionary mapping type name suffixes to the corresponding Kubernetes API endpoint. #}
 {% set K8S_ENDPOINTS = {'': 'api/v1', '-v1beta1-extensions': 'apis/extensions/v1beta1', '-rbac-v1': 'apis/rbac.authorization.k8s.io/v1', '-apps-v1': 'apis/apps/v1/'}  %}
 
-{% set COLLECTION_PREFIX = '/api/v1/namespaces/{namespace}/' %}
-{% set NAMESPACE_COLLECTION = '/api/v1/namespaces/{name}' %}
-{% set CM_COLLECTION = COLLECTION_PREFIX + 'configmaps' %}
-{% set RC_COLLECTION = COLLECTION_PREFIX + 'replicationcontrollers' %}
-{% set SERVICE_COLLECTION = COLLECTION_PREFIX + 'services' %}
-{% set PVC_COLLECTION = COLLECTION_PREFIX + 'persistentvolumeclaims' %}
-{% set STATEFULSETS_COLLECTION = '/apis/apps/v1/namespaces/{namespace}/statefulsets' %}
-{% set CLUSTER_ROLE_BINDING_COLLECTION = '/apis/rbac.authorization.k8s.io/v1/clusterrolebindings' %}
 
 {% set VM_OAUTH_SCOPES = ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/compute', 'https://www.googleapis.com/auth/devstorage.read_only', 'https://www.googleapis.com/auth/logging.write', 'https://www.googleapis.com/auth/monitoring', 'https://www.googleapis.com/auth/cloud_debugger'] %}
 

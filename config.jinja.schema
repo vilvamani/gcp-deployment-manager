@@ -12,6 +12,8 @@ imports:
   path: templates/bastion-instance/bastion.jinja
 - name: gke-cluster.jinja
   path: templates/kubernetes/gke-cluster.jinja
+- name: secret.jinja
+  path: templates/deployment/secret.jinja
 
 required:
   - region
