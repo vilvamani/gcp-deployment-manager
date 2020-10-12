@@ -151,33 +151,20 @@ resources:
       inputMappings:
       - fieldName: name
         location: PATH
-        methodMatch: ^(GET|DELETE|PUT)$
-        value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
-      - fieldName: metadata.name
+        methodMatch: ^(get|delete|put|patch|post)$
+        value: $.resource.properties.metadata.name
+      - fieldName: namespace
+        location: PATH
+        methodMatch: ^(get|delete|put|patch|post)$
+        value: $.resource.properties.metadata.namespace
+      - fieldName: metadata.resourceVersion
         location: BODY
-        methodMatch: ^(PUT|POST)$
-        value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
+        methodMatch: ^(put|patch)$
+        value: $.resource.self.metadata.resourceVersion
       - fieldName: Authorization
         location: HEADER
         value: >
           $.concat("Bearer ", $.googleOauth2AccessToken())
-    descriptorUrl: https://$(ref.{{ CLUSTER_NAME }}.endpoint)/swaggerapi/{{ endpoint }}
+    descriptorUrl: https://$(ref.{{ CLUSTER_NAME }}.endpoint)/openapi/v2
 {% endfor %}
 
-- name: resource-manager-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: cloudresourcemanager.googleapis.com
-
-- name: endpoints-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: endpoints.googleapis.com
-
-- name: iam-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: iam.googleapis.com
