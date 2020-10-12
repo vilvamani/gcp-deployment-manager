@@ -11,7 +11,7 @@
 {% set K8S_ENDPOINTS = {'': 'api/v1', '-v1beta1-extensions': 'apis/extensions/v1beta1', '-rbac-v1': 'apis/rbac.authorization.k8s.io/v1', '-apps-v1': 'apis/apps/v1/'}  %}
 
 {% set COLLECTION_PREFIX = '/api/v1/namespaces/{namespace}/' %}
-{% set NAMESPACE_COLLECTION = '/api/v1/namespaces' %}
+{% set NAMESPACE_COLLECTION = '/api/v1/namespaces/{name}' %}
 {% set CM_COLLECTION = COLLECTION_PREFIX + 'configmaps' %}
 {% set RC_COLLECTION = COLLECTION_PREFIX + 'replicationcontrollers' %}
 {% set SERVICE_COLLECTION = COLLECTION_PREFIX + 'services' %}
@@ -160,15 +160,11 @@ resources:
       - fieldName: name
         location: PATH
         methodMatch: ^(get|delete|put|patch|post)$
-        value: $.resource.properties.metadata.name
-      - fieldName: namespace
+        value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
+      - fieldName: metadata.name
         location: PATH
         methodMatch: ^(get|delete|put|patch|post)$
-        value: $.resource.properties.metadata.namespace
-      - fieldName: metadata.resourceVersion
-        location: BODY
-        methodMatch: ^(get|delete|put|patch|post)$
-        value: $.resource.self.metadata.resourceVersion
+        value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
       - fieldName: Authorization
         location: HEADER
         value: >
