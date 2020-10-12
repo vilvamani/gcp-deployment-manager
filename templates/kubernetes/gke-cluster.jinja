@@ -133,7 +133,7 @@ resources:
     dependsOn:
     - {{ KF_VM_SA_NAME }}
 
-{% for typeSuffix, endpoint in K8S_ENDPOINTS.iteritems() %}
+{% for typeSuffix, endpoint in K8S_ENDPOINTS.items() %}
 - name: {{ TYPE_NAME }}{{ typeSuffix }}
   type: deploymentmanager.v2beta.typeProvider
   properties:
