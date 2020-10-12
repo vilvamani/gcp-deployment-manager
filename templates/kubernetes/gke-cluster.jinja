@@ -154,8 +154,8 @@ resources:
         methodMatch: ^(get|delete|put|patch|post)$
         value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
       - fieldName: metadata.name
-        location: PATH
-        methodMatch: ^(get|delete|put|patch|post)$
+        location: BODY
+        methodMatch: ^(PUT|POST)$
         value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
       - fieldName: Authorization
         location: HEADER
@@ -163,3 +163,4 @@ resources:
           $.concat("Bearer ", $.googleOauth2AccessToken())
     descriptorUrl: https://$(ref.{{ CLUSTER_NAME }}.endpoint)/openapi/v2
 {% endfor %}
+
