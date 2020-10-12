@@ -167,7 +167,7 @@ resources:
         value: $.resource.properties.metadata.namespace
       - fieldName: metadata.resourceVersion
         location: BODY
-        methodMatch: ^(put|patch)$
+        methodMatch: ^(get|delete|put|patch|post)$
         value: $.resource.self.metadata.resourceVersion
       - fieldName: Authorization
         location: HEADER
