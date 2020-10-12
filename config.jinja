@@ -68,8 +68,3 @@ resources:
     dependsOn:
       - boomi-bastion
 
-- name: boomi-gke-secret
-  type: secret.jinja
-  metadata:
-    dependsOn:
-      - boomi-gke-cluster
