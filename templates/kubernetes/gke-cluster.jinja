@@ -168,3 +168,12 @@ resources:
     descriptorUrl: https://$(ref.{{ CLUSTER_NAME }}.endpoint)/openapi/v2
 {% endfor %}
 
+{#  Namespace for bootstrapper. #}
+- name: admin-namespace
+  type: {{ env['project'] }}/$(ref.{{ TYPE_NAME }}.name):{{ NAMESPACE_COLLECTION }}
+  properties:
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      name: kubeflow-admin
+    spec:
