@@ -2,8 +2,13 @@
 {% set deployment = env["deployment"] %}
 {% set region = properties["region"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
+
 {% set TYPE_NAME = deployment + '-type' %}
-{% set K8S_ENDPOINTS = {'': 'api/v1', '-apps': 'apis/apps/v1beta1', '-v1beta1-extensions': 'apis/extensions/v1beta1'} %}
+{% set RBAC_TYPE_NAME = TYPE_NAME + '-rbac-v1' %}
+{% set APPS_TYPE_NAME = TYPE_NAME + '-apps-v1' %}
+
+{# A dictionary mapping type name suffixes to the corresponding Kubernetes API endpoint. #}
+{% set K8S_ENDPOINTS = {'': 'api/v1', '-v1beta1-extensions': 'apis/extensions/v1beta1', '-rbac-v1': 'apis/rbac.authorization.k8s.io/v1', '-apps-v1': 'apis/apps/v1/'}  %}
 
 
 {% set VM_OAUTH_SCOPES = ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/compute', 'https://www.googleapis.com/auth/devstorage.read_only', 'https://www.googleapis.com/auth/logging.write', 'https://www.googleapis.com/auth/monitoring', 'https://www.googleapis.com/auth/cloud_debugger'] %}
@@ -128,7 +133,7 @@ resources:
     dependsOn:
     - {{ KF_VM_SA_NAME }}
 
-{% for typeSuffix, endpoint in K8S_ENDPOINTS.items() %}
+{% for typeSuffix, endpoint in K8S_ENDPOINTS.iteritems() %}
 - name: {{ TYPE_NAME }}{{ typeSuffix }}
   type: deploymentmanager.v2beta.typeProvider
   properties:
@@ -156,11 +161,23 @@ resources:
         location: HEADER
         value: >
           $.concat("Bearer ", $.googleOauth2AccessToken())
-    descriptorUrl: https://$(ref.{{ CLUSTER_NAME }}.endpoint)/openapi/v2/{{ endpoint }}
+    descriptorUrl: https://$(ref.{{ CLUSTER_NAME }}.endpoint)/swaggerapi/{{ endpoint }}
 {% endfor %}
 
-outputs:
-{% for typeSuffix, endpoint in K8S_ENDPOINTS.items() %}
-- name: clusterType{{ typeSuffix }}
-  value: {{ TYPE_NAME }}{{ typeSuffix }}
-{% endfor %}
+- name: resource-manager-api
+  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
+  properties:
+    consumerId: {{ 'project:' + env['project'] }}
+    serviceName: cloudresourcemanager.googleapis.com
+
+- name: endpoints-api
+  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
+  properties:
+    consumerId: {{ 'project:' + env['project'] }}
+    serviceName: endpoints.googleapis.com
+
+- name: iam-api
+  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
+  properties:
+    consumerId: {{ 'project:' + env['project'] }}
+    serviceName: iam.googleapis.com
