@@ -1,0 +1,18 @@
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+{% set zone = properties["zone"] %}
+
+resources:
+- name: {{ deployment + '-filestore' }}
+  type: gcp-types/file-v1beta1:projects.locations.instances
+  properties:
+    parent: {{ 'projects/isolated-project/locations/' + zone }}
+    # Any name of the instance would do
+    instanceId: {{ deployment + '-filestore' }}
+    tier: STANDARD
+    description: my description
+    networks:
+    - network: {{ properties["network"] }}
+    fileShares:
+    - name: my_share
+      capacityGb: {{ properties["size"] }}
