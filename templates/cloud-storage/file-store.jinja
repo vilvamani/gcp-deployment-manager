@@ -6,7 +6,7 @@ resources:
 - name: {{ deployment + '-filestore' }}
   type: gcp-types/file-v1beta1:projects.locations.instances
   properties:
-    parent: {{ 'projects/isolated-project/locations/' + zone }}
+    parent: {{ 'projects/' + env["project"] + '/locations/' + zone }}
     # Any name of the instance would do
     instanceId: {{ deployment + '-filestore' }}
     tier: STANDARD
