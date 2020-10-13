@@ -19,20 +19,6 @@ resources:
     publicSubnetCIDR: {{ publicSubnetCIDR }}
     privateSubnetCIDR: {{ privateSubnetCIDR }}
 
-- name: boomi-bastion
-  type: bastion.jinja
-  properties:
-    region: {{ REGION }}
-    zone: {{ properties["zone"] }}
-    network: $(ref.{{ VPC_NAME }}.selfLink)
-    subnet: $(ref.{{ PUBLIC_SUBNET_NAME }}.selfLink)
-    machineType: {{ properties["machineType"] }}
-    machineImage: {{ properties["machineImage"] }}
-    targetSize: {{ properties["targetSize"] }}
-  metadata:
-    dependsOn:
-      - boomi-gke-network
-
 - name: boomi-gke-cluster
   type: gke-cluster.jinja
   properties:
@@ -64,7 +50,18 @@ resources:
         - cidrBlock: 1.2.3.4/32
         - cidrBlock: 5.6.7.8/32
         enabled: true
-  metadata:
-    dependsOn:
-      - boomi-bastion
 
+#- name: boomi-bastion
+#  type: bastion.jinja
+#  properties:
+#    region: {{ REGION }}
+#    zone: {{ properties["zone"] }}
+#    network: $(ref.{{ VPC_NAME }}.selfLink)
+#    subnet: $(ref.{{ PUBLIC_SUBNET_NAME }}.selfLink)
+#    machineType: {{ properties["machineType"] }}
+#    machineImage: {{ properties["machineImage"] }}
+#    targetSize: {{ properties["targetSize"] }}
+#  metadata:
+#    dependsOn:
+#      - boomi-gke-network
+#      - boomi-gke-cluster
