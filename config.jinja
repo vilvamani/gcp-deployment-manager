@@ -55,7 +55,7 @@ resources:
   type: file-store.jinja
   properties:
     zone: {{ properties["zone"] }}
-    network: $(ref.{{ VPC_NAME }}.selfLink)
+    network: {{ VPC_NAME }}
     size: 1024
 
 #- name: boomi-bastion
