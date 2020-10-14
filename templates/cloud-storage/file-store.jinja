@@ -21,7 +21,7 @@ resources:
     networks:
     - network: {{ properties["network"] }}
     fileShares:
-    - name: {{ deployment + '-fs' }}
+    - name: {{ deployment + '_file' }}
       capacityGb: {{ properties["size"] }}
   metadata:
     dependsOn:
