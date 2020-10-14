@@ -70,6 +70,12 @@ resources:
   action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
   properties:
     consumerId: {{ 'project:' + env['project'] }}
+    serviceName: container.googleapis.com
+
+- name: enable-gkeconnect-api
+  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
+  properties:
+    consumerId: {{ 'project:' + env['project'] }}
     serviceName: gkeconnect.googleapis.com
 
 - name: {{ CLUSTER_NAME }}
@@ -139,6 +145,7 @@ resources:
     dependsOn:
     - {{ KF_VM_SA_NAME }}
     - enable-gke-api
+    - enable-gkeconnect-api
 
 {% for typeSuffix, endpoint in K8S_ENDPOINTS.items() %}
 - name: {{ TYPE_NAME }}{{ typeSuffix }}

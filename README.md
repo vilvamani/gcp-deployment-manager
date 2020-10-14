@@ -10,5 +10,5 @@ gcloud deployment-manager deployments create boomi-qs --config=test_config.yaml
 
 # GKE Credentials
 ```
-gcloud container clusters get-credentials  boomi-quickstart-gke-cluster --zone=us-central1
+gcloud container clusters get-credentials  boomi-qs-gke-cluster --zone=us-central1
 ```

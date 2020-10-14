@@ -16,7 +16,7 @@ imports:
   path: templates/cloud-storage/file-store.jinja
 
 - name: build.py
-  path: cloudbuild.py
+  path: templates/cloudbuild.py
     
 
 required:
