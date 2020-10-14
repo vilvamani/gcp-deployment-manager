@@ -5,7 +5,7 @@ git clone https://github.com/vilvamani/gcp-deployment-manager.git && cd gcp-depl
 ```
 
 ```
-gcloud deployment-manager deployments create boomi-quickstart --config=test_config.yaml
+gcloud deployment-manager deployments create boomi-qs --config=test_config.yaml
 ```
 
 # GKE Credentials
