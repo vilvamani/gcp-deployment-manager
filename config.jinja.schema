@@ -14,10 +14,8 @@ imports:
   path: templates/kubernetes/gke-cluster.jinja
 - name: file-store.jinja
   path: templates/cloud-storage/file-store.jinja
-
-- name: build.py
-  path: templates/cloudbuild.py
-    
+- name: secret.jinja
+  path: templates/boomi-deployment/secret.jinja
 
 required:
   - region

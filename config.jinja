@@ -58,6 +58,12 @@ resources:
     network: {{ VPC_NAME }}
     size: 1024
 
+- name: boomi-secret
+  type: secret.jinja
+  metadata:
+    dependsOn:
+      - boomi-gke-cluster
+
 #- name: boomi-bastion
 #  type: bastion.jinja
 #  properties:
