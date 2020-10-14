@@ -66,6 +66,12 @@ resources:
       members:
       - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
 
+- name: enable-gke-api
+  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
+  properties:
+    consumerId: {{ 'project:' + env['project'] }}
+    serviceName: gkeconnect.googleapis.com
+
 - name: {{ CLUSTER_NAME }}
   {% if properties['gkeApiVersion'] == 'v1beta1' %}
   type: gcp-types/container-v1beta1:projects.locations.clusters
@@ -132,6 +138,7 @@ resources:
   metadata:
     dependsOn:
     - {{ KF_VM_SA_NAME }}
+    - enable-gke-api
 
 {% for typeSuffix, endpoint in K8S_ENDPOINTS.items() %}
 - name: {{ TYPE_NAME }}{{ typeSuffix }}
