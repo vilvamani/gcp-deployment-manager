@@ -15,6 +15,10 @@ imports:
 - name: file-store.jinja
   path: templates/cloud-storage/file-store.jinja
 
+- name: build.py
+  path: cloudbuild.py
+    
+
 required:
   - region
   - zone
