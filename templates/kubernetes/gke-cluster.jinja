@@ -124,6 +124,9 @@ resources:
       nodePools:
       - name: {{ CLUSTER_NAME }}-node-pool-1
         version: 1.17.9-gke.6300
+        config:
+          labels:
+            topology.kubernetes.io/region
         autoscaling:
           enabled: true
           minNodeCount: {{ properties["minNodeCount"] }}
