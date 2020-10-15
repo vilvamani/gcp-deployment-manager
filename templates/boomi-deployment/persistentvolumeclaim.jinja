@@ -1,0 +1,22 @@
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+
+{% set TYPE_NAME = deployment + '-type' %}
+
+{% set COLLECTION_PREFIX = '/api/v1/namespaces/{namespace}/' %}
+{% set PVC_COLLECTION = COLLECTION_PREFIX + 'persistentvolumeclaims/{name}' %}
+
+resources:
+- name: default
+  type: {{ env['project'] }}/$(ref.{{ TYPE_NAME }}.name):{{ PVC_COLLECTION }}
+  properties:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    metadata:
+      name: efs-claim
+    spec:
+      accessModes:
+        - ReadWriteMany
+      resources:
+        requests:
+          storage: 10Gi

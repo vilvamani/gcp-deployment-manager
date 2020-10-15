@@ -64,6 +64,14 @@ resources:
     dependsOn:
       - boomi-gke-cluster
 
+- name: boomi-pvc
+  type: persistentvolumeclaim.jinja
+  metadata:
+    dependsOn:
+      - boomi-gke-cluster
+
+
+
 #- name: boomi-bastion
 #  type: bastion.jinja
 #  properties:
