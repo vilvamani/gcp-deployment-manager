@@ -10,8 +10,8 @@ imports:
   path: templates/network/network.jinja
 - name: bastion.jinja
   path: templates/bastion-instance/bastion.jinja
-- name: gke-cluster.jinja
-  path: templates/kubernetes/gke-cluster.jinja
+- name: new-gke-cluster.jinja
+  path: templates/kubernetes/new-gke-cluster.jinja
 - name: file-store.jinja
   path: templates/cloud-storage/file-store.jinja
 - name: secret.jinja

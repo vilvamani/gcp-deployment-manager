@@ -169,24 +169,29 @@ resources:
       - fieldName: name
         location: PATH
         methodMatch: ^(get|delete|put|patch|post)$
-        value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
+        value: $.resource.properties.metadata.name
+
       - fieldName: namespace
         location: PATH
         methodMatch: ^(get|delete|put|patch|post)$
-        value: $.ifNull($.resource.properties.metadata.namespace, $.resource.name)
+        value: $.resource.properties.metadata.namespace
+
       - fieldName: metadata.resourceVersion
         location: BODY
         methodMatch: ^(PUT|POST)$
-        value: $.ifNull($.resource.properties.metadata.resourceVersion, $.resource.name)
+        value: $.resource.properties.metadata.resourceVersion
+
       - fieldName: Authorization
         location: HEADER
         value: >
           $.concat("Bearer ", $.googleOauth2AccessToken())
     descriptorUrl: https://$(ref.{{ CLUSTER_NAME }}.endpoint)/openapi/v2
-{% endfor %}
-
-outputs:
-{% for typeSuffix, endpoint in K8S_ENDPOINTS.items() %}
-- name: clusterType{{ typeSuffix }}
-  value: {{ TYPE_NAME }}{{ typeSuffix }}
+#    collectionOverrides:
+#    - collection: /api/v1/namespaces/{namespace}/services/{name}
+#      options:
+#        inputMappings:
+#        - fieldName: spec.clusterIP
+#          location: BODY
+#          methodMatch: ^(put|patch)$
+#          value: $.resource.self.spec.clusterIP
 {% endfor %}
