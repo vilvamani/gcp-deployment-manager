@@ -83,20 +83,20 @@ resources:
           - KUBECONFIG=/workspace/.kube/config
   metadata:
     dependsOn:
-      - boomi-gke-cluster
+    - boomi-gke-cluster
 
 
 #- name: boomi-secret
 #  type: secret.jinja
 #  metadata:
 #    dependsOn:
-#      - boomi-gke-cluster
+#    - boomi-gke-cluster
 
 #- name: boomi-pvc
 #  type: persistentvolumeclaim.jinja
 #  metadata:
 #    dependsOn:
-#      - boomi-gke-cluster
+#    - boomi-gke-cluster
 
 #- name: boomi-bastion
 #  type: bastion.jinja
@@ -110,7 +110,7 @@ resources:
 #    targetSize: {{ properties["targetSize"] }}
 #  metadata:
 #    dependsOn:
-#      - boomi-gke-network
-#      - boomi-gke-cluster
+#    - boomi-gke-network
+#    - boomi-gke-cluster
 
 
