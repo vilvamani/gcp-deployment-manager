@@ -75,7 +75,7 @@ resources:
           - cluster-info
         env:
           - CLOUDSDK_COMPUTE_REGION={{ REGION }}
-          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.name)
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.clusterName)
           - KUBECONFIG=/workspace/.kube/config
 
       # Step 2
@@ -85,7 +85,7 @@ resources:
           - --filename=https://raw.githubusercontent.com/ikanski/EKS/master/config/boomi_molecule_eks_service.yaml
         env:
           - CLOUDSDK_COMPUTE_REGION={{ REGION }}
-          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.name)
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.clusterName)
           - KUBECONFIG=/workspace/.kube/config
 
       # Step 3
@@ -96,7 +96,7 @@ resources:
           - --validate=false
         env:
           - CLOUDSDK_COMPUTE_REGION={{ REGION }}
-          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.name)
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.clusterName)
           - KUBECONFIG=/workspace/.kube/config
   metadata:
     dependsOn:
