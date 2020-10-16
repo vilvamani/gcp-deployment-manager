@@ -51,7 +51,10 @@ resources:
         - cidrBlock: 1.2.3.4/32
         - cidrBlock: 5.6.7.8/32
         enabled: true
-        
+  metadata:
+    dependsOn:
+    - boomi-gke-network
+
 - name: file-store
   type: file-store.jinja
   properties:
@@ -69,7 +72,7 @@ resources:
           - cluster-info
         env:
           - CLOUDSDK_COMPUTE_REGION={{ REGION }}
-          - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.selfLink)
           - KUBECONFIG=/workspace/.kube/config
 
       # Step 2
@@ -79,11 +82,12 @@ resources:
           - --filename=https://raw.githubusercontent.com/ikanski/EKS/master/config/boomi_molecule_eks_service.yaml
         env:
           - CLOUDSDK_COMPUTE_REGION={{ REGION }}
-          - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.selfLink)
           - KUBECONFIG=/workspace/.kube/config
   metadata:
     dependsOn:
     - boomi-gke-cluster
+    - file-store
 
 
 #- name: boomi-secret
