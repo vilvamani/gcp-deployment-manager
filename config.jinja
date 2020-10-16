@@ -10,6 +10,9 @@
 
 
 resources:
+- name: boomi-enable-apis
+  type: enable-apis.jinja
+
 - name: boomi-gke-network
   type: network.jinja
   properties:
@@ -19,6 +22,9 @@ resources:
     privateSubnetName: {{ PRIVATE_SUBNET_NAME }}
     publicSubnetCIDR: {{ publicSubnetCIDR }}
     privateSubnetCIDR: {{ privateSubnetCIDR }}
+  metadata:
+    dependsOn:
+    - boomi-enable-apis
 
 - name: boomi-gke-cluster
   type: gke.jinja
@@ -103,32 +109,34 @@ resources:
     - boomi-gke-cluster
     - file-store
 
+{#
+- name: boomi-secret
+  type: secret.jinja
+  metadata:
+    dependsOn:
+    - boomi-gke-cluster
 
-#- name: boomi-secret
-#  type: secret.jinja
-#  metadata:
-#    dependsOn:
-#    - boomi-gke-cluster
+- name: boomi-pvc
+  type: persistentvolumeclaim.jinja
+  metadata:
+    dependsOn:
+    - boomi-gke-cluster
 
-#- name: boomi-pvc
-#  type: persistentvolumeclaim.jinja
-#  metadata:
-#    dependsOn:
-#    - boomi-gke-cluster
+- name: boomi-bastion
+  type: bastion.jinja
+  properties:
+    region: {{ REGION }}
+    zone: {{ properties["zone"] }}
+    network: $(ref.{{ VPC_NAME }}.selfLink)
+    subnet: $(ref.{{ PUBLIC_SUBNET_NAME }}.selfLink)
+    machineType: {{ properties["machineType"] }}
+    machineImage: {{ properties["machineImage"] }}
+    targetSize: {{ properties["targetSize"] }}
+  metadata:
+    dependsOn:
+    - boomi-gke-network
+    - boomi-gke-cluster
 
-#- name: boomi-bastion
-#  type: bastion.jinja
-#  properties:
-#    region: {{ REGION }}
-#    zone: {{ properties["zone"] }}
-#    network: $(ref.{{ VPC_NAME }}.selfLink)
-#    subnet: $(ref.{{ PUBLIC_SUBNET_NAME }}.selfLink)
-#    machineType: {{ properties["machineType"] }}
-#    machineImage: {{ properties["machineImage"] }}
-#    targetSize: {{ properties["targetSize"] }}
-#  metadata:
-#    dependsOn:
-#    - boomi-gke-network
-#    - boomi-gke-cluster
+#}
 
 
