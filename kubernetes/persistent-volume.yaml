@@ -8,6 +8,8 @@ spec:
   accessModes:
   - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
+  volumeMode: Filesystem
+  storageClassName: standard
   nfs:
     path: /boomifileshare
     server: ip-address
