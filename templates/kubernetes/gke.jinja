@@ -13,23 +13,9 @@
 
 {% set VM_OAUTH_SCOPES = ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/compute', 'https://www.googleapis.com/auth/devstorage.read_only', 'https://www.googleapis.com/auth/logging.write', 'https://www.googleapis.com/auth/monitoring', 'https://www.googleapis.com/auth/cloud_debugger'] %}
 
-{% set KF_ADMIN_NAME = deployment + '-admin' %}
-{% set KF_USER_NAME = deployment + '-user' %}
 {% set KF_VM_SA_NAME = deployment + '-vm' %}
 
 resources:
-- name: {{ KF_ADMIN_NAME }}
-  type: iam.v1.serviceAccount
-  properties:
-    accountId: {{ KF_ADMIN_NAME }}
-    displayName: Service Account used for Kubeflow admin actions.
-
-- name: {{ KF_USER_NAME }}
-  type: iam.v1.serviceAccount
-  properties:
-    accountId: {{ KF_USER_NAME }}
-    displayName: Service Account used for Kubeflow user actions.
-
 - name: {{ KF_VM_SA_NAME }}
   type: gcp-types/iam-v1:projects.serviceAccounts
   properties:
