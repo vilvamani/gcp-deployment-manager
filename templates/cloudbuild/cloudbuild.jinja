@@ -3,4 +3,4 @@ resources:
   action: 'gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create'
   properties:
     projectId: {{ env['project'] }}
-    steps: {{ env['build_steps'] }}
+    steps: {{ properties['build_steps'] }}

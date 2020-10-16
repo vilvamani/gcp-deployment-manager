@@ -1,12 +1,25 @@
+imports:
+- path: cloudbuild.jinja
+
 resources:
   - name: boomi-cloudbuild
     type: cloudbuild.jinja
     properties:
       build_steps:
         # Step 1
-        - name: gcr.io/cloud-builders/kubectl
+        - name: 'gcr.io/cloud-builders/kubectl'
           args:
             - cluster-info
+          env:
+            - CLOUDSDK_COMPUTE_REGION=us-central1
+            - CLOUDSDK_CONTAINER_CLUSTER=boomi-qs-gke-cluster
+            - KUBECONFIG=/workspace/.kube/config
+
+        # Step 2
+        - name: 'gcr.io/cloud-builders/kubectl'
+          args:
+            - apply
+            - --filename=https://raw.githubusercontent.com/ikanski/EKS/master/config/boomi_molecule_eks_service.yaml
           env:
             - CLOUDSDK_COMPUTE_REGION=us-central1
             - CLOUDSDK_CONTAINER_CLUSTER=boomi-qs-gke-cluster
