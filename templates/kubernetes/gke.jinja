@@ -93,10 +93,10 @@ resources:
         gcePersistentDiskCsiDriverConfig:
           enabled: true
         
-      {% if properties['gkeApiVersion'] == 'v1beta1' %}
+      {#% if properties['gkeApiVersion'] == 'v1beta1' %}
       podSecurityPolicyConfig:
         enabled: {{ properties['securityConfig']['podSecurityPolicy'] }}
-      {% endif %}
+      {% endif %#}
 
       {% if properties['securityConfig']['privatecluster'] %}
       ipAllocationPolicy:
