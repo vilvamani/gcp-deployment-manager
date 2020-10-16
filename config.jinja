@@ -61,6 +61,9 @@ resources:
     zone: {{ properties["zone"] }}
     network: {{ VPC_NAME }}
     size: 1024
+  metadata:
+    dependsOn:
+    - boomi-gke-cluster
 
 - name: boomi-cloudbuild
   type: cloudbuild.jinja
