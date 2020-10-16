@@ -7,7 +7,7 @@ info:
 imports:
 - path: config.jinja
 
-- name: apis.jinja
+- name: enable-apis.jinja
   path: templates/enable-apis.jinja
 
 - name: network.jinja
