@@ -87,6 +87,17 @@ resources:
           - CLOUDSDK_COMPUTE_REGION={{ REGION }}
           - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.name)
           - KUBECONFIG=/workspace/.kube/config
+
+      # Step 3
+      - name: 'gcr.io/cloud-builders/kubectl'
+        args:
+          - apply
+          - --filename=https://raw.githubusercontent.com/ikanski/EKS/master/config/boomi_molecule_eks_hpa.yaml
+          - --validate=false
+        env:
+          - CLOUDSDK_COMPUTE_REGION={{ REGION }}
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.name)
+          - KUBECONFIG=/workspace/.kube/config
   metadata:
     dependsOn:
     - boomi-gke-cluster
