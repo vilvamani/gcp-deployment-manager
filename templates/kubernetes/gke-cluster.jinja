@@ -170,14 +170,12 @@ resources:
         location: PATH
         methodMatch: ^(get|delete|put|patch|post)$
         value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
-      - fieldName: namespace
-        location: PATH
-        methodMatch: ^(get|delete|put|patch|post)$
-        value: $.ifNull($.resource.properties.metadata.namespace, $.resource.name)
+
       - fieldName: metadata.resourceVersion
         location: BODY
         methodMatch: ^(PUT|POST)$
         value: $.ifNull($.resource.properties.metadata.resourceVersion, $.resource.name)
+        
       - fieldName: Authorization
         location: HEADER
         value: >

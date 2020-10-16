@@ -20,7 +20,7 @@ resources:
     privateSubnetCIDR: {{ privateSubnetCIDR }}
 
 - name: boomi-gke-cluster
-  type: new-gke-cluster.jinja
+  type: gke-cluster.jinja
   properties:
     region: {{ properties["region"] }}
     zone: {{ properties["zone"] }}
@@ -69,8 +69,6 @@ resources:
   metadata:
     dependsOn:
       - boomi-gke-cluster
-
-
 
 #- name: boomi-bastion
 #  type: bastion.jinja
