@@ -21,7 +21,7 @@ resources:
     networks:
     - network: {{ properties["network"] }}
     fileShares:
-    - name: boomi-fileshare
+    - name: boomifileshare
       capacityGb: {{ properties["size"] }}
   metadata:
     dependsOn:
