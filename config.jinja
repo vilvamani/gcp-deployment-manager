@@ -81,6 +81,10 @@ resources:
           - CLOUDSDK_COMPUTE_REGION={{ REGION }}
           - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
           - KUBECONFIG=/workspace/.kube/config
+  metadata:
+    dependsOn:
+      - boomi-gke-cluster
+
 
 #- name: boomi-secret
 #  type: secret.jinja
