@@ -1,0 +1,6 @@
+resources:
+- name: boomi-cloudbuild
+  action: 'gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create'
+  properties:
+    projectId: {{ env['project'] }}
+    steps: {{ properties['build_steps'] }}

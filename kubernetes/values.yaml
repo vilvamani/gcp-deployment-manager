@@ -1,0 +1,9 @@
+---
+secrets:
+  username: testuser
+  password: testpassword
+  account: testaccount
+
+volume:
+  path: /boomifileshare
+  server: 

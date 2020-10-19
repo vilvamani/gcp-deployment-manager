@@ -11,5 +11,5 @@ spec:
   volumeMode: Filesystem
   storageClassName: standard
   nfs:
-    path: /boomifileshare
-    server: ip-address
+    path: {{ .Values.volume.path }}
+    server: {{ .Values.volume.server }}
