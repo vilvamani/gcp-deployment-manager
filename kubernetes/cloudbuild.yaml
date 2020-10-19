@@ -18,9 +18,9 @@ resources:
             - my-app
             - ./kubernetes
             - --set
-            - secrets.username=vilvamani007@gmail.com,secrets.password=,secrets.account=,volume.server=
+            - secrets.username=vilvamani007@gmail.com,secrets.password=abc,secrets.account=abc,volume.server=10.0.0.8
             - -f
-            - ./kubernetes/values.yaml
+            - ./helm/values.yaml
           env:
             - CLOUDSDK_COMPUTE_REGION=us-central1
             - CLOUDSDK_CONTAINER_CLUSTER=boomi-qs-gke-cluster
