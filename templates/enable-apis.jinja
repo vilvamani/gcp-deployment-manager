@@ -37,7 +37,7 @@ resources:
     policy: $(ref.get-iam-policy)
     gcpIamPolicyPatch:
       add:
-        - role: roles/container.developer
+        - role: roles/container.admin
           members:
             - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
       remove: []

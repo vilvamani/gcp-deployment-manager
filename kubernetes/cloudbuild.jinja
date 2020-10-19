@@ -4,3 +4,6 @@ resources:
   properties:
     projectId: {{ env['project'] }}
     steps: {{ properties['build_steps'] }}
+  metadata:
+    runtimePolicy:
+      - UPDATE_ALWAYS   
