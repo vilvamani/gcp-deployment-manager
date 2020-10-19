@@ -23,6 +23,7 @@ resources:
     network: $(ref.{{ vpcName }}.selfLink)
     ipCidrRange: {{ publicSubnetCIDR }}
     region: {{ region }}
+    enableFlowLogs: true
 
 # GCP Private Subnets
 - name: {{ privateSubnet }}
@@ -32,6 +33,7 @@ resources:
     network: $(ref.{{ vpcName }}.selfLink)
     ipCidrRange: {{ privateSubnetCIDR }}
     region: {{ region }}
+    enableFlowLogs: true
 
 # GCP Firewall Rules
 - name: {{ deployment + '-firewall-allow-ssh-rdp' }}
