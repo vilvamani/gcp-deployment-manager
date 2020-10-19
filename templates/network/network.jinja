@@ -23,6 +23,7 @@ resources:
     network: $(ref.{{ vpcName }}.selfLink)
     ipCidrRange: {{ publicSubnetCIDR }}
     region: {{ region }}
+    enableFlowLogs: true
 
 # GCP Private Subnets
 - name: {{ privateSubnet }}
@@ -32,6 +33,7 @@ resources:
     network: $(ref.{{ vpcName }}.selfLink)
     ipCidrRange: {{ privateSubnetCIDR }}
     region: {{ region }}
+    enableFlowLogs: true
 
 # GCP Firewall Rules
 - name: {{ deployment + '-firewall-allow-ssh-rdp' }}
@@ -45,6 +47,8 @@ resources:
       ports: [22, 3389]
     targetTags: 
     - allow-ssh-rpd
+    logConfig:
+      enable: true
 
 - name: {{ deployment + '-firewall-allow-http-https' }}
   type: compute.v1.firewall
@@ -55,6 +59,8 @@ resources:
     allowed:
     - IPProtocol: TCP
       ports: [80, 443]
+    logConfig:
+      enable: true
 
 - name: {{ deployment + '-firewall-allow-icmp' }}
   type: compute.v1.firewall
@@ -65,6 +71,8 @@ resources:
     allowed:
     - IPProtocol: ICMP
       ports: []
+    logConfig:
+      enable: true
 
 - name: {{ deployment }}-route
   type: compute.v1.route
