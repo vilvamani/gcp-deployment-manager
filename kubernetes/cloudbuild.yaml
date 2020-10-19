@@ -6,6 +6,8 @@ resources:
     type: cloudbuild.jinja
     properties:
       build_steps:
+        - name: 'gcr.io/${PROJECT_ID}/shellcheck'
+          args: ['sed 's/username/linux/' ./helm/templates/secret.yaml']
         - name: 'gcr.io/$PROJECT_ID/helm:latest'
           args: ['version', '--client']
           env:
