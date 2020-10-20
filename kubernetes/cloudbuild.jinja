@@ -7,7 +7,7 @@ resources:
   properties:
     timeout: 120s
     steps:
-    - id: git-clone
+    - id: git_clone
       name: 'gcr.io/cloud-builders/git'
       args:
       - clone
@@ -18,8 +18,17 @@ resources:
       args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
       dir: gcp-deployment-manager/kubernetes
 
-    - name: 'gcr.io/$PROJECT_ID/helm:latest'
-      args: ['upgrade', '--install', 'mysecret', '--namespace', 'default']
+    - id: helm_secret_deployment
+      name: 'gcr.io/$PROJECT_ID/helm:latest'
+      args: 
+        - install
+        - --generate-name
+        - --namespace
+        - default
+        - --set
+        - secrets.username=vilvamani007@gmail.com,secrets.password=abc,secrets.account=abc,volume.server=10.0.0.8
+        - -f
+        - ./values.yaml
       dir: gcp-deployment-manager/kubernetes/helm
       env:
         - CLOUDSDK_COMPUTE_REGION=us-central1
