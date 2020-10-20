@@ -9,7 +9,7 @@ spec:
   - ReadWriteMany	
   persistentVolumeReclaimPolicy: Retain	
   volumeMode: Filesystem	
-  storageClassName: standard	
+  storageClassName: standard-rwo	
   nfs:	
     path: {{ .Values.volume.path }}	
     server: {{ .Values.volume.server }} 
