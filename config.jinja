@@ -7,7 +7,7 @@
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
-
+{% set CommonTags = properties["CommonTags"] %}
 
 resources:
 - name: boomi-enable-apis
@@ -33,6 +33,7 @@ resources:
     zone: {{ properties["zone"] }}
     network: $(ref.{{ VPC_NAME }}.selfLink)
     subnet: $(ref.{{ PRIVATE_SUBNET_NAME }}.selfLink)
+    CommonTags: {{ properties["CommonTags"] }}
 
     # Set this to v1beta1 to use beta features such as private clusters
     gkeApiVersion: {{ properties["gkeApiVersion"] }}

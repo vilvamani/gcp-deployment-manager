@@ -96,3 +96,11 @@ properties:
     type: integer
     description: "No of Boomi Instance type"
     default: 10
+
+  CommonTags:
+    type: object
+    description: "Common tags or labels applied for all resources"
+    default: {
+      "environment": "dev",
+      "owner": "divya"
+      }
