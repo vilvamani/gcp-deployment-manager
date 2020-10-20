@@ -24,7 +24,7 @@ resources:
         - -c
         - |
            ls -la &&
-           sed -i -e 's/<my_username>/properties["username"]/g' -e 's/<my_password>/properties["password"]/g' -e 's/<my_boomi_account>/properties["account"]/g' boomi_molecule_eks_secret.yaml
+           sed -i -e 's/<my_username>/properties["username"]/g' -e 's/<my_password>/properties["password"]/g' -e 's/<my_boomi_account>/properties["ipaddress"]/g' boomi_molecule_eks_secret.yaml
       dir: EKS/config
 
     - name: 'gcr.io/cloud-builders/kubectl'

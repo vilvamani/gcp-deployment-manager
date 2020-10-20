@@ -76,11 +76,15 @@ resources:
   properties:
     region: {{ REGION }}
     CLUSTER_NAME: $(ref.{{ CLUSTER_NAME }}.name)
+    username: vilvamani007@gmail.com
+    password: abcde
+    account: google.com
+    ipaddress: $(ref.{{ file-store }}.ipAddresses)
   metadata:
     dependsOn:
     - boomi-gke-cluster
     - file-store
-    
+
 {#    build_steps:
       # Step 1
       - name: 'gcr.io/cloud-builders/kubectl'
