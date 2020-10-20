@@ -25,12 +25,6 @@ imports:
 - name: file-store.jinja
   path: templates/cloud-storage/file-store.jinja
 
-- name: secret.jinja
-  path: templates/boomi-deployment/secret.jinja
-
-- name: persistentvolumeclaim.jinja
-  path: templates/boomi-deployment/persistentvolumeclaim.jinja
-
 required:
   - region
   - zone
