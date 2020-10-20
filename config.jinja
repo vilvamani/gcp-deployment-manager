@@ -79,7 +79,7 @@ resources:
     username: vilvamani007@gmail.com
     password: abcde
     account: google.com
-    ipaddress: $(ref.{{ deployment + '-filestore' }}.ipAddresses)
+    ipaddress: $(ref.{{ deployment + '-filestore' }}.networks[0].ipAddresses)
 {#  metadata:
     dependsOn:
     - boomi-gke-cluster

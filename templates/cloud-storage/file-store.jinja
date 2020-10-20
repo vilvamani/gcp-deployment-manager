@@ -25,3 +25,7 @@ resources:
   metadata:
     dependsOn:
       - enable-filestore-api
+
+outputs:
+- name: fileShareIp
+  value: $(ref.{{ deployment + '-filestore' }}.networks[0].ipAddresses)
