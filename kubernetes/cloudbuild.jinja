@@ -15,7 +15,6 @@ resources:
 
     - name: 'gcr.io/cloud-builders/docker'
       args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
-        - '.'
       dir: gcp-deployment-manager/kubernetes
       env:
         - SKIP_CLUSTER_CONFIG=true
