@@ -10,53 +10,36 @@ resources:
     runtimePolicy:
     - UPDATE_ALWAYS
   properties:
-    steps: 
-    - id: git-clone
+    timeout: 120s
+    steps:
+    - id: git_clone
       name: 'gcr.io/cloud-builders/git'
       args:
       - clone
-      - https://github.com/ikanski/EKS.git
+      - https://github.com/vilvamani/gcp-deployment-manager.git
 
-    - id: replace
-      name: 'gcr.io/cloud-builders/gcloud'
-      entrypoint: 'bash'
-      args:
-        - -c
-        - |
-           ls -la &&
-           sed -i -e 's/<my_username>/properties["username"]/g' -e 's/<my_password>/properties["password"]/g' -e 's/<my_boomi_account>/properties["ipaddress"]/g' boomi_molecule_eks_secret.yaml
-      dir: EKS/config
+    - id: 'build_image'
+      name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
+      dir: gcp-deployment-manager/kubernetes
 
-    - name: 'gcr.io/cloud-builders/kubectl'
-      args:
-        - apply
-        - --filename=./boomi_molecule_eks_secret.yaml
-        - --validate=false
-      dir: EKS/config
+    - id: helm_deployment
+      name: 'gcr.io/$PROJECT_ID/helm:latest'
+      args: 
+        - upgrade
+        - --install
+        - secret
+        - --namespace
+        - default
+        - --set
+        - secrets.username=vilvamani007@gmail.com,secrets.password={{ region }},secrets.account=google.com,volume.server=10.0.0.8
+        - '.'
+      dir: gcp-deployment-manager/kubernetes/helm
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
+      waitFor: [build_image]
 
-    - name: 'gcr.io/cloud-builders/kubectl'
-      args:
-        - apply
-        - --filename=./boomi_molecule_eks_hpa.yaml
-        - --validate=false
-      dir: EKS/config
-      env:
-        - CLOUDSDK_COMPUTE_REGION={{ region }}
-        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
-        - KUBECONFIG=/workspace/.kube/config
-      
-    - name: 'gcr.io/cloud-builders/kubectl'
-      args:
-        - apply
-        - --filename=./boomi_molecule_eks_service.yaml
-        - --validate=false
-      dir: EKS/config
-      env:
-        - CLOUDSDK_COMPUTE_REGION={{ region }}
-        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
-        - KUBECONFIG=/workspace/.kube/config
-    timeout: 120s
+    substitutions:
+      _HELM_VERSION: 3.2.0

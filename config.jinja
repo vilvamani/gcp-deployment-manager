@@ -71,7 +71,7 @@ resources:
     dependsOn:
     - boomi-gke-cluster
 
-{#- name: boomi-cloudbuild
+- name: boomi-cloudbuild
   type: cloudbuild.jinja
   properties:
     region: {{ REGION }}
@@ -79,7 +79,7 @@ resources:
     username: vilvamani007@gmail.com
     password: abcde
     account: google.com
-    ipaddress: $(ref.{{ file-store }}.ipAddresses)
+{#    ipaddress: $(ref.{{ file-store }}.ipAddresses)
   metadata:
     dependsOn:
     - boomi-gke-cluster
