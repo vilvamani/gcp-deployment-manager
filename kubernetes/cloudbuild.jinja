@@ -18,22 +18,23 @@ resources:
       args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
       dir: gcp-deployment-manager/kubernetes
 
-    - id: helm_secret_deployment
+    - id: helm_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args: 
-        - install
-        - --generate-name
+        - upgrade
+        - --install
+        - secret
         - --namespace
         - default
         - --set
-        - secrets.username=vilvamani007@gmail.com,secrets.password=abc,secrets.account=abc,volume.server=10.0.0.8
-        - -f
-        - ./values.yaml
+        - secrets.username=vilvamani007@gmail.com,secrets.password=xyzabc,secrets.account=google.com,volume.server=10.0.0.8
+        - '.'
       dir: gcp-deployment-manager/kubernetes/helm
       env:
         - CLOUDSDK_COMPUTE_REGION=us-central1
         - CLOUDSDK_CONTAINER_CLUSTER=boomi-qs-gke-cluster
         - KUBECONFIG=/workspace/.kube/config
+      waitFor: [build_image]
 
     substitutions:
       _HELM_VERSION: 3.2.0
