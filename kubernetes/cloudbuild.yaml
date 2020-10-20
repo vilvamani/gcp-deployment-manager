@@ -4,26 +4,4 @@ imports:
 resources:
   - name: boomi-cloudbuild
     type: cloudbuild.jinja
-    properties:
-      build_steps:
-        - name: 'gcr.io/${PROJECT_ID}/shellcheck'
-          args: ['sed 's/username/linux/' ./helm/templates/secret.yaml']
-        - name: 'gcr.io/$PROJECT_ID/helm:latest'
-          args: ['version', '--client']
-          env:
-            - SKIP_CLUSTER_CONFIG=true
-        # Deploy with Helm
-        - name: gcr.io/$PROJECT_ID/helm:latest
-          args:
-            - upgrade
-            - -i
-            - my-app
-            - ./kubernetes
-            - --set
-            - secrets.username=vilvamani007@gmail.com,secrets.password=abc,secrets.account=abc,volume.server=10.0.0.8
-            - -f
-            - ./helm/values.yaml
-          env:
-            - CLOUDSDK_COMPUTE_REGION=us-central1
-            - CLOUDSDK_CONTAINER_CLUSTER=boomi-qs-gke-cluster
-            - KUBECONFIG=/workspace/.kube/config
+  

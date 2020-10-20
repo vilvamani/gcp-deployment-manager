@@ -1,9 +1,24 @@
 resources:
 - name: boomi-cloudbuild
-  action: 'gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create'
-  properties:
-    projectId: {{ env['project'] }}
-    steps: {{ properties['build_steps'] }}
+  action: gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create
   metadata:
     runtimePolicy:
-      - UPDATE_ALWAYS   
+    - UPDATE_ALWAYS
+  properties:
+    timeout: 120s
+    steps:
+    - id: git-clone
+      name: 'gcr.io/cloud-builders/git'
+      args:
+      - clone
+      - https://github.com/vilvamani/gcp-deployment-manager.git
+
+    - name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
+        - '.'
+      dir: gcp-deployment-manager/kubernetes
+      env:
+        - SKIP_CLUSTER_CONFIG=true
+
+    substitutions:
+      _HELM_VERSION: 3.2.0
