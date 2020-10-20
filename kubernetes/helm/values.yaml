@@ -6,4 +6,4 @@ secrets:
 
 volume:
   path: /boomifileshare
-  server: 
+  server: 10.0.0.8
