@@ -1,6 +1,62 @@
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+{% set region = properties["region"] %}
+{% set CLUSTER_NAME = properties["CLUSTER_NAME"] %}
+
 resources:
 - name: boomi-cloudbuild
-  action: 'gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create'
+  action: gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create
+  metadata:
+    runtimePolicy:
+    - UPDATE_ALWAYS
   properties:
-    projectId: {{ env['project'] }}
-    steps: {{ properties['build_steps'] }}
+    steps: 
+    - id: git-clone
+      name: 'gcr.io/cloud-builders/git'
+      args:
+      - clone
+      - https://github.com/ikanski/EKS.git
+
+    - id: replace
+      name: 'gcr.io/cloud-builders/gcloud'
+      entrypoint: 'bash'
+      args:
+        - -c
+        - |
+           ls -la &&
+           sed -i -e 's/<my_username>/properties["username"]/g' -e 's/<my_password>/properties["password"]/g' -e 's/<my_boomi_account>/properties["account"]/g' boomi_molecule_eks_secret.yaml
+      dir: EKS/config
+
+    - name: 'gcr.io/cloud-builders/kubectl'
+      args:
+        - apply
+        - --filename=./boomi_molecule_eks_secret.yaml
+        - --validate=false
+      dir: EKS/config
+      env:
+        - CLOUDSDK_COMPUTE_REGION={{ region }}
+        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+        - KUBECONFIG=/workspace/.kube/config
+
+    - name: 'gcr.io/cloud-builders/kubectl'
+      args:
+        - apply
+        - --filename=./boomi_molecule_eks_hpa.yaml
+        - --validate=false
+      dir: EKS/config
+      env:
+        - CLOUDSDK_COMPUTE_REGION={{ region }}
+        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+        - KUBECONFIG=/workspace/.kube/config
+      
+    - name: 'gcr.io/cloud-builders/kubectl'
+      args:
+        - apply
+        - --filename=./boomi_molecule_eks_service.yaml
+        - --validate=false
+      dir: EKS/config
+      env:
+        - CLOUDSDK_COMPUTE_REGION={{ region }}
+        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+        - KUBECONFIG=/workspace/.kube/config
+    timeout: 120s

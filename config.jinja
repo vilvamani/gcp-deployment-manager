@@ -74,7 +74,14 @@ resources:
 - name: boomi-cloudbuild
   type: cloudbuild.jinja
   properties:
-    build_steps:
+    region: {{ REGION }}
+    CLUSTER_NAME: $(ref.{{ CLUSTER_NAME }}.name)
+  metadata:
+    dependsOn:
+    - boomi-gke-cluster
+    - file-store
+    
+{#    build_steps:
       # Step 1
       - name: 'gcr.io/cloud-builders/kubectl'
         args:
@@ -108,20 +115,8 @@ resources:
     dependsOn:
     - boomi-gke-cluster
     - file-store
-
+#}
 {#
-- name: boomi-secret
-  type: secret.jinja
-  metadata:
-    dependsOn:
-    - boomi-gke-cluster
-
-- name: boomi-pvc
-  type: persistentvolumeclaim.jinja
-  metadata:
-    dependsOn:
-    - boomi-gke-cluster
-
 - name: boomi-bastion
   type: bastion.jinja
   properties:
@@ -136,7 +131,6 @@ resources:
     dependsOn:
     - boomi-gke-network
     - boomi-gke-cluster
-
 #}
 
 
