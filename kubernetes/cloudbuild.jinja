@@ -13,14 +13,18 @@ resources:
       - clone
       - https://github.com/vilvamani/gcp-deployment-manager.git
 
-    - name: 'gcr.io/cloud-builders/docker'
+    - id: 'build_image'
+      name: 'gcr.io/cloud-builders/docker'
       args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
       dir: gcp-deployment-manager/kubernetes
 
     - name: 'gcr.io/$PROJECT_ID/helm:latest'
-      args: ['version', '--client']
+      args: ['upgrade', '--install', 'mysecret', '--namespace', 'default']
+      dir: gcp-deployment-manager/kubernetes/helm
       env:
-        - SKIP_CLUSTER_CONFIG=true
+        - CLOUDSDK_COMPUTE_REGION=us-central1
+        - CLOUDSDK_CONTAINER_CLUSTER=boomi-qs-gke-cluster
+        - KUBECONFIG=/workspace/.kube/config
 
     substitutions:
       _HELM_VERSION: 3.2.0
