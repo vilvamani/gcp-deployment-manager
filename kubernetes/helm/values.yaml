@@ -7,3 +7,7 @@ secrets:
 volume:
   path: /boomifileshare
   server: 10.0.0.8
+
+storage:
+  reservedIpRange: 10.0.0.8/29
+  network: default

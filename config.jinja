@@ -81,6 +81,8 @@ resources:
     password: abcde
     account: google.com
     ipaddress: $(ref.file-store.fileShareIp)
+    network: {{ VPC_NAME }}
+    reservedIpRange: $(ref.file-store.reservedIpRange)
   metadata:
     dependsOn:
     - boomi-gke-cluster

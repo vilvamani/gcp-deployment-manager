@@ -5,9 +5,9 @@ metadata:
 provisioner: filestore.csi.storage.gke.io
 parameters:
   # "CIDR range to allocate Filestore IP Ranges from"
-  # reserved-ipv4-cidr: 192.168.92.22/26
+  reserved-ipv4-cidr: {{ .Values.storage.reservedIpRange }}
   # # standard (default) or premier
-  # tier: premier
+  tier: default
   # # Name of the VPC. Note that non-default VPCs require special firewall rules to be setup: TODO
-  # network: default
+  network: {{ .Values.storage.network }}
 allowVolumeExpansion: true
