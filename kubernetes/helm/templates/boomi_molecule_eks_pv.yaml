@@ -2,6 +2,8 @@ apiVersion: v1
 kind: PersistentVolume
 metadata:
   name: "efs-pv"
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "nfs"
 spec:
   capacity:
     storage: 30Gi

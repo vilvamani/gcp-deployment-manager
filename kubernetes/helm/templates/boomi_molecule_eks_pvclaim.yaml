@@ -2,6 +2,8 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: efs-claim
+  annotations:
+    volume.beta.kubernetes.io/storage-class: "gke-csi-filestore"
 spec:
   accessModes:
     - ReadWriteMany
