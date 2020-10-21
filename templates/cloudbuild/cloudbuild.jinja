@@ -32,7 +32,7 @@ resources:
         - --namespace
         - default
         - --set
-        - secrets.username={{ properties["username"] }},secrets.password={{ properties["password"] }},secrets.account={{ properties["account"] }},volume.server={{ properties["ipaddress"] }}, storage.reservedIpRange={{ properties["reservedIpRange"] }}, storage.network={{ properties["network"] }}
+        - secrets.username={{ properties["username"] }},secrets.password={{ properties["password"] }},secrets.account={{ properties["account"] }},volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }}
         - '.'
       dir: gcp-deployment-manager/kubernetes/helm
       env:
