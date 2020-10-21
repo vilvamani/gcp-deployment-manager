@@ -6,7 +6,7 @@ spec:
   capacity:	
     storage: 30Gi	
   accessModes:	
-  - ReadWriteMany	
+  - ReadWriteOnce	
   persistentVolumeReclaimPolicy: Retain	
   volumeMode: Filesystem	
   storageClassName: standard-rwo	

@@ -4,7 +4,7 @@ metadata:
   name: efs-claim
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   storageClassName: standard-rwo
   resources:
     requests:
