@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   name: "efs-pv"
   annotations:
-    volume.beta.kubernetes.io/storage-class: "nfs"
+    volume.beta.kubernetes.io/storage-class: "gke-csi-filestore"
 spec:
   capacity:
     storage: 30Gi
