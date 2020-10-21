@@ -22,17 +22,15 @@ resources:
       name: 'gcr.io/cloud-builders/docker'
       args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
       dir: gcp-deployment-manager/kubernetes
+      waitFor: [git_clone]
 
     - id: helm_nfs_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args: 
-        - upgrade
-        - --install
-        - nfs-client-provisioner
-        - --namespace
-        - default
+        - install
         - --set
         - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare
+        - nfs-client-provisioner
         - stable/nfs-client-provisioner
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
@@ -42,7 +40,7 @@ resources:
         - HELM_REPO_URL=https://kubernetes-charts.storage.googleapis.com
       waitFor: [build_image]
 
-    - id: helm_deployment
+    - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args: 
         - upgrade
@@ -58,7 +56,7 @@ resources:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
-      waitFor: [build_image]
+      waitFor: [helm_nfs_deployment]
 
     substitutions:
       _HELM_VERSION: 3.2.0
