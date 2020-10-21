@@ -28,4 +28,7 @@ resources:
 
 outputs:
 - name: fileShareIp
-  value: $(ref.{{ deployment + '-filestore' }}.networks[0].ipAddresses)
+  value: $(ref.{{ deployment + '-filestore' }}.networks[0].ipAddresses[0])
+
+- name: reservedIpRange
+  value: $(ref.{{ deployment + '-filestore' }}.networks[0].reservedIpRange)
