@@ -81,46 +81,7 @@ resources:
     password: abcde
     account: google.com
     ipaddress: $(ref.file-store.fileShareIp)
-{#  metadata:
-    dependsOn:
-    - boomi-gke-cluster
-    - file-store
 
-    build_steps:
-      # Step 1
-      - name: 'gcr.io/cloud-builders/kubectl'
-        args:
-          - cluster-info
-        env:
-          - CLOUDSDK_COMPUTE_REGION={{ REGION }}
-          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.name)
-          - KUBECONFIG=/workspace/.kube/config
-
-      # Step 2
-      - name: 'gcr.io/cloud-builders/kubectl'
-        args:
-          - apply
-          - --filename=https://raw.githubusercontent.com/ikanski/EKS/master/config/boomi_molecule_eks_service.yaml
-        env:
-          - CLOUDSDK_COMPUTE_REGION={{ REGION }}
-          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.name)
-          - KUBECONFIG=/workspace/.kube/config
-
-      # Step 3
-      - name: 'gcr.io/cloud-builders/kubectl'
-        args:
-          - apply
-          - --filename=https://raw.githubusercontent.com/ikanski/EKS/master/config/boomi_molecule_eks_hpa.yaml
-          - --validate=false
-        env:
-          - CLOUDSDK_COMPUTE_REGION={{ REGION }}
-          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ CLUSTER_NAME }}.name)
-          - KUBECONFIG=/workspace/.kube/config
-  metadata:
-    dependsOn:
-    - boomi-gke-cluster
-    - file-store
-#}
 {#
 - name: boomi-bastion
   type: bastion.jinja
@@ -137,5 +98,3 @@ resources:
     - boomi-gke-network
     - boomi-gke-cluster
 #}
-
-
