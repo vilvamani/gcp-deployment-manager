@@ -2,6 +2,7 @@
 {% set deployment = env["deployment"] %}
 {% set region = properties["region"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
+{% set CommonTags = properties["CommonTags"] %}
 
 {% set TYPE_NAME = deployment + '-type' %}
 {% set RBAC_TYPE_NAME = TYPE_NAME + '-rbac-v1' %}
@@ -79,6 +80,8 @@ resources:
       network: {{ properties["network"] }}
       subnetwork: {{ properties["subnet"] }}
 
+      releaseChannel: 
+        channel: "REGULAR"
       initialClusterVersion: 1.17.9-gke.6300
       currentMasterVersion: 1.17.9-gke.6300
 
@@ -106,6 +109,32 @@ resources:
       privateCluster: {{ properties['securityConfig']['privatecluster'] }}
       masterAuthorizedNetworksConfig: {{ properties['securityConfig']['masterAuthorizedNetworksConfig'] }}
       {% endif %}
+      resourceLabels: {{ properties["CommonTags"] }}
+      autoscaling:
+        enableNodeAutoprovisioning: true
+        resourceLimits: 
+        - resourceType: cpu
+          minimum: 1
+          maximum: 1
+        - resourceType: memory
+          minimum: 1
+          maximum: 1
+        autoprovisioningNodePoolDefaults:
+          serviceAccount: {{ KF_VM_SA_NAME }}@{{ env['project'] }}.iam.gserviceaccount.com
+          oauthScopes: {{ VM_OAUTH_SCOPES }}
+      networkPolicy:
+        provider: CALICO
+        enabled: true
+      maintenancePolicy:
+        window:
+          recurringWindow:
+            window:
+              startTime: "2020-11-10T07:00:25Z"
+              endTime: "2020-11-12T07:00:25Z"
+            recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
+      workloadIdentityConfig:
+        workloadPool: {{ env['project'] }}.svc.id.goog
+
 
       nodePools:
       - name: {{ CLUSTER_NAME }}-node-pool-1
