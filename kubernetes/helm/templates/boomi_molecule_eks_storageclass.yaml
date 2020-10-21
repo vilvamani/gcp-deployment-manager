@@ -11,3 +11,4 @@ parameters:
   # # Name of the VPC. Note that non-default VPCs require special firewall rules to be setup: TODO
   network: {{ .Values.storage.network }}
 allowVolumeExpansion: true
+reclaimPolicy: Retain
