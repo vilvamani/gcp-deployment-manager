@@ -94,7 +94,7 @@ resources:
         horizontalPodAutoscaling:
           disabled: false
         gcePersistentDiskCsiDriverConfig:
-          enabled: true
+          enabled: false
         
       {#% if properties['gkeApiVersion'] == 'v1beta1' %}
       podSecurityPolicyConfig:
