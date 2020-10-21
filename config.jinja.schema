@@ -19,6 +19,9 @@ imports:
 - name: gke.jinja
   path: templates/kubernetes/gke.jinja
 
+- name: gke-cluster.jinja
+  path: templates/kubernetes/gke-cluster.jinja
+
 - name: cloudbuild.jinja
   path: templates/cloudbuild/cloudbuild.jinja
 

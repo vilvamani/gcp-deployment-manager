@@ -27,7 +27,7 @@ resources:
     - boomi-enable-apis
 
 - name: boomi-gke-cluster
-  type: gke.jinja
+  type: gke-cluster.jinja
   properties:
     region: {{ properties["region"] }}
     zone: {{ properties["zone"] }}

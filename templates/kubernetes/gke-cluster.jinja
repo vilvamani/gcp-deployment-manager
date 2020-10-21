@@ -2,6 +2,7 @@
 {% set deployment = env["deployment"] %}
 {% set region = properties["region"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
+{% set CommonTags = properties["CommonTags"] %}
 
 {% set TYPE_NAME = deployment + '-type' %}
 {% set RBAC_TYPE_NAME = TYPE_NAME + '-rbac-v1' %}
@@ -13,23 +14,9 @@
 
 {% set VM_OAUTH_SCOPES = ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/compute', 'https://www.googleapis.com/auth/devstorage.read_only', 'https://www.googleapis.com/auth/logging.write', 'https://www.googleapis.com/auth/monitoring', 'https://www.googleapis.com/auth/cloud_debugger'] %}
 
-{% set KF_ADMIN_NAME = deployment + '-admin' %}
-{% set KF_USER_NAME = deployment + '-user' %}
 {% set KF_VM_SA_NAME = deployment + '-vm' %}
 
 resources:
-- name: {{ KF_ADMIN_NAME }}
-  type: iam.v1.serviceAccount
-  properties:
-    accountId: {{ KF_ADMIN_NAME }}
-    displayName: Service Account used for Kubeflow admin actions.
-
-- name: {{ KF_USER_NAME }}
-  type: iam.v1.serviceAccount
-  properties:
-    accountId: {{ KF_USER_NAME }}
-    displayName: Service Account used for Kubeflow user actions.
-
 - name: {{ KF_VM_SA_NAME }}
   type: gcp-types/iam-v1:projects.serviceAccounts
   properties:
@@ -107,10 +94,10 @@ resources:
         gcePersistentDiskCsiDriverConfig:
           enabled: true
         
-      {% if properties['gkeApiVersion'] == 'v1beta1' %}
+      {#% if properties['gkeApiVersion'] == 'v1beta1' %}
       podSecurityPolicyConfig:
         enabled: {{ properties['securityConfig']['podSecurityPolicy'] }}
-      {% endif %}
+      {% endif %#}
 
       {% if properties['securityConfig']['privatecluster'] %}
       ipAllocationPolicy:
@@ -150,41 +137,3 @@ resources:
     - enable-gke-api
     - enable-gkeconnect-api
 
-{% for typeSuffix, endpoint in K8S_ENDPOINTS.items() %}
-- name: {{ TYPE_NAME }}{{ typeSuffix }}
-  type: deploymentmanager.v2beta.typeProvider
-  properties:
-    options:
-      validationOptions:
-        # Kubernetes API accepts ints, in fields they annotate with string.
-        # This validation will show as warning rather than failure for
-        # Deployment Manager.
-        # https://github.com/kubernetes/kubernetes/issues/2971
-        schemaValidation: IGNORE_WITH_WARNINGS
-      # According to kubernetes spec, the path parameter 'name'
-      # should be the value inside the metadata field
-      # https://github.com/kubernetes/community/blob/master/contributors/devel/api-conventions.md
-      # This mapping specifies that
-      inputMappings:
-      - fieldName: name
-        location: PATH
-        methodMatch: ^(get|delete|put|patch|post)$
-        value: $.ifNull($.resource.properties.metadata.name, $.resource.name)
-
-      - fieldName: metadata.resourceVersion
-        location: BODY
-        methodMatch: ^(PUT|POST)$
-        value: $.ifNull($.resource.properties.metadata.resourceVersion, $.resource.name)
-        
-      - fieldName: Authorization
-        location: HEADER
-        value: >
-          $.concat("Bearer ", $.googleOauth2AccessToken())
-    descriptorUrl: https://$(ref.{{ CLUSTER_NAME }}.endpoint)/openapi/v2
-{% endfor %}
-
-outputs:
-{% for typeSuffix, endpoint in K8S_ENDPOINTS.items() %}
-- name: clusterType{{ typeSuffix }}
-  value: {{ TYPE_NAME }}{{ typeSuffix }}
-{% endfor %}
