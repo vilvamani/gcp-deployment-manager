@@ -23,6 +23,20 @@ resources:
       args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
       dir: gcp-deployment-manager/kubernetes
 
+    - id: helm_nfs_deployment
+      name: 'gcr.io/$PROJECT_ID/helm:latest'
+      args: 
+        - upgrade
+        - --install
+        - stable/nfs-client-provisioner
+        - --set
+        - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare
+      env:
+        - CLOUDSDK_COMPUTE_REGION={{ region }}
+        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+        - KUBECONFIG=/workspace/.kube/config
+      waitFor: [build_image]
+
     - id: helm_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args: 
