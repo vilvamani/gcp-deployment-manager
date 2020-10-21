@@ -76,13 +76,13 @@ resources:
   type: cloudbuild.jinja
   properties:
     region: {{ REGION }}
+    network: {{ VPC_NAME }}
     CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
+    ipaddress: $(ref.file-store.fileShareIp)
+    reservedIpRange: $(ref.file-store.reservedIpRange)
     username: vilvamani007@gmail.com
     password: abcde
     account: google.com
-    ipaddress: $(ref.file-store.fileShareIp)
-    network: {{ VPC_NAME }}
-    reservedIpRange: $(ref.file-store.reservedIpRange)
   metadata:
     dependsOn:
     - boomi-gke-cluster
