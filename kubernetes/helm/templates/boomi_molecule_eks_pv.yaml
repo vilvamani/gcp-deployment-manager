@@ -9,7 +9,7 @@ spec:
   - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
-  storageClassName: csi-filestore
+  storageClassName: gke-csi-filestore
   nfs:
     path: {{ .Values.volume.path }}
     server: {{ .Values.volume.server }}
