@@ -137,3 +137,6 @@ resources:
     - enable-gke-api
     - enable-gkeconnect-api
 
+outputs:
+- name: gkeClusterName
+  value: $(ref.{{ CLUSTER_NAME }}.name)

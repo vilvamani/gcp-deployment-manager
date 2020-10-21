@@ -76,7 +76,7 @@ resources:
   type: cloudbuild.jinja
   properties:
     region: {{ REGION }}
-    CLUSTER_NAME: $(ref.{{ CLUSTER_NAME }}.name)
+    CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
     username: vilvamani007@gmail.com
     password: abcde
     account: google.com
