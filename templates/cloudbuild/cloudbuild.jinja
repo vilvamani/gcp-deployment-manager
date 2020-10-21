@@ -28,13 +28,18 @@ resources:
       args: 
         - upgrade
         - --install
-        - stable/nfs-client-provisioner
+        - nfs-client-provisioner
+        - --namespace
+        - default
         - --set
         - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare
+        - stable/nfs-client-provisioner
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
+        - HELM_REPO_NAME=stable/nfs-client-provisioner
+        - HELM_REPO_URL=https://kubernetes-charts.storage.googleapis.com
       waitFor: [build_image]
 
     - id: helm_deployment
