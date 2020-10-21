@@ -23,4 +23,3 @@
 
 templates/boomi_molecule_eks_statefulset.yaml
 templates/boomi_molecule_eks_service.yaml
-templates/
