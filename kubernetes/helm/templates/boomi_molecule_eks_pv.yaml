@@ -6,10 +6,10 @@ spec:
   capacity:
     storage: 30Gi
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
-  storageClassName: standard-rwo
+  storageClassName: csi-filestore
   nfs:
     path: {{ .Values.volume.path }}
     server: {{ .Values.volume.server }}

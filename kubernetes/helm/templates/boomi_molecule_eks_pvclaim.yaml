@@ -4,8 +4,8 @@ metadata:
   name: efs-claim
 spec:
   accessModes:
-    - ReadWriteOnce
-  storageClassName: standard-rwo
+    - ReadWriteMany
+  storageClassName: csi-filestore
   resources:
     requests:
       storage: 50Gi
