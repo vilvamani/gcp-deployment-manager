@@ -100,6 +100,18 @@ properties:
     description: "No of Boomi Instance type"
     default: 10
 
+  BoomiUsername:
+    type: string
+    default: vilvamani007@gmail.com
+
+  BoomiPassword:
+    type: string
+    default: google#2020
+
+  BoomiAccount:
+    type: string
+    default: google-microsoft
+
   CommonTags:
     type: object
     description: "Common tags or labels applied for all resources"
