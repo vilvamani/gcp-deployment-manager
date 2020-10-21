@@ -80,8 +80,10 @@ resources:
       network: {{ properties["network"] }}
       subnetwork: {{ properties["subnet"] }}
 
-      initialClusterVersion: 1.17.9-gke.6300
-      currentMasterVersion: 1.17.9-gke.6300
+      releaseChannel: 
+        channel: "REGULAR"
+      initialClusterVersion: 1.17.12-gke.1501
+      currentMasterVersion: 1.17.12-gke.1501
 
       loggingService: logging.googleapis.com/kubernetes
       monitoringService: monitoring.googleapis.com/kubernetes
