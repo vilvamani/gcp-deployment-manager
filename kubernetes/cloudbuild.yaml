@@ -1,7 +1,0 @@
-imports:
-- path: cloudbuild.jinja
-
-resources:
-  - name: boomi-cloudbuild
-    type: cloudbuild.jinja
-  
