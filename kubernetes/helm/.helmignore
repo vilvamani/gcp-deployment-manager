@@ -21,5 +21,4 @@
 *.tmproj
 .vscode/
 
-# templates/boomi_molecule_eks_statefulset.yaml
-# templates/boomi_molecule_eks_service.yaml
+templates/boomi_molecule_gke_hpa.yaml
