@@ -19,7 +19,7 @@ spec:
       volumes:
         - name: molecule-storage
           persistentVolumeClaim:
-            claimName: efs-claim
+            claimName: gke-claim
         - name: tmpfs
           emptyDir: {}
         - name: cgroup
