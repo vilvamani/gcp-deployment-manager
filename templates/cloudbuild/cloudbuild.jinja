@@ -87,8 +87,9 @@ resources:
       name: 'gcr.io/cloud-builders/kubectl'
       args: 
         - apply
-        - --filename=
+        - --filename=./templates/boomi_molecule_gke_hpa.yaml
         - --validate=false
+      dir: gcp-deployment-manager/kubernetes/helm
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
