@@ -50,19 +50,18 @@ resources:
             exec 1>/var/log/configure-bastion.log 2>&1
 
             set -x
-            whoami
-
+            
+            #install kubectl
             curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
             chmod +x ./kubectl
             sudo mv ./kubectl /usr/local/bin/kubectl
             kubectl version --client
 
-            export HOME=/`whoami`
-            export KUBECONFIG=$HOME/.kube/config
-            
-            gcloud container clusters get-credentials {{ properties["CLUSTER_NAME"] }} --region={{ properties["region"] }}
-            kubectl apply -f https://raw.githubusercontent.com/ikanski/EKS/master/config/boomi_molecule_eks_service.yaml
-
+            #mount filestore
+            sudo yum -y update && sudo yum -y install nfs-utils
+            sudo mkdir -p /mnt/boominfs
+            sudo mount  {{ properties["ipaddress"] }}:/boomifileshare /mnt/boominfs
+            df -h --type=nfs
 
 - name: {{ deployment }}-igm
   type: compute.v1.regionInstanceGroupManager
