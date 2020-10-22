@@ -1,5 +1,5 @@
 imports:
-- path: NewVPC.jinja
+- path: DefaultVPC.jinja
 
 resources:
 - name: boomi-gke-quickstart
