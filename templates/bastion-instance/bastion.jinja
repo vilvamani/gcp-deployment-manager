@@ -86,7 +86,7 @@ resources:
             sudo mount  {{ properties["ipaddress"] }}:/boomifileshare /mnt/boominfs
 
             export HOME='whoami'
-            export KUBECONFIG=$HOME/.kube/co
+            export KUBECONFIG=$HOME/.kube/config
 
             #Get GKE credentials
             gcloud container clusters get-credentials {{ CLUSTER_NAME }} --region={{ region }} --project {{project}}

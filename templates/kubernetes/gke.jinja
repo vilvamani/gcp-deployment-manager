@@ -14,13 +14,13 @@
 
 {% set VM_OAUTH_SCOPES = ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/compute', 'https://www.googleapis.com/auth/devstorage.read_only', 'https://www.googleapis.com/auth/logging.write', 'https://www.googleapis.com/auth/monitoring', 'https://www.googleapis.com/auth/cloud_debugger'] %}
 
-{% set KF_VM_SA_NAME = deployment + '-vm' %}
+{% set GKE_CLUSTER_SA = deployment + '-vm' %}
 
 resources:
-- name: {{ KF_VM_SA_NAME }}
+- name: {{ GKE_CLUSTER_SA }}
   type: gcp-types/iam-v1:projects.serviceAccounts
   properties:
-    accountId: {{ KF_VM_SA_NAME }}
+    accountId: {{ GKE_CLUSTER_SA }}
     displayName: Service Account used for Kubeflow admin actions.
   accessControl:
     gcpIamPolicy:
@@ -30,28 +30,25 @@ resources:
       - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
     - role: roles/container.admin
       members:
-      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
     - role: roles/servicemanagement.admin
       members:
-      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
-    - role: roles/container.admin
-      members:
-      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
     - role: roles/compute.instanceAdmin
       members:
-      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
     - role: roles/storage.admin
       members:
-      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
     - role: roles/dataflow.admin
       members:
-      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
     - role: roles/logging.logWriter
       members:
-      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
     - role: roles/monitoring.metricWriter
       members:
-      - {{ 'serviceAccount:' + KF_VM_SA_NAME + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
 
 - name: enable-gke-api
   action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
@@ -120,7 +117,7 @@ resources:
           minimum: 1
           maximum: 1
         autoprovisioningNodePoolDefaults:
-          serviceAccount: {{ KF_VM_SA_NAME }}@{{ env['project'] }}.iam.gserviceaccount.com
+          serviceAccount: {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
           oauthScopes: {{ VM_OAUTH_SCOPES }}
       networkPolicy:
         provider: CALICO
@@ -158,10 +155,10 @@ resources:
           machineType: {{ properties["gkeMachineType"] }}
           diskSizeGb: 20
           oauthScopes: {{ VM_OAUTH_SCOPES }}
-          serviceAccount: {{ KF_VM_SA_NAME }}@{{ env['project'] }}.iam.gserviceaccount.com
+          serviceAccount: {{ GKE_CLUSTER_SA }}@{{ env['project'] }}.iam.gserviceaccount.com
   metadata:
     dependsOn:
-    - {{ KF_VM_SA_NAME }}
+    - {{ GKE_CLUSTER_SA }}
     - enable-gke-api
     - enable-gkeconnect-api
 

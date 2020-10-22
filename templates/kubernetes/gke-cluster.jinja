@@ -104,6 +104,31 @@ resources:
       privateCluster: {{ properties['securityConfig']['privatecluster'] }}
       masterAuthorizedNetworksConfig: {{ properties['securityConfig']['masterAuthorizedNetworksConfig'] }}
       {% endif %}
+      resourceLabels: {{ properties["CommonTags"] }}
+      autoscaling:
+        enableNodeAutoprovisioning: true
+        resourceLimits: 
+        - resourceType: cpu
+          minimum: 1
+          maximum: 10
+        - resourceType: memory
+          minimum: 1
+          maximum: 10
+        autoprovisioningNodePoolDefaults:
+          serviceAccount: {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+          oauthScopes: {{ VM_OAUTH_SCOPES }}
+      networkPolicy:
+        provider: CALICO
+        enabled: true
+      maintenancePolicy:
+        window:
+          recurringWindow:
+            window:
+              startTime: "2020-11-01T07:00:25Z"
+              endTime: "2021-11-01T07:00:25Z"
+            recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
+      workloadIdentityConfig:
+        workloadPool: {{ env['project'] }}.svc.id.goog
 
       nodePools:
       - name: {{ CLUSTER_NAME }}-node-pool-1

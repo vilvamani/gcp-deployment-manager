@@ -117,5 +117,5 @@ properties:
     description: "Common tags or labels applied for all resources"
     default: {
       "environment": "dev",
-      "owner": "divya"
+      "owner": "boomi-molecule"
       }
