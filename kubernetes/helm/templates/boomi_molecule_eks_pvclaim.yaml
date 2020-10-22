@@ -3,11 +3,11 @@ kind: PersistentVolumeClaim
 metadata:
   name: efs-claim
   annotations:
-    volume.beta.kubernetes.io/storage-class: "gke-csi-filestore"
+    volume.beta.kubernetes.io/storage-class: "nfs-client"
 spec:
   accessModes:
     - ReadWriteMany
-  storageClassName: gke-csi-filestore
+  storageClassName: nfs-client
   resources:
     requests:
       storage: 50Gi

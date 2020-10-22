@@ -3,7 +3,7 @@ kind: PersistentVolume
 metadata:
   name: "efs-pv"
   annotations:
-    volume.beta.kubernetes.io/storage-class: "gke-csi-filestore"
+    volume.beta.kubernetes.io/storage-class: "nfs-client"
 spec:
   capacity:
     storage: 30Gi
@@ -11,7 +11,7 @@ spec:
   - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   volumeMode: Filesystem
-  storageClassName: gke-csi-filestore
+  storageClassName: nfs-client
   nfs:
     path: {{ .Values.volume.path }}
     server: {{ .Values.volume.server }}
