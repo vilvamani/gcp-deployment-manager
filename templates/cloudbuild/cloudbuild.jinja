@@ -52,11 +52,12 @@ resources:
     - id: helm_nfs_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args: 
-        - install
+        - upgrade
+        - --install
+        - boomi-nfs
         - --set
         - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany
         - stable/nfs-client-provisioner
-        - --generate-name
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
