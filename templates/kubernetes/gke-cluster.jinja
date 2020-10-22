@@ -113,7 +113,7 @@ resources:
           maximum: 10
         - resourceType: memory
           minimum: 1
-          maximum: 10
+          maximum: 20
         autoprovisioningNodePoolDefaults:
           serviceAccount: {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
           oauthScopes: {{ VM_OAUTH_SCOPES }}
