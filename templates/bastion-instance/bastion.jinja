@@ -84,11 +84,14 @@ resources:
             sudo yum -y update && sudo yum -y install nfs-utils
             sudo mkdir -p /mnt/boominfs
             sudo mount  {{ properties["ipaddress"] }}:/boomifileshare /mnt/boominfs
- 
-            #Get GKE credentials
-            #gcloud container clusters get-credentials {{ CLUSTER_NAME }} --region={{ region }}
 
-            #echo "gcloud container clusters get-credentials {{ CLUSTER_NAME }} --zone {{ region }} --project {{project}}" >> /etc/profile
+            export HOME='whoami'
+            export KUBECONFIG=$HOME/.kube/co
+
+            #Get GKE credentials
+            gcloud container clusters get-credentials {{ CLUSTER_NAME }} --region={{ region }} --project {{project}}
+
+            echo "gcloud container clusters get-credentials {{ CLUSTER_NAME }} --zone {{ region }} --project {{project}}" >> /etc/profile
 
 - name: {{ deployment }}-igm
   type: compute.v1.regionInstanceGroupManager
