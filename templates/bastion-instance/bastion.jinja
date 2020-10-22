@@ -1,6 +1,8 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
 {% set bastionVM = "bastion-vm" %}
+{% set region = properties["region"] %}
+{% set CLUSTER_NAME = deployment + '-gke-cluster' %}
 
 resources:
 - name: {{ deployment }}-it
@@ -44,9 +46,6 @@ resources:
         - key: startup-script
           value: |
             #!/bin/bash
-
-            yum update -y
-
             #### Log the execution to a file ####
             exec 3>&1 4>&2
             trap 'exec 2>&4 1>&3' 0 1 2 3 RETURN
@@ -64,18 +63,15 @@ resources:
             sudo yum -y update && sudo yum -y install nfs-utils
             sudo mkdir -p /mnt/boominfs
             sudo mount  {{ properties["ipaddress"] }}:/boomifileshare /mnt/boominfs
-            df -h --type=nfs
-
-            export HOME=/`whoami`
-            export KUBECONFIG=$HOME/.kube/config
-            
-            gcloud container clusters get-credentials {{ properties["CLUSTER_NAME"] }} --region={{ properties["region"] }}
+ 
+            #Get GKE credentials
+            gcloud container clusters get-credentials {{ CLUSTER_NAME }} --region={{ region }}
 
 - name: {{ deployment }}-igm
   type: compute.v1.regionInstanceGroupManager
   properties:
     name: {{ deployment }}-igm
-    region: {{ properties["region"] }}
+    region: {{ region }}
     failoverAction: NO_FAILOVER
     targetSize: {{ properties["targetSize"] }}
     baseInstanceName: {{ bastionVM }}
@@ -84,7 +80,7 @@ resources:
 - name: {{ deployment }}-as
   type: compute.v1.regionAutoscaler
   properties:
-    region: {{ properties["region"] }}
+    region: {{ region }}
     target: $(ref.{{ deployment }}-igm.selfLink)
     autoscalingPolicy:
       maxNumReplicas: 2
