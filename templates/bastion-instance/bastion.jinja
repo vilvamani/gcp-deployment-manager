@@ -4,14 +4,35 @@
 {% set region = properties["region"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
 
+{% set BASTION_VM_SA = deployment + '-bastion-vm' %}
+
 resources:
+- name: {{ BASTION_VM_SA }}
+  type: gcp-types/iam-v1:projects.serviceAccounts
+  properties:
+    accountId: {{ BASTION_VM_SA }}
+    displayName: Service Account used for Kubeflow admin actions.
+  accessControl:
+    gcpIamPolicy:
+    bindings:
+    - role: roles/container.admin
+      members:
+      - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
+    - role: roles/container.clusterAdmin
+      members:
+      - {{ 'serviceAccount:' + BASTION_VM_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+    - role: roles/container.admin
+      members:
+      - {{ 'serviceAccount:' + BASTION_VM_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+
+
 - name: {{ deployment }}-it
   type: compute.v1.instanceTemplate
   properties:
     zone: {{ properties["zone"] }}
     properties:
-      serviceAccounts:
-      - email: 1075107499208-compute@developer.gserviceaccount.com
+      serviceAccounts: 
+      - email: {{ BASTION_VM_SA }}@{{ env['project'] }}.iam.gserviceaccount.com
         scopes:
         - https://www.googleapis.com/auth/compute
         - https://www.googleapis.com/auth/logging.write
@@ -65,7 +86,9 @@ resources:
             sudo mount  {{ properties["ipaddress"] }}:/boomifileshare /mnt/boominfs
  
             #Get GKE credentials
-            gcloud container clusters get-credentials {{ CLUSTER_NAME }} --region={{ region }}
+            #gcloud container clusters get-credentials {{ CLUSTER_NAME }} --region={{ region }}
+
+            #echo "gcloud container clusters get-credentials {{ CLUSTER_NAME }} --zone {{ region }} --project {{project}}" >> /etc/profile
 
 - name: {{ deployment }}-igm
   type: compute.v1.regionInstanceGroupManager
@@ -88,4 +111,3 @@ resources:
       cpuUtilization:
         utilizationTarget: 0.8
       coolDownPeriodSec: 90
-
