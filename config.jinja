@@ -1,9 +1,9 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
 {% set REGION = properties["region"] %}
-{% set VPC_NAME = "%s-gke-network" % env["deployment"] %}
-{% set PUBLIC_SUBNET_NAME = "public" %}
-{% set PRIVATE_SUBNET_NAME = "private" %}
+{% set VPC_NAME = deployment + "-gke-network" %}
+{% set PUBLIC_SUBNET_NAME = deployment + "-" +  REGION  + '-public-subnet' %}
+{% set PRIVATE_SUBNET_NAME = deployment + "-" +  REGION + '-private-subnet' %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
