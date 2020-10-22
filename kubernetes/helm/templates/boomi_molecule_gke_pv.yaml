@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: "efs-pv"
+  name: gke-pv
 spec:
   capacity:
-    storage: 30Gi
-  accessModes:
-  - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
+    storage: 100Gi
   volumeMode: Filesystem
-  storageClassName: gke-csi-filestore
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: nfs-client
   nfs:
     path: {{ .Values.volume.path }}
     server: {{ .Values.volume.server }}

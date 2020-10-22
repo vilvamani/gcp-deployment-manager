@@ -82,8 +82,8 @@ resources:
 
       releaseChannel: 
         channel: "REGULAR"
-      initialClusterVersion: 1.17.9-gke.6300
-      currentMasterVersion: 1.17.9-gke.6300
+      initialClusterVersion: 1.17.12-gke.1501
+      currentMasterVersion: 1.17.12-gke.1501
 
       loggingService: logging.googleapis.com/kubernetes
       monitoringService: monitoring.googleapis.com/kubernetes
@@ -92,9 +92,9 @@ resources:
         httpLoadBalancing:
           disabled: false
         horizontalPodAutoscaling:
-          disabled: false
+          disabled: true
         gcePersistentDiskCsiDriverConfig:
-          enabled: true
+          enabled: false
         
       {#% if properties['gkeApiVersion'] == 'v1beta1' %}
       podSecurityPolicyConfig:
@@ -138,7 +138,7 @@ resources:
 
       nodePools:
       - name: {{ CLUSTER_NAME }}-node-pool-1
-        version: 1.17.9-gke.6300
+        version: 1.17.12-gke.1501
         config:
           labels:
             topology.kubernetes.io/region
@@ -165,3 +165,6 @@ resources:
     - enable-gke-api
     - enable-gkeconnect-api
 
+outputs:
+- name: gkeClusterName
+  value: $(ref.{{ CLUSTER_NAME }}.name)

@@ -19,7 +19,7 @@ spec:
       volumes:
         - name: molecule-storage
           persistentVolumeClaim:
-            claimName: efs-claim
+            claimName: gke-claim
         - name: tmpfs
           emptyDir: {}
         - name: cgroup
@@ -79,7 +79,7 @@ spec:
               - liveness
         env:
         - name: BOOMI_ATOMNAME
-          value: "boomi-molecule-eks"
+          value: "boomi-molecule-gke"
         - name: ATOM_LOCALHOSTID
           valueFrom:
             fieldRef:
@@ -100,6 +100,6 @@ spec:
               name: boomi-secret
               key: password
         - name: BOOMI_CONTAINERNAME
-          value: "boomi-molecule-eks"
+          value: "boomi-molecule-gke"
         - name: INSTALLATION_DIRECTORY
           value: "/mnt/boomi"

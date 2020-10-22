@@ -44,6 +44,9 @@ resources:
         - key: startup-script
           value: |
             #!/bin/bash
+
+            yum update -y
+
             #### Log the execution to a file ####
             exec 3>&1 4>&2
             trap 'exec 2>&4 1>&3' 0 1 2 3 RETURN
@@ -62,6 +65,11 @@ resources:
             sudo mkdir -p /mnt/boominfs
             sudo mount  {{ properties["ipaddress"] }}:/boomifileshare /mnt/boominfs
             df -h --type=nfs
+
+            export HOME=/`whoami`
+            export KUBECONFIG=$HOME/.kube/config
+            
+            gcloud container clusters get-credentials {{ properties["CLUSTER_NAME"] }} --region={{ properties["region"] }}
 
 - name: {{ deployment }}-igm
   type: compute.v1.regionInstanceGroupManager

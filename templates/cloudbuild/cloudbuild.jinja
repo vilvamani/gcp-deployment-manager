@@ -22,8 +22,50 @@ resources:
       name: 'gcr.io/cloud-builders/docker'
       args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
       dir: gcp-deployment-manager/kubernetes
+      waitFor: [git_clone]
 
-    - id: helm_deployment
+    - id: helm_repo_update
+      name: 'gcr.io/$PROJECT_ID/helm:latest'
+      args: 
+        - repo
+        - add
+        - stable
+        - https://kubernetes-charts.storage.googleapis.com
+      env:
+        - CLOUDSDK_COMPUTE_REGION={{ region }}
+        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+        - KUBECONFIG=/workspace/.kube/config
+        - HELM_REPO_URL=https://kubernetes-charts.storage.googleapis.com
+      waitFor: [build_image]
+
+    - id: helm_list
+      name: 'gcr.io/$PROJECT_ID/helm:latest'
+      args: 
+        - repo
+        - list
+      env:
+        - CLOUDSDK_COMPUTE_REGION={{ region }}
+        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+        - KUBECONFIG=/workspace/.kube/config
+      waitFor: [helm_repo_update]
+
+    - id: helm_nfs_deployment
+      name: 'gcr.io/$PROJECT_ID/helm:latest'
+      args: 
+        - upgrade
+        - --install
+        - boomi-nfs
+        - --set
+        - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany
+        - stable/nfs-client-provisioner
+      env:
+        - CLOUDSDK_COMPUTE_REGION={{ region }}
+        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+        - KUBECONFIG=/workspace/.kube/config
+        - HELM_REPO_NAME=stable/nfs-client-provisioner
+      waitFor: [helm_list]
+
+    - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args: 
         - upgrade
@@ -39,7 +81,20 @@ resources:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
-      waitFor: [build_image]
+      waitFor: [helm_nfs_deployment]
+
+    - id: kubectl_hpa_deployment
+      name: 'gcr.io/cloud-builders/kubectl'
+      args: 
+        - apply
+        - --filename=./templates/boomi_molecule_gke_hpa.yaml
+        - --validate=false
+      dir: gcp-deployment-manager/kubernetes/helm
+      env:
+        - CLOUDSDK_COMPUTE_REGION={{ region }}
+        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+        - KUBECONFIG=/workspace/.kube/config
+      waitFor: [helm_boomi_deployment]
 
     substitutions:
       _HELM_VERSION: 3.2.0
