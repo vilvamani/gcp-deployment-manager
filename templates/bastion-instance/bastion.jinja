@@ -44,6 +44,9 @@ resources:
         - key: startup-script
           value: |
             #!/bin/bash
+
+            yum update -y
+
             #### Log the execution to a file ####
             exec 3>&1 4>&2
             trap 'exec 2>&4 1>&3' 0 1 2 3 RETURN
@@ -61,8 +64,9 @@ resources:
             export KUBECONFIG=$HOME/.kube/config
             
             gcloud container clusters get-credentials {{ properties["CLUSTER_NAME"] }} --region={{ properties["region"] }}
-            kubectl apply -f https://raw.githubusercontent.com/ikanski/EKS/master/config/boomi_molecule_eks_service.yaml
 
+            mkdir -p ~/fileShare
+            mount {{ properties["ipaddress"] }}:/boomifileshare
 
 - name: {{ deployment }}-igm
   type: compute.v1.regionInstanceGroupManager

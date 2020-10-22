@@ -88,7 +88,6 @@ resources:
     - boomi-gke-cluster
     - file-store
 
-{#
 - name: boomi-bastion
   type: bastion.jinja
   properties:
@@ -99,8 +98,9 @@ resources:
     machineType: {{ properties["machineType"] }}
     machineImage: {{ properties["machineImage"] }}
     targetSize: {{ properties["targetSize"] }}
+    CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
+    ipaddress: $(ref.file-store.fileShareIp)
   metadata:
     dependsOn:
     - boomi-gke-network
     - boomi-gke-cluster
-#}
