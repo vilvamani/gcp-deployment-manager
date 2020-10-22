@@ -92,9 +92,9 @@ resources:
         httpLoadBalancing:
           disabled: false
         horizontalPodAutoscaling:
-          disabled: false
+          disabled: true
         gcePersistentDiskCsiDriverConfig:
-          enabled: true
+          enabled: false
         
       {#% if properties['gkeApiVersion'] == 'v1beta1' %}
       podSecurityPolicyConfig:
