@@ -77,8 +77,8 @@ resources:
       network: {{ properties["network"] }}
       subnetwork: {{ properties["subnet"] }}
 
-      initialClusterVersion: 1.17.12-gke.1501
-      currentMasterVersion: 1.17.12-gke.1501
+      initialClusterVersion: 1.17.12-gke.2502
+      currentMasterVersion: 1.17.12-gke.2502
 
       loggingService: logging.googleapis.com/kubernetes
       monitoringService: monitoring.googleapis.com/kubernetes
@@ -132,7 +132,7 @@ resources:
 
       nodePools:
       - name: {{ CLUSTER_NAME }}-node-pool-1
-        version: 1.17.12-gke.1501
+        version: 1.17.12-gke.2502
         config:
           labels:
             topology.kubernetes.io/region
