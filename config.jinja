@@ -76,7 +76,7 @@ resources:
     CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
     ipaddress: $(ref.file-store.fileShareIp)
     reservedIpRange: $(ref.file-store.reservedIpRange)
-    ingress_staticIpName: $(ref.boomi-gke-network.ingress_staticIpName)
+    ingressStaticIpName: $(ref.boomi-gke-network.ingressStaticIpName)
   metadata:
     dependsOn:
     - boomi-gke-cluster

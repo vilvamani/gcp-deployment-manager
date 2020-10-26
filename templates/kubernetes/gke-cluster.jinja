@@ -102,6 +102,9 @@ resources:
         useIpAliases: true
       masterIpv4CidrBlock: {{ properties['securityConfig']['masterIpv4CidrBlock'] }}
       privateCluster: {{ properties['securityConfig']['privatecluster'] }}
+      privateClusterConfig:
+        enablePrivateEndpoint: {{ properties['securityConfig']['privatecluster'] }}
+        enablePrivateNodes: {{ properties['securityConfig']['privatecluster'] }}
       masterAuthorizedNetworksConfig: {{ properties['securityConfig']['masterAuthorizedNetworksConfig'] }}
       {% endif %}
       resourceLabels: {{ properties["CommonTags"] }}

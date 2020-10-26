@@ -106,11 +106,11 @@ resources:
     networkTier: PREMIUM
 
 outputs:
-- name: VpcRef
-  value: $(ref.{{ vpcName }}.selfLink)
-
 - name: VpcName
   value: $(ref.{{ vpcName }}.name)
+
+- name: VpcRef
+  value: $(ref.{{ vpcName }}.selfLink)
 
 - name: PrivateSubnetRef
   value: $(ref.{{ privateSubnet }}.selfLink)
@@ -118,5 +118,5 @@ outputs:
 - name: PublicSubnetRef
   value: $(ref.{{ publicSubnet }}.selfLink)
 
-- name: ingressStaticIp
+- name: ingressStaticIpName
   value: $(ref.{{ deployment + '-ingress-static-ip' }}.name)
