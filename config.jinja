@@ -5,6 +5,18 @@
 
 resources:
 - name: boomi-network
-  type: network.jinja
+  type: network.py
   properties:
-    region: {{ properties["region"] }}
+    name: boomi-network
+    autoCreateSubnetworks: false
+    subnetworks:
+      - name: boomi-public-subnet
+        region: australia-southeast1
+        ipCidrRange: 172.16.0.0/21
+        privateIpGoogleAccess: true
+        enableFlowLogs: false
+      - name: boomi-private-subnet
+        region: australia-southeast1
+        ipCidrRange: 172.16.8.0/21
+        privateIpGoogleAccess: true
+        enableFlowLogs: false

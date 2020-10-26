@@ -7,8 +7,9 @@ info:
 imports:
 - path: config.jinja
 
-- name: network.jinja
-  path: templates/network/network.jinja
+- name: network.py
+  path: templates/network/network.py
+
 
 required:
   - region
