@@ -64,7 +64,7 @@ def generate_config(context):
         'outputs':
             [
                 {
-                    'name': 'name',
+                    'name': 'vpcName',
                     'value': name
                 },
                 {
