@@ -90,8 +90,8 @@ resources:
   properties:
     region: {{ REGION }}
     zone: {{ properties["zone"] }}
-    network: $(ref.{{ VPC_NAME }}.selfLink)
-    subnet: $(ref.{{ PUBLIC_SUBNET_NAME }}.selfLink)
+    network: $(ref.boomi-gke-network.VpcRef)
+    subnet: $(ref.boomi-gke-network.PublicSubnetRef)
     machineType: {{ properties["machineType"] }}
     machineImage: {{ properties["machineImage"] }}
     targetSize: {{ properties["targetSize"] }}
