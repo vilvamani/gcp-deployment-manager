@@ -48,12 +48,4 @@ resources:
         direction: INGRESS
         sourceRanges:
           - 0.0.0.0/0
-      - name: boomi-allow-icmp
-        description: Allow ICMP from anywhere
-        allowed:
-          - IPProtocol: ICMP
-            ports:
-             - ""
-        direction: INGRESS
-        sourceRanges:
-          - 0.0.0.0/0
+
