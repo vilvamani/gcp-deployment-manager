@@ -15,7 +15,7 @@ resources:
     description: {{ vpcName }}
     autoCreateSubnetworks: {{ properties["autoCreateSubnetworks"] }}
 
-{% if properties["autoCreateSubnetworks"] %}
+{% if !properties["autoCreateSubnetworks"] %}
 # GCP Public Subnets
 - name: {{ publicSubnet }}
   type: compute.v1.subnetwork
