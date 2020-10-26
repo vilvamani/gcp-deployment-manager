@@ -98,10 +98,19 @@ resources:
 
 outputs:
 - name: VpcName
-  value: $(ref.{{ vpcName }}.selfLink)
+  value: $(ref.{{ vpcName }}.name)
 
 - name: PublicSubnetName
-  value: $(ref.{{ publicSubnet }}.selfLink)
+  value: $(ref.{{ publicSubnet }}.name)
 
 - name: PrivateSubnetName
+  value: $(ref.{{ privateSubnet }}.name)
+  
+- name: VpcRef
+  value: $(ref.{{ vpcName }}.selfLink)
+
+- name: PublicSubnetRef
+  value: $(ref.{{ publicSubnet }}.selfLink)
+
+- name: PrivateSubnetRef
   value: $(ref.{{ privateSubnet }}.selfLink)
