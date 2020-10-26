@@ -95,15 +95,3 @@ resources:
       subnetworks: 
       - name: $(ref.{{ privateSubnet }}.selfLink)
         sourceIpRangesToNat: ["PRIMARY_IP_RANGE"]
-
-- name: {{ deployment }}-ingress-static-ip
-  type: compute.v1.globalAddress
-  properties:
-    name: {{ deployment }}-ingress-static-ip
-    description: {{ deployment }}-ingress-static-ip
-    ipVersion: IPV4
-    networkTier: PREMIUM
-
-outputs:
-- name: ingress_staticIpName
-  value: $(ref.{{ deployment + '-ingress-static-ip' }}.name)

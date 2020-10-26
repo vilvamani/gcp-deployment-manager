@@ -1,9 +1,9 @@
 imports:
-- path: NewVPC.jinja
+- path: config.jinja
 
 resources:
 - name: boomi-gke-quickstart
-  type: NewVPC.jinja
+  type: config.jinja
   properties:
     region: us-central1
     #publicSubnetCIDR: 102.0.0.0/20
