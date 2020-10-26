@@ -81,9 +81,9 @@ properties:
     default: n1-standard-2
 
   privatecluster:
-    type: string
+    type: boolean
     description: "Does the cluster belongs to private network"
-    default: "false"
+    default: false
 
   desiredNodeCount:
     type: integer
