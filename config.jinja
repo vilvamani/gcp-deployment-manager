@@ -60,7 +60,7 @@ resources:
   type: cloud_router.py
   properties:
     name: boomi-cloud-router
-    network: $(ref.boomi-network.selfLink)
+    network: $(ref.boomi-network.name)
     region: us-central1
     asn: 65001
     nat-name: boomi-nat
