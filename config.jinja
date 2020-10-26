@@ -24,7 +24,7 @@ resources:
 - name: boomi-allow-firewall
   type: firewall.py
   properties:
-    network: boomi-network
+    network: $(ref.boomi-network.selfLink)
     rules:
       - name: boomi-allow-ssh-to-bastion
         description: Allow SSH from anywhere to Bastion
@@ -60,7 +60,7 @@ resources:
   type: cloud_router.py
   properties:
     name: boomi-cloud-router
-    network: boomi-network
+    network: $(ref.boomi-network.selfLink)
     region: us-central1
     asn: 65001
     nat-name: boomi-nat
