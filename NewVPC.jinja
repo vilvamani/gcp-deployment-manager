@@ -1,6 +1,9 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
 {% set REGION = properties["region"] %}
+{% set VPC_NAME = deployment + "-gke-network" %}
+{% set PUBLIC_SUBNET_NAME = deployment + "-" +  REGION  + '-public-subnet' %}
+{% set PRIVATE_SUBNET_NAME = deployment + "-" +  REGION + '-private-subnet' %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
@@ -25,8 +28,8 @@ resources:
   properties:
     region: {{ properties["region"] }}
     zone: {{ properties["zone"] }}
-    network: $(ref.boomi-gke-network.VpcRef)
-    subnet: $(ref.boomi-gke-network.PrivateSubnetRef)
+    network: $(ref.{{ VPC_NAME }}.selfLink)
+    subnet: $(ref.{{ PRIVATE_SUBNET_NAME }}.selfLink)
     CommonTags: {{ properties["CommonTags"] }}
 
     # Set this to v1beta1 to use beta features such as private clusters
@@ -87,8 +90,8 @@ resources:
   properties:
     region: {{ REGION }}
     zone: {{ properties["zone"] }}
-    network: $(ref.boomi-gke-network.VpcRef)
-    subnet: $(ref.boomi-gke-network.PublicSubnetRef)
+    network: $(ref.{{ VPC_NAME }}.selfLink)
+    subnet: $(ref.{{ PUBLIC_SUBNET_NAME }}.selfLink)
     machineType: {{ properties["machineType"] }}
     machineImage: {{ properties["machineImage"] }}
     targetSize: {{ properties["targetSize"] }}
