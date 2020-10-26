@@ -1,9 +1,6 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
 {% set REGION = properties["region"] %}
-{% set VPC_NAME = deployment + "-gke-network" %}
-{% set PUBLIC_SUBNET_NAME = deployment + "-" +  REGION  + '-public-subnet' %}
-{% set PRIVATE_SUBNET_NAME = deployment + "-" +  REGION + '-private-subnet' %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
@@ -17,9 +14,6 @@ resources:
   type: network.jinja
   properties:
     region: {{ REGION }}
-    vpcName: {{ VPC_NAME }}
-    publicSubnetName: {{ PUBLIC_SUBNET_NAME }}
-    privateSubnetName: {{ PRIVATE_SUBNET_NAME }}
     publicSubnetCIDR: {{ publicSubnetCIDR }}
     privateSubnetCIDR: {{ privateSubnetCIDR }}
   metadata:
@@ -31,8 +25,8 @@ resources:
   properties:
     region: {{ properties["region"] }}
     zone: {{ properties["zone"] }}
-    network: $(ref.{{ VPC_NAME }}.selfLink)
-    subnet: $(ref.{{ PRIVATE_SUBNET_NAME }}.selfLink)
+    network: $(ref.boomi-gke-network.VpcName)
+    subnet: $(ref.boomi-gke-network.PrivateSubnetName)
     CommonTags: {{ properties["CommonTags"] }}
 
     # Set this to v1beta1 to use beta features such as private clusters
@@ -66,7 +60,7 @@ resources:
   type: file-store.jinja
   properties:
     zone: {{ properties["zone"] }}
-    network: {{ VPC_NAME }}
+    network: $(ref.boomi-gke-network.VpcName)
     size: 1024
   metadata:
     dependsOn:
@@ -76,7 +70,7 @@ resources:
   type: cloudbuild.jinja
   properties:
     region: {{ REGION }}
-    network: {{ VPC_NAME }}
+    network: $(ref.boomi-gke-network.VpcName)
     CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
     ipaddress: $(ref.file-store.fileShareIp)
     reservedIpRange: $(ref.file-store.reservedIpRange)
@@ -93,8 +87,8 @@ resources:
   properties:
     region: {{ REGION }}
     zone: {{ properties["zone"] }}
-    network: $(ref.{{ VPC_NAME }}.selfLink)
-    subnet: $(ref.{{ PUBLIC_SUBNET_NAME }}.selfLink)
+    network: $(ref.boomi-gke-network.VpcName)
+    subnet: $(ref.boomi-gke-network.PublicSubnetName)
     machineType: {{ properties["machineType"] }}
     machineImage: {{ properties["machineImage"] }}
     targetSize: {{ properties["targetSize"] }}

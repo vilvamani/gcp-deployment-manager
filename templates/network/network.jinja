@@ -1,9 +1,9 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
 {% set region = properties["region"] %}
-{% set vpcName = properties["vpcName"] %}
-{% set publicSubnet= properties["publicSubnetName"] %}
-{% set privateSubnet= properties["privateSubnetName"] %}
+{% set vpcName = deployment + "-gke-network" %}
+{% set publicSubnet = deployment + "-" +  REGION  + '-public-subnet' %}
+{% set privateSubnet = deployment + "-" +  REGION + '-private-subnet' %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 
@@ -95,3 +95,13 @@ resources:
       subnetworks: 
       - name: $(ref.{{ privateSubnet }}.selfLink)
         sourceIpRangesToNat: ["PRIMARY_IP_RANGE"]
+
+outputs:
+- name: VpcName
+  value: $(ref.{{vpcName}}.name)
+
+- name: PublicSubnetName
+  value: $(ref.{{publicSubnet}}.name)
+
+- name: PprivateSubnetName
+  value: $(ref.{{privateSubnet}}.name)
