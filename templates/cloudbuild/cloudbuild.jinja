@@ -74,7 +74,7 @@ resources:
         - --namespace
         - default
         - --set
-        - secrets.username={{ properties["username"] }},secrets.password={{ properties["password"] }},secrets.account={{ properties["account"] }},volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }},ingress.staticIpName={{ properties["ingress_staticIpName"] }}
+        - secrets.username={{ properties["username"] }},secrets.password={{ properties["password"] }},secrets.account={{ properties["account"] }},volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }},ingress.staticIpName={{ properties["ingressStaticIpName"] }}
         - '.'
       dir: gcp-deployment-manager/kubernetes/helm
       env:

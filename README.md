@@ -13,7 +13,7 @@ git clone https://github.com/vilvamani/gcp-deployment-manager.git && cd gcp-depl
 ```
 
 ```
-gcloud deployment-manager deployments create boomi-qs --config=NewVPCGKECluster.yaml
+gcloud deployment-manager deployments create boomi-qs --config=config.yaml
 ```
 
 # GKE Credentials

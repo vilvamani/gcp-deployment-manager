@@ -90,20 +90,7 @@ resources:
           disabled: true
         gcePersistentDiskCsiDriverConfig:
           enabled: false
-        
-      {#% if properties['gkeApiVersion'] == 'v1beta1' %}
-      podSecurityPolicyConfig:
-        enabled: {{ properties['securityConfig']['podSecurityPolicy'] }}
-      {% endif %#}
 
-      {% if properties['securityConfig']['privatecluster'] %}
-      ipAllocationPolicy:
-        createSubnetwork: false
-        useIpAliases: true
-      masterIpv4CidrBlock: {{ properties['securityConfig']['masterIpv4CidrBlock'] }}
-      privateCluster: {{ properties['securityConfig']['privatecluster'] }}
-      masterAuthorizedNetworksConfig: {{ properties['securityConfig']['masterAuthorizedNetworksConfig'] }}
-      {% endif %}
       resourceLabels: {{ properties["CommonTags"] }}
       autoscaling:
         enableNodeAutoprovisioning: true
@@ -129,6 +116,23 @@ resources:
             recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
       workloadIdentityConfig:
         workloadPool: {{ env['project'] }}.svc.id.goog
+
+      {#% if properties['gkeApiVersion'] == 'v1beta1' %}
+      podSecurityPolicyConfig:
+        enabled: {{ properties['securityConfig']['podSecurityPolicy'] }}
+      {% endif %#}
+
+      {% if properties['securityConfig']['privatecluster'] %}
+      ipAllocationPolicy:
+        createSubnetwork: false
+        useIpAliases: true
+      masterIpv4CidrBlock: {{ properties['securityConfig']['masterIpv4CidrBlock'] }}
+      masterAuthorizedNetworksConfig: {{ properties['securityConfig']['masterAuthorizedNetworksConfig'] }}
+      privateCluster: {{ properties['securityConfig']['privatecluster'] }}
+      privateClusterConfig:
+        enablePrivateEndpoint: {{ properties['securityConfig']['privatecluster'] }}
+        enablePrivateNodes: {{ properties['securityConfig']['privatecluster'] }}
+      {% endif %}
 
       nodePools:
       - name: {{ CLUSTER_NAME }}-node-pool-1

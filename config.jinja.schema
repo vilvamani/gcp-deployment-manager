@@ -5,7 +5,7 @@ info:
   version: 1.0
 
 imports:
-- path: NewVPC.jinja
+- path: config.jinja
 
 - name: enable-apis.jinja
   path: templates/gcp-apis/enable-apis.jinja
@@ -81,9 +81,9 @@ properties:
     default: n1-standard-2
 
   privatecluster:
-    type: string
+    type: boolean
     description: "Does the cluster belongs to private network"
-    default: "true"
+    default: false
 
   desiredNodeCount:
     type: integer
