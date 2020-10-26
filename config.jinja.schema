@@ -83,7 +83,7 @@ properties:
   privatecluster:
     type: string
     description: "Does the cluster belongs to private network"
-    default: "true"
+    default: "false"
 
   desiredNodeCount:
     type: integer
