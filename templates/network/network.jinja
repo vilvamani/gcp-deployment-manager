@@ -47,8 +47,10 @@ outputs:
 - name: VpcSelfLink
   value: $(ref.{{ vpcName }}.selfLink)
 
+{% if properties["autoCreateSubnetworks"] %}
 - name: PrivateSubnetRef
   value: $(ref.{{ privateSubnet }}.selfLink)
 
 - name: PublicSubnetRef
   value: $(ref.{{ publicSubnet }}.selfLink)
+{% endif %}
