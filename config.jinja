@@ -55,3 +55,12 @@ resources:
         direction: INGRESS
         sourceRanges:
           - 0.0.0.0/0
+
+- name: boomi-cloud-router
+  type: cloud_router.py
+  properties:
+    name: boomi-cloud-router
+    network: boomi-network
+    region: us-central1
+    asn: 65001
+    nat-name: boomi-nat
