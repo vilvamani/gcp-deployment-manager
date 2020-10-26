@@ -40,6 +40,56 @@ resources:
     privateIpGoogleAccess: {{ properties["privateIpGoogleAccess"] }}
 {% endif %}
 
+# GCP Firewall Rules
+- name: {{ deployment + '-allow-ssh-rdp' }}
+  type: compute.v1.firewall
+  properties:
+    name: {{ deployment + '-allow-ssh-rdp' }}
+    description: {{ deployment + '-allow-ssh-rdp' }}
+    network: $(ref.{{ vpcName }}.selfLink)
+    sourceRanges: ["0.0.0.0/0"]
+    allowed:
+    - IPProtocol: TCP
+      ports: [22, 3389]
+    targetTags: 
+    - allow-ssh-rpd
+    logConfig:
+      enable: true
+
+- name: {{ deployment + '-allow-http-https' }}
+  type: compute.v1.firewall
+  properties:
+    name: {{ deployment + '-allow-http-https' }}
+    description: {{ deployment + '-allow-http-https' }}
+    network: $(ref.{{ vpcName }}.selfLink)
+    sourceRanges: ["0.0.0.0/0"]
+    allowed:
+    - IPProtocol: TCP
+      ports: [80, 443]
+    logConfig:
+      enable: true
+
+- name: {{ deployment + '-allow-icmp' }}
+  type: compute.v1.firewall
+  properties:
+    name: {{ deployment + '-allow-icmp' }}
+    description: {{ deployment + '-allow-icmp' }}
+    network: $(ref.{{ vpcName }}.selfLink)
+    sourceRanges: ["0.0.0.0/0"]
+    allowed:
+    - IPProtocol: ICMP
+      ports: []
+    logConfig:
+      enable: true
+
+- name: {{ deployment }}-ingress-static-ip
+  type: compute.v1.globalAddress
+  properties:
+    name: {{ deployment }}-ingress-static-ip
+    description: {{ deployment }}-ingress-static-ip
+    ipVersion: IPV4
+    networkTier: PREMIUM
+
 outputs:
 - name: VpcName
   value: $(ref.{{ vpcName }}.name)
@@ -54,3 +104,6 @@ outputs:
 - name: PublicSubnetRef
   value: $(ref.{{ publicSubnet }}.selfLink)
 {% endif %}
+
+- name: ingressStaticIpName
+  value: $(ref.{{ deployment + '-ingress-static-ip' }}.name)
