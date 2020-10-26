@@ -25,8 +25,8 @@ resources:
   properties:
     region: {{ properties["region"] }}
     zone: {{ properties["zone"] }}
-    network: $(ref.boomi-gke-network.VpcName)
-    subnet: $(ref.boomi-gke-network.PrivateSubnetName)
+    network: $(ref.boomi-gke-network.VpcRef)
+    subnet: $(ref.boomi-gke-network.PrivateSubnetRef)
     CommonTags: {{ properties["CommonTags"] }}
 
     # Set this to v1beta1 to use beta features such as private clusters
@@ -87,8 +87,8 @@ resources:
   properties:
     region: {{ REGION }}
     zone: {{ properties["zone"] }}
-    network: $(ref.boomi-gke-network.VpcName)
-    subnet: $(ref.boomi-gke-network.PublicSubnetName)
+    network: $(ref.boomi-gke-network.VpcRef)
+    subnet: $(ref.boomi-gke-network.PublicSubnetRef)
     machineType: {{ properties["machineType"] }}
     machineImage: {{ properties["machineImage"] }}
     targetSize: {{ properties["targetSize"] }}
