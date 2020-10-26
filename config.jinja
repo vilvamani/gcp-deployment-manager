@@ -1,101 +1,10 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
-{% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
-{% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
 {% set CommonTags = properties["CommonTags"] %}
 
 resources:
-- name: boomi-enable-apis
-  type: enable-apis.jinja
-
-- name: boomi-gke-network
+- name: boomi-network
   type: network.jinja
   properties:
     region: {{ properties["region"] }}
-    publicSubnetCIDR: {{ publicSubnetCIDR }}
-    privateSubnetCIDR: {{ privateSubnetCIDR }}
-  metadata:
-    dependsOn:
-    - boomi-enable-apis
-
-- name: boomi-gke-cluster
-  type: gke-cluster.jinja
-  properties:
-    region: {{ properties["region"] }}
-    zone: {{ properties["zone"] }}
-    network: $(ref.boomi-gke-network.VpcRef)
-    subnet: $(ref.boomi-gke-network.PrivateSubnetRef)
-    CommonTags: {{ properties["CommonTags"] }}
-
-    # Set this to v1beta1 to use beta features such as private clusters
-    gkeApiVersion: {{ properties["gkeApiVersion"] }}
-    pool-version: v1
-
-    # Whether to deploy the new Stackdriver Kubernetes agents
-    stackdriver-kubernetes: false
-
-    desiredNodeCount: {{ properties["desiredNodeCount"] }}
-    minNodeCount: {{ properties["minNodeCount"] }}
-    maxNodeCount: {{ properties["maxNodeCount"] }}
-
-    gkeMachineType: {{ properties["gkeMachineType"] }}
-
-    securityConfig:
-      privatecluster: {{ properties["privatecluster"] }}
-      masterIpv4CidrBlock: 172.16.0.0/28
-      secureNodeMetadata: true
-      podSecurityPolicy: true
-      masterAuthorizedNetworksConfig:
-        cidrBlocks:
-        - cidrBlock: {{ privateSubnetCIDR }}
-        - cidrBlock: {{ publicSubnetCIDR }}
-        enabled: true
-  metadata:
-    dependsOn:
-    - boomi-gke-network
-
-- name: file-store
-  type: file-store.jinja
-  properties:
-    zone: {{ properties["zone"] }}
-    network: $(ref.boomi-gke-network.VpcName)
-    size: 1024
-  metadata:
-    dependsOn:
-    - boomi-gke-cluster
-
-- name: boomi-gke-cloudbuild
-  type: cloudbuild.jinja
-  properties:
-    region: {{ properties["region"] }}
-    username: {{ properties["BoomiUsername"] }}
-    password: {{ properties["BoomiPassword"] }}
-    account: {{ properties["BoomiAccount"] }}
-    network: $(ref.boomi-gke-network.VpcName)
-    CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
-    ipaddress: $(ref.file-store.fileShareIp)
-    reservedIpRange: $(ref.file-store.reservedIpRange)
-    ingressStaticIpName: $(ref.boomi-gke-network.ingressStaticIpName)
-  metadata:
-    dependsOn:
-    - boomi-gke-cluster
-    - file-store
-
-- name: boomi-gke-bastion
-  type: bastion.jinja
-  properties:
-    region: {{ properties["region"] }}
-    zone: {{ properties["zone"] }}
-    machineType: {{ properties["machineType"] }}
-    machineImage: {{ properties["machineImage"] }}
-    targetSize: {{ properties["targetSize"] }}
-    network: $(ref.boomi-gke-network.VpcRef)
-    subnet: $(ref.boomi-gke-network.PublicSubnetRef)
-    CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
-    ipaddress: $(ref.file-store.fileShareIp)
-  metadata:
-    dependsOn:
-    - boomi-gke-network
-    - boomi-gke-cluster
-    - boomi-gke-cloudbuild

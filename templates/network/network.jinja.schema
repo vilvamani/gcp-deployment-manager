@@ -1,0 +1,22 @@
+# Copyright 2018 Google Inc. All rights reserved.
+
+info:
+  title: Network
+  author: vilvamani.arumugam@accenture.com
+  description: |
+    Creates a network.
+    Creates a subnetwork.
+
+    For more information on this resource:
+      - https://cloud.google.com/compute/docs/reference/rest/v1/networks
+
+imports:
+  - path: network.jinja
+
+properties:
+  autoCreateSubnetworks:
+    type: boolean
+    default: false
+    description: |
+      If "true": (a) the newly created network is assigned the default CIDR of
+      10.128.0.0/9; and (b) one subnetwork per region is created automatically.

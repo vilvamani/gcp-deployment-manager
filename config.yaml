@@ -6,5 +6,6 @@ resources:
   type: config.jinja
   properties:
     region: us-central1
+    zone: us-central1-a
     #publicSubnetCIDR: 102.0.0.0/20
     #privateSubnetCIDR: 102.0.16.0/20
