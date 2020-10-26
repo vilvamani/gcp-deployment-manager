@@ -1,6 +1,7 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
 
+{% set region: properties["region"] %}
 {% set vpcName = deployment + "-network" %}
 {% set publicSubnet = deployment + "-" +  region  + '-public-subnet' %}
 {% set privateSubnet = deployment + "-" +  region + '-private-subnet' %}
