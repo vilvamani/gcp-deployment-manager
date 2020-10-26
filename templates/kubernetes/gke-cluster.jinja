@@ -72,12 +72,15 @@ resources:
       ipAllocationPolicy:
         createSubnetwork: false
         useIpAliases: true
-      masterIpv4CidrBlock: {{ properties['securityConfig']['masterIpv4CidrBlock'] }}
+
       masterAuthorizedNetworksConfig: {{ properties['securityConfig']['masterAuthorizedNetworksConfig'] }}
       privateCluster: {{ properties['securityConfig']['privatecluster'] }}
       privateClusterConfig:
         enablePrivateEndpoint: {{ properties['securityConfig']['privatecluster'] }}
         enablePrivateNodes: {{ properties['securityConfig']['privatecluster'] }}
+        masterIpv4CidrBlock: {{ properties['securityConfig']['masterIpv4CidrBlock'] }}
+        masterGlobalAccessConfig:
+          enabled: true
       {% endif %}
 
       nodePools:
