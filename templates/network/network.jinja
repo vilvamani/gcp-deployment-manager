@@ -2,8 +2,8 @@
 {% set deployment = env["deployment"] %}
 {% set region = properties["region"] %}
 {% set vpcName = deployment + "-gke-network" %}
-{% set publicSubnet = deployment + "-" +  REGION  + '-public-subnet' %}
-{% set privateSubnet = deployment + "-" +  REGION + '-private-subnet' %}
+{% set publicSubnet = deployment + "-" +  region  + '-public-subnet' %}
+{% set privateSubnet = deployment + "-" +  region + '-private-subnet' %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 
