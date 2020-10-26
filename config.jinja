@@ -1,9 +1,5 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
-{% set REGION = properties["region"] %}
-{% set VPC_NAME = deployment + "-gke-network" %}
-{% set PUBLIC_SUBNET_NAME = deployment + "-" +  REGION  + '-public-subnet' %}
-{% set PRIVATE_SUBNET_NAME = deployment + "-" +  REGION + '-private-subnet' %}
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
@@ -16,10 +12,7 @@ resources:
 - name: boomi-gke-network
   type: network.jinja
   properties:
-    region: {{ REGION }}
-    vpcName: {{ VPC_NAME }}
-    publicSubnetName: {{ PUBLIC_SUBNET_NAME }}
-    privateSubnetName: {{ PRIVATE_SUBNET_NAME }}
+    region: {{ properties["region"] }}
     publicSubnetCIDR: {{ publicSubnetCIDR }}
     privateSubnetCIDR: {{ privateSubnetCIDR }}
   metadata:
@@ -31,8 +24,8 @@ resources:
   properties:
     region: {{ properties["region"] }}
     zone: {{ properties["zone"] }}
-    network: $(ref.{{ VPC_NAME }}.selfLink)
-    subnet: $(ref.{{ PRIVATE_SUBNET_NAME }}.selfLink)
+    network: $(ref.boomi-gke-network.VpcRef)
+    subnet: $(ref.boomi-gke-network.PrivateSubnetRef)
     CommonTags: {{ properties["CommonTags"] }}
 
     # Set this to v1beta1 to use beta features such as private clusters
@@ -66,7 +59,7 @@ resources:
   type: file-store.jinja
   properties:
     zone: {{ properties["zone"] }}
-    network: {{ VPC_NAME }}
+    network: $(ref.boomi-gke-network.VpcName)
     size: 1024
   metadata:
     dependsOn:
@@ -75,14 +68,15 @@ resources:
 - name: boomi-gke-cloudbuild
   type: cloudbuild.jinja
   properties:
-    region: {{ REGION }}
-    network: {{ VPC_NAME }}
-    CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
-    ipaddress: $(ref.file-store.fileShareIp)
-    reservedIpRange: $(ref.file-store.reservedIpRange)
+    region: {{ properties["region"] }}
     username: {{ properties["BoomiUsername"] }}
     password: {{ properties["BoomiPassword"] }}
     account: {{ properties["BoomiAccount"] }}
+    network: $(ref.boomi-gke-network.VpcName)
+    CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
+    ipaddress: $(ref.file-store.fileShareIp)
+    reservedIpRange: $(ref.file-store.reservedIpRange)
+    ingress_staticIpName: $(ref.boomi-gke-network.ingress_staticIpName)
   metadata:
     dependsOn:
     - boomi-gke-cluster
@@ -91,13 +85,13 @@ resources:
 - name: boomi-gke-bastion
   type: bastion.jinja
   properties:
-    region: {{ REGION }}
+    region: {{ properties["region"] }}
     zone: {{ properties["zone"] }}
-    network: $(ref.{{ VPC_NAME }}.selfLink)
-    subnet: $(ref.{{ PUBLIC_SUBNET_NAME }}.selfLink)
     machineType: {{ properties["machineType"] }}
     machineImage: {{ properties["machineImage"] }}
     targetSize: {{ properties["targetSize"] }}
+    network: $(ref.boomi-gke-network.VpcRef)
+    subnet: $(ref.boomi-gke-network.PublicSubnetRef)
     CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
     ipaddress: $(ref.file-store.fileShareIp)
   metadata:

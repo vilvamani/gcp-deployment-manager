@@ -1,9 +1,10 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
 {% set region = properties["region"] %}
-{% set vpcName = properties["vpcName"] %}
-{% set publicSubnet= properties["publicSubnetName"] %}
-{% set privateSubnet= properties["privateSubnetName"] %}
+{% set vpcName = deployment + "-gke-network" %}
+{% set publicSubnet = deployment + "-" +  region  + '-public-subnet' %}
+{% set privateSubnet = deployment + "-" +  region + '-private-subnet' %}
+
 {% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
 {% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 
@@ -95,3 +96,27 @@ resources:
       subnetworks: 
       - name: $(ref.{{ privateSubnet }}.selfLink)
         sourceIpRangesToNat: ["PRIMARY_IP_RANGE"]
+
+- name: {{ deployment }}-ingress-static-ip
+  type: compute.v1.globalAddress
+  properties:
+    name: {{ deployment }}-ingress-static-ip
+    description: {{ deployment }}-ingress-static-ip
+    ipVersion: IPV4
+    networkTier: PREMIUM
+
+outputs:
+- name: VpcRef
+  value: $(ref.{{ vpcName }}.selfLink)
+
+- name: VpcName
+  value: $(ref.{{ vpcName }}.name)
+
+- name: PrivateSubnetRef
+  value: $(ref.{{ privateSubnet }}.selfLink)
+
+- name: PublicSubnetRef
+  value: $(ref.{{ publicSubnet }}.selfLink)
+
+- name: ingressStaticIp
+  value: $(ref.{{ deployment + '-ingress-static-ip' }}.name)
