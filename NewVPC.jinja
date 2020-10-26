@@ -17,6 +17,9 @@ resources:
   type: network.jinja
   properties:
     region: {{ REGION }}
+    vpcName: {{ VPC_NAME }}
+    publicSubnetName: {{ PUBLIC_SUBNET_NAME }}
+    privateSubnetName: {{ PRIVATE_SUBNET_NAME }}
     publicSubnetCIDR: {{ publicSubnetCIDR }}
     privateSubnetCIDR: {{ privateSubnetCIDR }}
   metadata:
