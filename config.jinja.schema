@@ -10,7 +10,9 @@ imports:
 - name: network.py
   path: templates/network/network.py
 
-
+- name: firewall.py
+  path: templates/firewall/firewall.py
+    
 required:
   - region
   - zone

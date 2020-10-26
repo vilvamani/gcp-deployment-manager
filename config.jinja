@@ -20,3 +20,21 @@ resources:
         ipCidrRange: 172.16.8.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
+
+- name: boomi-allow-ssh-bastion
+  type: firewall.py
+  properties:
+    network: boomi-network
+    rules:
+      - name: allow-ssh-to-bastion
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "22"
+              - "3389"
+        description: Allow SSH from anywhere to Bastion
+        direction: INGRESS
+        sourceRanges:
+          - 0.0.0.0/0
+        targetTags:
+          - bastion
