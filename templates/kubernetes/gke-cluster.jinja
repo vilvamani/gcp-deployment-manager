@@ -3,65 +3,11 @@
 {% set region = properties["region"] %}
 {% set CLUSTER_NAME = deployment + '-gke-cluster' %}
 {% set CommonTags = properties["CommonTags"] %}
+{% set VM_OAUTH_SCOPES = ['https://www.googleapis.com/auth/cloud-platform'] %}
+{% set BOOMI_SA = properties["boomisa"] %}
 
-{% set TYPE_NAME = deployment + '-type' %}
-{% set RBAC_TYPE_NAME = TYPE_NAME + '-rbac-v1' %}
-{% set APPS_TYPE_NAME = TYPE_NAME + '-apps-v1' %}
-
-{# A dictionary mapping type name suffixes to the corresponding Kubernetes API endpoint. #}
-{% set K8S_ENDPOINTS = {'': 'api/v1', '-v1beta1-extensions': 'apis/extensions/v1beta1', '-rbac-v1': 'apis/rbac.authorization.k8s.io/v1', '-apps-v1': 'apis/apps/v1/'}  %}
-
-
-{% set VM_OAUTH_SCOPES = ['https://www.googleapis.com/auth/cloud-platform', 'https://www.googleapis.com/auth/compute', 'https://www.googleapis.com/auth/devstorage.read_only', 'https://www.googleapis.com/auth/logging.write', 'https://www.googleapis.com/auth/monitoring', 'https://www.googleapis.com/auth/cloud_debugger'] %}
-
-{% set GKE_CLUSTER_SA = deployment + '-vm' %}
 
 resources:
-- name: {{ GKE_CLUSTER_SA }}
-  type: gcp-types/iam-v1:projects.serviceAccounts
-  properties:
-    accountId: {{ GKE_CLUSTER_SA }}
-    displayName: Service Account used for Kubeflow admin actions.
-  accessControl:
-    gcpIamPolicy:
-    bindings:
-    - role: roles/container.admin
-      members:
-      - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
-    - role: roles/container.admin
-      members:
-      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
-    - role: roles/servicemanagement.admin
-      members:
-      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
-    - role: roles/compute.instanceAdmin
-      members:
-      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
-    - role: roles/storage.admin
-      members:
-      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
-    - role: roles/dataflow.admin
-      members:
-      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
-    - role: roles/logging.logWriter
-      members:
-      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
-    - role: roles/monitoring.metricWriter
-      members:
-      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
-
-- name: enable-gke-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: container.googleapis.com
-
-- name: enable-gkeconnect-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: gkeconnect.googleapis.com
-
 - name: {{ CLUSTER_NAME }}
   {% if properties['gkeApiVersion'] == 'v1beta1' %}
   type: gcp-types/container-v1beta1:projects.locations.clusters
@@ -102,7 +48,7 @@ resources:
           minimum: 1
           maximum: 20
         autoprovisioningNodePoolDefaults:
-          serviceAccount: {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+          serviceAccount: {{ BOOMI_SA }}
           oauthScopes: {{ VM_OAUTH_SCOPES }}
       networkPolicy:
         provider: CALICO
@@ -126,15 +72,12 @@ resources:
       ipAllocationPolicy:
         createSubnetwork: false
         useIpAliases: true
-
+      masterIpv4CidrBlock: {{ properties['securityConfig']['masterIpv4CidrBlock'] }}
       masterAuthorizedNetworksConfig: {{ properties['securityConfig']['masterAuthorizedNetworksConfig'] }}
       privateCluster: {{ properties['securityConfig']['privatecluster'] }}
       privateClusterConfig:
         enablePrivateEndpoint: {{ properties['securityConfig']['privatecluster'] }}
         enablePrivateNodes: {{ properties['securityConfig']['privatecluster'] }}
-        masterIpv4CidrBlock: {{ properties['securityConfig']['masterIpv4CidrBlock'] }}
-        masterGlobalAccessConfig:
-          enabled: true
       {% endif %}
 
       nodePools:
@@ -159,12 +102,8 @@ resources:
           machineType: {{ properties["gkeMachineType"] }}
           diskSizeGb: 20
           oauthScopes: {{ VM_OAUTH_SCOPES }}
-          serviceAccount: {{ GKE_CLUSTER_SA }}@{{ env['project'] }}.iam.gserviceaccount.com
-  metadata:
-    dependsOn:
-    - {{ GKE_CLUSTER_SA }}
-    - enable-gke-api
-    - enable-gkeconnect-api
+          serviceAccount: {{ BOOMI_SA }}
+
 
 outputs:
 - name: gkeClusterName
