@@ -38,3 +38,13 @@ resources:
           - 0.0.0.0/0
         targetTags:
           - bastion
+      - name: allow-http-https
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "80"
+              - "443"
+        description: Allow HTTP/HTTPS from anywhere
+        direction: INGRESS
+        sourceRanges:
+          - 0.0.0.0/0
