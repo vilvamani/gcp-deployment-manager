@@ -34,6 +34,9 @@ resources:
     - role: roles/servicemanagement.admin
       members:
       - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
+    - role: roles/container.admin
+      members:
+      - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
     - role: roles/compute.instanceAdmin
       members:
       - {{ 'serviceAccount:' + GKE_CLUSTER_SA + '@' + env['project'] + '.iam.gserviceaccount.com' }}
@@ -77,8 +80,8 @@ resources:
       network: {{ properties["network"] }}
       subnetwork: {{ properties["subnet"] }}
 
-      initialClusterVersion: 1.17.12-gke.2502
-      currentMasterVersion: 1.17.12-gke.2502
+      initialClusterVersion: 1.17.9-gke.6300
+      currentMasterVersion: 1.17.9-gke.6300
 
       loggingService: logging.googleapis.com/kubernetes
       monitoringService: monitoring.googleapis.com/kubernetes
@@ -132,7 +135,7 @@ resources:
 
       nodePools:
       - name: {{ CLUSTER_NAME }}-node-pool-1
-        version: 1.17.12-gke.2502
+        version: 1.17.9-gke.6300
         config:
           labels:
             topology.kubernetes.io/region
