@@ -52,7 +52,7 @@ properties:
 
 outputs:
   properties:
-    - name:
+    - vpcName:
         type: string
         description: The network resource name.
     - selfLink:

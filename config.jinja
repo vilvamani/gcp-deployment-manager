@@ -4,18 +4,6 @@
 {% set CommonTags = properties["CommonTags"] %}
 
 resources:
-- name: boomi-cloud-router
-  type: cloud_router.py
-  properties:
-    name: boomi-cloud-router
-    network: boomi-network
-    region: us-central1
-    asn: 65001
-    nat-name: boomi-nat
-  metadata:
-    dependsOn:
-    - boomi-network
-    
 - name: boomi-network
   type: network.py
   properties:
@@ -67,3 +55,17 @@ resources:
         direction: INGRESS
         sourceRanges:
           - 0.0.0.0/0
+
+- name: boomi-cloud-router
+  type: cloud_router.py
+  properties:
+    name: boomi-cloud-router
+    network:$(ref.boomi-network.vpcName)
+    region: us-central1
+    asn: 65001
+    nat-name: boomi-nat
+  metadata:
+    dependsOn:
+      - boomi-network
+    runtimePolicy:
+      - UPDATE_ALWAYS
