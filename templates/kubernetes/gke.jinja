@@ -79,8 +79,8 @@ resources:
 
       releaseChannel: 
         channel: "REGULAR"
-      initialClusterVersion: 1.17.12-gke.2502
-      currentMasterVersion: 1.17.12-gke.2502
+      initialClusterVersion: 1.17.12-gke.1501
+      currentMasterVersion: 1.17.12-gke.1501
 
       loggingService: logging.googleapis.com/kubernetes
       monitoringService: monitoring.googleapis.com/kubernetes
@@ -134,7 +134,7 @@ resources:
 
       nodePools:
       - name: {{ CLUSTER_NAME }}-node-pool-1
-        version: 1.17.12-gke.2502
+        version: 1.17.12-gke.1501
         config:
           labels:
             topology.kubernetes.io/region

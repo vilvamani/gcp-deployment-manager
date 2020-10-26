@@ -96,21 +96,14 @@ resources:
       - name: $(ref.{{ privateSubnet }}.selfLink)
         sourceIpRangesToNat: ["PRIMARY_IP_RANGE"]
 
+- name: {{ deployment }}-ingress-static-ip
+  type: compute.v1.globalAddress
+  properties:
+    name: {{ deployment }}-ingress-static-ip
+    description: {{ deployment }}-ingress-static-ip
+    ipVersion: IPV4
+    networkTier: PREMIUM
+
 outputs:
-- name: VpcName
-  value: $(ref.{{ vpcName }}.name)
-
-- name: PublicSubnetName
-  value: $(ref.{{ publicSubnet }}.name)
-
-- name: PrivateSubnetName
-  value: $(ref.{{ privateSubnet }}.name)
-  
-- name: VpcRef
-  value: $(ref.{{ vpcName }}.selfLink)
-
-- name: PublicSubnetRef
-  value: $(ref.{{ publicSubnet }}.selfLink)
-
-- name: PrivateSubnetRef
-  value: $(ref.{{ privateSubnet }}.selfLink)
+- name: ingress_staticIpName
+  value: $(ref.{{ deployment + '-ingress-static-ip' }}.name)
