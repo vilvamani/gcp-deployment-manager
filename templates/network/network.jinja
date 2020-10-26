@@ -1,12 +1,9 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
-{% set region = properties["region"] %}
-{% set vpcName = deployment + "-gke-network" %}
+
+{% set vpcName = deployment + "-network" %}
 {% set publicSubnet = deployment + "-" +  region  + '-public-subnet' %}
 {% set privateSubnet = deployment + "-" +  region + '-private-subnet' %}
-
-{% set publicSubnetCIDR = properties["publicSubnetCIDR"] %}
-{% set privateSubnetCIDR = properties["privateSubnetCIDR"] %}
 
 resources:
 # GCP Custom Network
@@ -17,9 +14,40 @@ resources:
     description: {{ vpcName }}
     autoCreateSubnetworks: {{ properties["autoCreateSubnetworks"] }}
 
+{% if properties["autoCreateSubnetworks"] %}
+# GCP Public Subnets
+- name: {{ publicSubnet }}
+  type: compute.v1.subnetwork
+  properties:
+    name: {{ publicSubnet }}
+    description: {{ publicSubnet }}
+    network: $(ref.{{ vpcName }}.selfLink)
+    region: {{ properties["region"] }}
+    ipCidrRange: {{ properties["publicSubnetCidrRange"] }}
+    enableFlowLogs: {{ properties["enableFlowLogs"] }}
+
+# GCP Private Subnets
+- name: {{ privateSubnet }}
+  type: compute.v1.subnetwork
+  properties:
+    name: {{ privateSubnet }}
+    description: {{ publicSubnet }}
+    network: $(ref.{{ vpcName }}.selfLink)
+    region: {{ properties["region"] }}
+    ipCidrRange: {{ properties["privateSubnetCidrRange"] }}
+    enableFlowLogs: {{ properties["enableFlowLogs"] }}
+    privateIpGoogleAccess: {{ properties["privateIpGoogleAccess"] }}
+{% endif %}
+
 outputs:
-- name: Boomi-VpcName
+- name: VpcName
   value: $(ref.{{ vpcName }}.name)
 
-- name: Boomi-VpcSelfLink
+- name: VpcSelfLink
   value: $(ref.{{ vpcName }}.selfLink)
+
+- name: PrivateSubnetRef
+  value: $(ref.{{ privateSubnet }}.selfLink)
+
+- name: PublicSubnetRef
+  value: $(ref.{{ publicSubnet }}.selfLink)

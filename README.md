@@ -9,7 +9,7 @@ gcloud projects add-iam-policy-binding [project-id] --member=serviceAccount:[pro
 ```
 
 ```
-git clone https://github.com/vilvamani/gcp-deployment-manager.git && cd gcp-deployment-manager
+git clone -b develop https://github.com/vilvamani/gcp-deployment-manager.git && cd gcp-deployment-manager
 ```
 
 ```

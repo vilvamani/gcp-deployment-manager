@@ -20,3 +20,30 @@ properties:
     description: |
       If "true": (a) the newly created network is assigned the default CIDR of
       10.128.0.0/9; and (b) one subnetwork per region is created automatically.
+
+  region:
+    type: string
+    default: us-central1
+    description: |
+      The region the cluster belongs to. Should be set when clusterLocationType
+      is set to Regional
+
+  publicSubnetCidrRange:
+    type: string
+    default: 172.16.0.0/21
+    description: |
+      The CidrRange of public subnet    
+
+  privateSubnetCidrRange
+    type: string
+    default: 172.16.8.0/21
+    description: |
+      The CidrRange of private subnet
+
+  enableFlowLogs:
+    type: boolean
+    default: false
+
+  privateIpGoogleAccess:
+    type: boolean
+    default: false
