@@ -82,6 +82,25 @@ resources:
     logConfig:
       enable: true
 
+- name: {{ deployment }}-{{ region }}-cloud-router
+  type: compute.v1.router
+  properties:
+    name: {{ deployment }}-{{ region }}-cloud-router
+    description: route with default internet gateway
+    network: $(ref.{{ vpcName }}.selfLink)
+    region: {{ region }}
+    nats:
+    - name: {{ deployment }}-{{ region }}-nat
+      natIpAllocateOption: "AUTO_ONLY"
+      sourceSubnetworkIpRangesToNat: "LIST_OF_SUBNETWORKS"
+      subnetworks:
+      {% if not properties["autoCreateSubnetworks"] %}
+      - name: $(ref.{{ privateSubnet }}.selfLink)
+      {% else %}
+      - name: $(ref.default.selfLink)
+      {% endif %}
+        sourceIpRangesToNat: ["PRIMARY_IP_RANGE"]
+
 - name: {{ deployment }}-ingress-static-ip
   type: compute.v1.globalAddress
   properties:
