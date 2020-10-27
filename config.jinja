@@ -96,10 +96,6 @@ resources:
         capacityGb: 1024
     networks:
       - network: $(ref.boomi-network.vpcName)
-  metadata:
-    dependsOn:
-      - fileShareApi
-      - boomi-cloud-router
 
 - name: boomi-gke-cluster
   type: gke.py
