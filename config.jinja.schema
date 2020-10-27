@@ -25,6 +25,9 @@ imports:
 - name: bastion_instance.py
   path: templates/bastion_instance/bastion_instance.py
 
+- name: fileshare-api.py
+  path: templates/cloud_filestore/fileshare-api.py
+
 required:
   - region
   - zone

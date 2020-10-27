@@ -85,7 +85,7 @@ resources:
     nat-name: boomi-nat
 
 - name: cloud-filestore
-  type: cloud_filestore.py
+  type: fileshare-api.py
   properties:
     consumerId: {{ 'project:' + env['project'] }}
     location: {{ properties["zone"] }}
