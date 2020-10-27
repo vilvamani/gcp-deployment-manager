@@ -68,7 +68,7 @@ resources:
 - name: test-filestore
   type: cloud_filestore.py
   properties:
-    location: "/boomifileshare"
+    location: {{ properties["zone"] }}
     description: Boomi File Store
     tier: STANDARD
     fileShares:
