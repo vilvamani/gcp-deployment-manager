@@ -126,14 +126,11 @@ resources:
           management:
             autoUpgrade: True
             autoRepair: True
-      locations:
-        - {{ region }}-a
-        - {{ region }}-b
       loggingService: logging.googleapis.com/kubernetes
       monitoringService: monitoring.googleapis.com/kubernetes
       privateClusterConfig:
-        enablePrivateNodes: True
-        enablePrivateEndpoint: True
+        enablePrivateNodes: False
+        enablePrivateEndpoint: False
         masterIpv4CidrBlock: 172.16.0.0/28
       ipAllocationPolicy:
         useIpAliases: True
