@@ -27,7 +27,7 @@ def generate_config(context):
         'outputs':
             [
                 {
-                    'name': 'vpcName',
+                    'name': 'name',
                     'value': api['name']
                 }
             ]
