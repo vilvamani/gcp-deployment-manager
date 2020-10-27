@@ -115,10 +115,23 @@ properties:
     type: string
     default: google-microsoft
 
+  enableCloudApis:
+    type: array
+    description: "List of gcp apis to enable"
+    items:
+      type: string
+    default:
+      - cloudresourcemanager.googleapis.com
+      - endpoints.googleapis.com
+      - iam.googleapis.com
+      - container.googleapis.com
+      - gkeconnect.googleapis.com
+      - file.googleapis.com
+    uniqueItems: true
+
   CommonTags:
     type: object
     description: "Common tags or labels applied for all resources"
     default: {
-      "environment": "dev",
       "owner": "boomi-molecule"
       }

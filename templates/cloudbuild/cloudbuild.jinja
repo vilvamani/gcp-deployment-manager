@@ -4,7 +4,7 @@
 {% set CLUSTER_NAME = properties["CLUSTER_NAME"] %}
 
 resources:
-- name: boomi-cloudbuild
+- name: {{ deployment  + '-cloudbuild' }}
   action: gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create
   metadata:
     runtimePolicy:
