@@ -35,6 +35,19 @@ def generate_config(context):
         }
     ]
 
+    resources.append(
+        {
+            'name': 'ingressStaticIp',
+            'type': 'compute.v1.globalAddress',
+            'properties':
+                {
+                    'name': 'ingressStaticIp',
+                    'ipVersion': 'IPV4',
+                    'networkTier': 'PREMIUM'
+                }
+        }
+    )
+
     # Subnetworks:
     out = {}
     for subnetwork in context.properties.get('subnetworks', []):
@@ -73,6 +86,10 @@ def generate_config(context):
                 {
                     'name': 'subnetworks',
                     'value': out
+                },
+                {
+                    'name': 'ingressStaticIp',
+                    'value': '$(ref.ingressStaticIp.name)'
                 }
             ]
     }
