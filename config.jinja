@@ -9,17 +9,17 @@ resources:
   properties:
     consumerId: {{ 'project:' + env['project'] }}
     apis:
-      - name: fileShare-api
+      - name: fileShareApi
         serviceName: file.googleapis.com
-      - name: cloudresourcemanager-api
+      - name: cloudResourceManagerApi
         serviceName: cloudresourcemanager.googleapis.com
-      - name: endpoints-api
+      - name: endpointsApi
         serviceName: endpoints.googleapis.com
-      - name: iam-api
+      - name: iamApi
         serviceName: iam.googleapis.com
-      - name: container-api
+      - name: containerApi
         serviceName: container.googleapis.com
-      - name: gkeconnect-api
+      - name: gkeconnectApi
         serviceName: gkeconnect.googleapis.com
 
 - name: boomi-network
@@ -88,6 +88,9 @@ resources:
 
 - name: cloud-filestore
   type: cloud_filestore.py
+  metadata:
+    dependsOn:
+    - $(ref.enableApis.fileShareApi)
   properties:
     consumerId: {{ 'project:' + env['project'] }}
     location: {{ properties["zone"] }}
@@ -98,9 +101,6 @@ resources:
         capacityGb: 1024
     networks:
       - network: $(ref.boomi-network.vpcName)
-  metadata:
-    dependsOn:
-    - enableApis
 
 - name: bastion-instance
   type: bastion_instance.py
