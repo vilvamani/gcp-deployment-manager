@@ -128,7 +128,7 @@ resources:
       #mount filestore
       sudo yum -y update && sudo yum -y install nfs-utils
       sudo mkdir -p /mnt/boominfs
-      sudo mount $(ref.cloud-filestore.fileSharesIp):/boomifileshare /mnt/boominfs
+      sudo mount $(ref.cloud-filestore.fileShareIp):/boomifileshare /mnt/boominfs
 
       export HOME='whoami'
       export KUBECONFIG=$HOME/.kube/config

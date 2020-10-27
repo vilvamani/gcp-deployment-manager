@@ -100,3 +100,5 @@ def GenerateConfig(context):
           }
       }
   ]
+
+  return {'resources': resources}

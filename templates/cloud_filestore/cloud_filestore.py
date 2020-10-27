@@ -52,7 +52,7 @@ def generate_config(context):
                     'value': '$(ref.{}.networks)'.format(context.env['name'])
                 },
                 {
-                    'name': 'fileSharesIp',
+                    'name': 'fileShareIp',
                     'value': '$(ref.{}.networks[0].ipAddresses[0])'.format(context.env['name'])
                 }
             ]
