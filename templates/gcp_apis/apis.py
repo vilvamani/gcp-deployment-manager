@@ -20,4 +20,15 @@ def generate_config(context):
             }
         )
 
-    return {'resources': resources}
+
+    return {
+        'resources':
+            resources,
+        'outputs':
+            [
+                {
+                    'name': 'vpcName',
+                    'value': api['name']
+                }
+            ]
+    }
