@@ -13,7 +13,7 @@ imports:
 - name: firewall.py
   path: templates/firewall/firewall.py
     
-- name: cloud_router.py
+- name: xcloud_router.py
   path: templates/cloud_router/cloud_router.py
     
 required:
