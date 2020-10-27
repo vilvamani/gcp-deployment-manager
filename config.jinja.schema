@@ -7,6 +7,9 @@ info:
 imports:
 - path: config.jinja
 
+- name: apis.py
+  path: templates/gcp_apis/apis.py
+
 - name: network.py
   path: templates/network/network.py
 

@@ -4,6 +4,14 @@
 {% set CommonTags = properties["CommonTags"] %}
 
 resources:
+- name: enable-apis
+  type: apis.py
+  properties:
+    apis:
+      - name: cloudresourcemanager-api
+        consumerId: {{ 'project:' + env['project'] }}
+        serviceName: cloudresourcemanager.googleapis.com
+
 - name: boomi-network
   type: network.py
   properties:
@@ -65,7 +73,7 @@ resources:
     asn: 65001
     nat-name: boomi-nat
 
-- name: test-filestore
+- name: cloud-filestore
   type: cloud_filestore.py
   properties:
     location: {{ properties["zone"] }}
@@ -73,6 +81,6 @@ resources:
     tier: STANDARD
     fileShares:
       - name: boomifileshare
-        capacityGb: 2560
+        capacityGb: 1024
     networks:
       - network: $(ref.boomi-network.vpcName)

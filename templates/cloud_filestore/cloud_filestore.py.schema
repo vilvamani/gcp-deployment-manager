@@ -67,7 +67,7 @@ properties:
             The name of the file share (must be 16 characters or less).
         capacityGb:
           type: integer
-          minimum: 2560
+          minimum: 1024
           description: |
             File share capacity in gigabytes (GB). Cloud Filestore defines 1 GB as 1024^3 bytes.
   networks:
