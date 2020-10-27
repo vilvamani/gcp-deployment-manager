@@ -6,9 +6,14 @@
 {% set CommonTags = properties["CommonTags"] %}
 
 resources:
+- name: boomi-service-account
+  type: service-account.jinja
+
 - name: boomi-enable-apis
   type: enable-apis.jinja
-
+  properties:
+    boomisa: $(ref.boomi-service-account.BoomiSA)
+    
 - name: boomi-gke-network
   type: network.jinja
   properties:
@@ -26,6 +31,7 @@ resources:
     zone: {{ properties["zone"] }}
     network: $(ref.boomi-gke-network.VpcRef)
     subnet: $(ref.boomi-gke-network.PrivateSubnetRef)
+    boomisa: $(ref.boomi-service-account.BoomiSA)
     CommonTags: {{ properties["CommonTags"] }}
 
     # Set this to v1beta1 to use beta features such as private clusters
@@ -51,9 +57,6 @@ resources:
         - cidrBlock: {{ privateSubnetCIDR }}
         - cidrBlock: {{ publicSubnetCIDR }}
         enabled: true
-  metadata:
-    dependsOn:
-    - boomi-gke-network
 
 - name: file-store
   type: file-store.jinja
@@ -94,8 +97,7 @@ resources:
     subnet: $(ref.boomi-gke-network.PublicSubnetRef)
     CLUSTER_NAME: $(ref.boomi-gke-cluster.gkeClusterName)
     ipaddress: $(ref.file-store.fileShareIp)
+    boomisa: $(ref.boomi-service-account.BoomiSA)
   metadata:
     dependsOn:
-    - boomi-gke-network
-    - boomi-gke-cluster
     - boomi-gke-cloudbuild

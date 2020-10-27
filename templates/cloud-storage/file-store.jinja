@@ -3,13 +3,6 @@
 {% set zone = properties["zone"] %}
 
 resources:
-
-- name: enable-filestore-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: file.googleapis.com
-
 - name: {{ deployment + '-filestore' }}
   type: gcp-types/file-v1beta1:projects.locations.instances
   properties:
@@ -22,9 +15,7 @@ resources:
     fileShares:
     - name: boomifileshare
       capacityGb: {{ properties["size"] }}
-  metadata:
-    dependsOn:
-      - enable-filestore-api
+
 
 outputs:
 - name: fileShareIp

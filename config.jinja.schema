@@ -8,7 +8,10 @@ imports:
 - path: config.jinja
 
 - name: enable-apis.jinja
-  path: templates/gcp-apis/enable-apis.jinja
+  path: templates/iam/enable-apis.jinja
+
+- name: service-account.jinja
+  path: templates/iam/service-account.jinja
 
 - name: network.jinja
   path: templates/network/network.jinja
