@@ -50,6 +50,10 @@ def generate_config(context):
                 {
                     'name': 'networks',
                     'value': '$(ref.{}.networks)'.format(context.env['name'])
+                },
+                {
+                    'name': 'fileSharesIp',
+                    'value': '$(ref.{}.networks[0].ipAddresses[0])'.format(context.env['name'])
                 }
             ]
     }
