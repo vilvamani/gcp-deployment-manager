@@ -16,6 +16,8 @@ resources:
       name: 'gcr.io/cloud-builders/git'
       args:
       - clone
+      - b
+      - develop
       - https://github.com/vilvamani/gcp-deployment-manager.git
 
     - id: 'build_image'
