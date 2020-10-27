@@ -24,6 +24,9 @@ resources:
 
 - name: boomi-network
   type: network.py
+  metadata:
+    dependsOn:
+    - $(ref.enableApis.fileShareApi)
   properties:
     name: boomi-network
     autoCreateSubnetworks: false
@@ -38,9 +41,6 @@ resources:
         ipCidrRange: 172.16.8.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
-  metadata:
-    dependsOn:
-    - enableApis
 
 - name: boomi-firewall
   type: firewall.py
