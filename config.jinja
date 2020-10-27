@@ -26,7 +26,7 @@ resources:
   type: network.py
   metadata:
     dependsOn:
-    - $(ref.enableApis.fileShareApi)
+    - enableApis
   properties:
     name: boomi-network
     autoCreateSubnetworks: false
@@ -90,7 +90,7 @@ resources:
   type: cloud_filestore.py
   metadata:
     dependsOn:
-    - $(ref.enableApis.fileShareApi)
+    - enableApis
   properties:
     consumerId: {{ 'project:' + env['project'] }}
     location: {{ properties["zone"] }}
