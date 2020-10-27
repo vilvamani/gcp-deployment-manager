@@ -28,6 +28,9 @@ imports:
 - name: bastion_instance.py
   path: templates/bastion_instance/bastion_instance.py
 
+- name: gke.py
+  path: templates/gke/gke.py  
+
 required:
   - region
   - zone

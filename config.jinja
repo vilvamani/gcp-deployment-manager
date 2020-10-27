@@ -1,6 +1,6 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
-{% set CLUSTER_NAME = deployment + '-gke-cluster' %}
+{% set region = properties["region"] %}
 {% set CommonTags = properties["CommonTags"] %}
 
 resources:
@@ -31,12 +31,12 @@ resources:
     autoCreateSubnetworks: false
     subnetworks:
       - name: boomi-public-subnet
-        region: us-central1
+        region: {{ region }}
         ipCidrRange: 172.16.0.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
       - name: boomi-private-subnet
-        region: us-central1
+        region: {{ region }}
         ipCidrRange: 172.16.8.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
@@ -81,7 +81,7 @@ resources:
   properties:
     name: boomi-cloud-router
     network: $(ref.boomi-network.selfLink)
-    region: us-central1
+    region: {{ region }}
     asn: 65001
     nat-name: boomi-nat
 
@@ -100,6 +100,52 @@ resources:
     dependsOn:
       - fileShareApi
       - boomi-cloud-router
+
+- name: boomi-gke-cluster
+  type: gke.py
+  properties:
+    clusterLocationType: Regional
+    region: {{ region }}
+    cluster:
+      name: boomi-gke-cluster
+      description: Boomi k8s Cluster
+      network: $(ref.boomi-network.vpcName)
+      subnetwork: $(ref.boomi-private-subnet.selfLink)
+      initialClusterVersion: 1.17.12-gke.1501
+      nodePools:
+        - name: boomi-gke-pool
+          initialNodeCount: 1
+          version: 1.17.12-gke.1501
+          config:
+            machineType: n1-standard-1
+            oauthScopes:
+              - https://www.googleapis.com/auth/compute
+              - https://www.googleapis.com/auth/devstorage.read_only
+              - https://www.googleapis.com/auth/logging.write
+              - https://www.googleapis.com/auth/monitoring
+          autoscaling:
+            enabled: True
+            minNodeCount: 1
+            maxNodeCount: 2
+          management:
+            autoUpgrade: True
+            autoRepair: True
+      locations:
+        - {{ region }}-a
+        - {{ region }}-b
+      loggingService: logging.googleapis.com/kubernetes
+      monitoringService: monitoring.googleapis.com/kubernetes
+      privateClusterConfig:
+        enablePrivateNodes: True
+        enablePrivateEndpoint: True
+        masterIpv4CidrBlock: 172.16.0.0/28
+      ipAllocationPolicy:
+        useIpAliases: True
+        clusterIpv4CidrBlock: 10.1.0.0/16
+        servicesIpv4CidrBlock: 192.168.192.0/24
+      masterAuth:
+        clientCertificateConfig:
+          issueClientCertificate: True
 
 - name: bastion-instance
   type: bastion_instance.py
