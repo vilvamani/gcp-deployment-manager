@@ -50,3 +50,15 @@ properties:
     type: string
     default: us-central1-a
     description: The zone the cluster belongs to.
+    
+  BoomiUsername:
+    type: string
+    default: vilvamani007@gmail.com
+
+  BoomiPassword:
+    type: string
+    default: google#2020
+
+  BoomiAccount:
+    type: string
+    default: google-microsoft
