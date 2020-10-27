@@ -99,6 +99,7 @@ def generate_config(context):
 
     # Output variables
     output_props = [
+        'name',
         'selfLink',
         'endpoint',
         'currentMasterVersion',
