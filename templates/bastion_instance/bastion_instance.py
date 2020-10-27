@@ -101,4 +101,21 @@ def GenerateConfig(context):
       }
   ]
 
-  return {'resources': resources}
+    return {
+        'resources':
+            resources,
+        'outputs' = [
+            {
+                'name': 'internalIp',
+                'value': '$(ref.{}.networkInterfaces[0].networkIP)'.format(igm) # pylint: disable=line-too-long
+            },
+            {
+                'name': 'name',
+                'value': '$(ref.{}.name)'.format(igm)
+            },
+            {
+                'name': 'selfLink',
+                'value': '$(ref.{}.selfLink)'.format(igm)
+            }
+        ]
+    }

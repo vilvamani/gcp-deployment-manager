@@ -85,9 +85,6 @@ resources:
 
 - name: cloud-filestore
   type: cloud_filestore.py
-  metadata:
-    dependsOn:
-    - fileShareApi
   properties:
     consumerId: {{ 'project:' + env['project'] }}
     location: {{ properties["zone"] }}
@@ -98,6 +95,11 @@ resources:
         capacityGb: 1024
     networks:
       - network: $(ref.boomi-network.vpcName)
+    internalIp: $(ref.bastion-instance.internalIp)
+  metadata:
+    dependsOn:
+      - fileShareApi
+      - boomi-cloud-router
 
 - name: bastion-instance
   type: bastion_instance.py
