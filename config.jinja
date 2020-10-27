@@ -32,12 +32,12 @@ resources:
     subnetworks:
       - name: boomi-public-subnet
         region: {{ region }}
-        ipCidrRange: 100.16.0.0/21
+        ipCidrRange: 192.168.0.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
       - name: boomi-private-subnet
         region: {{ region }}
-        ipCidrRange: 100.16.8.0/21
+        ipCidrRange: 192.168.8.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
 
