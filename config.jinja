@@ -4,11 +4,13 @@
 {% set CommonTags = properties["CommonTags"] %}
 
 resources:
-- name: enable-apis
+- name: enable_apis
   type: apis.py
   properties:
     consumerId: {{ 'project:' + env['project'] }}
     apis:
+      - name: fileShare-api
+        serviceName: file.googleapis.com
       - name: cloudresourcemanager-api
         serviceName: cloudresourcemanager.googleapis.com
       - name: endpoints-api
@@ -85,7 +87,7 @@ resources:
     nat-name: boomi-nat
 
 - name: cloud-filestore
-  type: fileshare-api.py
+  type: cloud_filestore.py
   properties:
     consumerId: {{ 'project:' + env['project'] }}
     location: {{ properties["zone"] }}
@@ -98,7 +100,7 @@ resources:
       - network: $(ref.boomi-network.vpcName)
   metadata:
     dependsOn:
-      - enable-apis
+      - enable_apis
 
 - name: bastion-instance
   type: bastion_instance.py

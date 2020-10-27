@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """ This template creates a network, optionally with subnetworks. """
-
+import time
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
+
+    time.sleep(150)
 
     name = context.properties.get('name') or context.env['name']
     network_self_link = '$(ref.{}.selfLink)'.format(name)
