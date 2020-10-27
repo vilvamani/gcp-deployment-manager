@@ -35,6 +35,12 @@ def GenerateConfig(context):
           'type': 'compute.v1.instanceTemplate',
           'properties': {
               'properties': {
+                  'serviceAccounts': [{
+                      'email': 
+                          context.properties['saEmail'],
+                       'scopes':
+                          context.properties['saScopes']
+                  }],
                   'tags': context.properties['tags'],
                   'machineType':
                       context.properties['machineType'],
