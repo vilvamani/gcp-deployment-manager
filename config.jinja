@@ -13,13 +13,13 @@ resources:
         serviceName: cloudresourcemanager.googleapis.com
       - name: endpoints-api
         serviceName: endpoints.googleapis.com
-      - name: enable-filestore-api
+      - name: filestore-api
         serviceName: file.googleapis.com
       - name: iam-api
         serviceName: iam.googleapis.com
-      - name: enable-gke-api
+      - name: container-api
         serviceName: container.googleapis.com
-      - name: enable-gkeconnect-api
+      - name: gkeconnect-api
         serviceName: gkeconnect.googleapis.com
 
 - name: boomi-network
@@ -93,7 +93,7 @@ resources:
       - name: boomifileshare
         capacityGb: 1024
     networks:
-      - network: $(ref.boomi-network.selfLink)
+      - network: $(ref.boomi-network.vpcName)
   metadata:
     dependsOn:
       - enable-apis
