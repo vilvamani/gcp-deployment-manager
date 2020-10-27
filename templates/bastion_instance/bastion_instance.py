@@ -25,9 +25,6 @@ def GenerateConfig(context):
   instance_template = deployment + '-it'
   igm = deployment + '-igm'
   region = context.properties['region']
-  port = context.properties['port']
-  tp_name = deployment + '-tp'
-  fr_name = deployment + '-fr'
 
   # Create a dictionary which represents the resources
   # (Intstance Template, IGM, etc.)
@@ -39,11 +36,10 @@ def GenerateConfig(context):
           'properties': {
               'properties': {
                   'machineType':
-                      context.env['machineType'],
+                      context.properties['machineType'],
                   'networkInterfaces': [{
                       'network':
-                          URL_BASE + context.env['project'] +
-                          context.env['network'],
+                          context.properties['network'],
                       'accessConfigs': [{
                           'name': 'External NAT',
                           'type': 'ONE_TO_ONE_NAT'
@@ -51,16 +47,16 @@ def GenerateConfig(context):
                   }],
                   'disks': [{
                       'deviceName': 'boot',
-                      'type': 'STANDARD',
+                      'type': 'PERSISTENT',
                       'boot': True,
                       'autoDelete': True,
                       'diskType': 'pd-ssd',
                       'diskSizeGb': '30',
-                      'mode': 'READ_WRITE'
+                      'mode': 'READ_WRITE',
                       'initializeParams': {
                           'sourceImage':
                               URL_BASE +
-                              context.env['machineImage']
+                              context.properties['machineImage']
                       }
                   }]
               }

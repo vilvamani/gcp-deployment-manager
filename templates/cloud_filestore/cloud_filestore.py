@@ -1,10 +1,28 @@
 # Copyright 2018 Google Inc. All rights reserved.
 
 """ This template creates a Google Cloud Filestore instance. """
+def enable_file_api():
+    """ Entry point for the deployment resources. """
 
+    resources = []
+    resources.append(
+        {
+            'name': 'fileshare-api',
+            'action': 'gcp-types/servicemanagement-v1:servicemanagement.services.enable',
+            'properties': 
+            {
+                'consumerId': {{ 'project:' + context.env['project'] }},
+                'serviceName': 'file.googleapis.com'
+            }
+        }
+    )
+
+    return {'resources': resources}
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
+
+    fileApi = enable_file_api()
 
     resources = []
     properties = context.properties

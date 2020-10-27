@@ -13,8 +13,6 @@ resources:
         serviceName: cloudresourcemanager.googleapis.com
       - name: endpoints-api
         serviceName: endpoints.googleapis.com
-      - name: filestore-api
-        serviceName: file.googleapis.com
       - name: iam-api
         serviceName: iam.googleapis.com
       - name: container-api
@@ -96,7 +94,7 @@ resources:
       - network: $(ref.boomi-network.vpcName)
   metadata:
     dependsOn:
-      - enable-apis
+    - enable-apis
 
 - name: bastion-instance
   type: bastion_instance.py
