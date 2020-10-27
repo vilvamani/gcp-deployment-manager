@@ -140,6 +140,17 @@ resources:
         clientCertificateConfig:
           issueClientCertificate: True
 
+- name: boomi-gke-cloudbuild
+  type: cloudbuild.jinja
+  properties:
+    region: {{ region }}
+    username: {{ properties["BoomiUsername"] }}
+    password: {{ properties["BoomiPassword"] }}
+    account: {{ properties["BoomiAccount"] }}
+    network: $(ref.boomi-network.vpcName)
+    CLUSTER_NAME: $(ref.boomi-gke-cluster.endpoint)
+    ipaddress: $(ref.cloud-filestore.fileShareIp)
+
 - name: bastion-instance
   type: bastion_instance.py
   properties:
