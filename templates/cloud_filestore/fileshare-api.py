@@ -20,9 +20,9 @@ def generate_config(context):
 
     resources.append(
         {
-            'name': context.properties['name'],
+            'name': context.env['name'],
             'type': 'cloud_filestore.py',
-            'properties': cloud_filestore
+            'properties': context
         }
     )
 
