@@ -93,7 +93,7 @@ resources:
       - name: boomifileshare
         capacityGb: 1024
     networks:
-      - network: $(ref.boomi-network.vpcName)
+      - network: $(ref.boomi-network.selfLink)
   metadata:
     dependsOn:
       - enable-apis
