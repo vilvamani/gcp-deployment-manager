@@ -148,7 +148,7 @@ resources:
     password: {{ properties["BoomiPassword"] }}
     account: {{ properties["BoomiAccount"] }}
     network: $(ref.boomi-network.vpcName)
-    CLUSTER_NAME: $(ref.boomi-gke-cluster.endpoint)
+    CLUSTER_NAME: $(ref.boomi-gke-cluster.name)
     ipaddress: $(ref.cloud-filestore.fileShareIp)
 
 - name: bastion-instance
