@@ -9,8 +9,6 @@ resources:
   properties:
     consumerId: {{ 'project:' + env['project'] }}
     apis:
-      - name: fileShareApi
-        serviceName: file.googleapis.com
       - name: cloudResourceManagerApi
         serviceName: cloudresourcemanager.googleapis.com
       - name: endpointsApi
@@ -86,7 +84,7 @@ resources:
     nat-name: boomi-nat
 
 - name: cloud-filestore
-  type: cloud_filestore.jinja
+  type: cloud_filestore.py
   properties:
     description: Boomi File Store
     location: {{ properties["zone"] }}

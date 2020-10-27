@@ -10,6 +10,17 @@ def generate_config(context):
     project_id = properties.get('project', context.env['project'])
     name = properties.get('name', context.env['name'])
 
+    apiresource = {
+        'name': 'enableapi',
+        'action': 'gcp-types/servicemanagement-v1:servicemanagement.services.enable',
+        'properties': {
+            'consumerId': 'project:{}'.format(context.env['project']),
+            'serviceName': 'file.googleapis.com'
+        }
+    }
+
+    resources.append(apiresource)
+
     resource = {
         'name': context.env['name'],
         # https://cloud.google.com/filestore/docs/reference/rest/v1beta1/projects.locations.instances/create
@@ -17,6 +28,9 @@ def generate_config(context):
         'properties': {
             'parent': 'projects/{}/locations/{}'.format(project_id, properties['location']),
             'instanceId': name,
+        },
+        'metadata': {
+            'dependsOn': ['enableapi']
         }
     }
 

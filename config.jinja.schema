@@ -22,9 +22,6 @@ imports:
 - name: cloud_filestore.py
   path: templates/cloud_filestore/cloud_filestore.py
 
-- name: cloud_filestore.jinja
-  path: templates/cloud_filestore/cloud_filestore.jinja
-
 - name: bastion_instance.py
   path: templates/bastion_instance/bastion_instance.py
 
