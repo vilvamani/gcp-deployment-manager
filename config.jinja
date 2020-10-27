@@ -32,12 +32,12 @@ resources:
     subnetworks:
       - name: boomi-public-subnet
         region: {{ region }}
-        ipCidrRange: 172.16.0.0/21
+        ipCidrRange: 100.16.0.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
       - name: boomi-private-subnet
         region: {{ region }}
-        ipCidrRange: 172.16.8.0/21
+        ipCidrRange: 100.16.8.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
 
@@ -152,8 +152,8 @@ resources:
   properties:
     network: $(ref.boomi-network.selfLink)
     publicSubnet: $(ref.boomi-public-subnet.selfLink)
-    region: us-central1
-    machineType: n1-standard-2
+    region: {{ region }}
+    machineType: n1-standard-1
     machineImage: centos-cloud/global/images/family/centos-7
     minSize: 1
     maxSize: 5
