@@ -41,7 +41,7 @@ def GenerateConfig(context):
                       'network':
                           context.properties['network'],
                       'subnetwork':
-                          context.properties['publicsubnet'],
+                          context.properties['publicSubnet'],
                       'accessConfigs': [{
                           'name': 'External NAT',
                           'type': 'ONE_TO_ONE_NAT'
@@ -50,27 +50,7 @@ def GenerateConfig(context):
                   'metadata': {
                       'items': [{
                           'key': 'startup-script',
-                          'value': |
-                            #!/bin/bash
-                            #### Log the execution to a file ####
-                            exec 3>&1 4>&2
-                            trap 'exec 2>&4 1>&3' 0 1 2 3 RETURN
-                            exec 1>/var/log/configure-bastion.log 2>&1
-
-                            set -x
-                            #install kubectl
-                            curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-                            chmod +x ./kubectl
-                            sudo mv ./kubectl /usr/local/bin/kubectl
-                            kubectl version --client
-
-                            #mount filestore
-                            sudo yum -y update && sudo yum -y install nfs-utils
-                            sudo mkdir -p /mnt/boominfs
-                            sudo mount  context.properties["fileShareIp"]:/boomifileshare /mnt/boominfs
-
-                            export HOME='whoami'
-                            export KUBECONFIG=$HOME/.kube/config
+                          'value': context.properties['startupScript']
                         }]
                   },
                   'disks': [{

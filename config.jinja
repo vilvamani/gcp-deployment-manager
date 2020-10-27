@@ -106,13 +106,13 @@ resources:
   type: bastion_instance.py
   properties:
     network: $(ref.boomi-network.selfLink)
-    publicsubnet: $(ref.boomi-public-subnet.selfLink)
+    publicSubnet: $(ref.boomi-public-subnet.selfLink)
     region: us-central1
     machineType: n1-standard-2
     machineImage: centos-cloud/global/images/family/centos-7
     minSize: 1
     maxSize: 5
-    startup-script: |
+    startupScript: |
       #!/bin/bash
       #### Log the execution to a file ####
       exec 3>&1 4>&2
