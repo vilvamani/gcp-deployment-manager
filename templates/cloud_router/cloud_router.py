@@ -71,12 +71,3 @@ def generate_config(context):
                 }
             ]
     }
-
-
-def generate_network_url(context, network):
-    """Format the resource name as a resource URI."""
-
-    return 'projects/{}/global/networks/{}'.format(
-        context.env['project'],
-        network
-    )

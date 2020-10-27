@@ -56,8 +56,8 @@ resources:
         sourceRanges:
           - 0.0.0.0/0
 
-- name: boomi-xcloud-router
-  type: xcloud_router.py
+- name: boomi-cloud-router
+  type: cloud_router.py
   properties:
     name: boomi-cloud-router
     network: $(ref.boomi-network.selfLink)
