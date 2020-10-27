@@ -111,3 +111,4 @@ resources:
     machineImage: centos-cloud/global/images/family/centos-7
     minSize: 1
     maxSize: 5
+    fileShareIp: $(ref.cloud-filestore.networks[0].ipAddresses[0])
