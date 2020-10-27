@@ -35,9 +35,7 @@ def GenerateConfig(context):
           'type': 'compute.v1.instanceTemplate',
           'properties': {
               'properties': {
-                  'tags': {
-                    'items': ['bastion', 'allow-ssh-rpd']
-                  },
+                  'tags': context.properties['tags'],
                   'machineType':
                       context.properties['machineType'],
                   'networkInterfaces': [{

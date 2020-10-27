@@ -161,6 +161,9 @@ resources:
     machineImage: centos-cloud/global/images/family/centos-7
     minSize: 1
     maxSize: 2
+    tags:
+      items:
+        - bastion
     startupScript: |
       #!/bin/bash
       #### Log the execution to a file ####
