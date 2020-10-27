@@ -150,6 +150,7 @@ resources:
     network: $(ref.boomi-network.vpcName)
     CLUSTER_NAME: $(ref.boomi-gke-cluster.name)
     ipaddress: $(ref.cloud-filestore.fileShareIp)
+    ingressStaticIpName: $(ref.boomi-gke-network.ingressStaticIpName)
 
 - name: bastion-instance
   type: bastion_instance.py

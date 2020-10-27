@@ -88,7 +88,7 @@ def generate_config(context):
                     'value': out
                 },
                 {
-                    'name': 'ingressStaticIp',
+                    'name': 'ingressStaticIpName',
                     'value': '$(ref.ingressStaticIp.name)'
                 }
             ]
