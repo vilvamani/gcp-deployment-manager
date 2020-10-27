@@ -22,7 +22,7 @@ resources:
       - name: gkeconnect-api
         serviceName: gkeconnect.googleapis.com
 
-- name: boomiNetwork
+- name: boomi-network
   type: network.py
   properties:
     name: boomi-network
@@ -42,7 +42,7 @@ resources:
     dependsOn:
     - enableApis
 
-- name: boomiFirewall
+- name: boomi-firewall
   type: firewall.py
   properties:
     network: $(ref.boomi-network.selfLink)
@@ -77,7 +77,7 @@ resources:
         sourceRanges:
           - 0.0.0.0/0
 
-- name: boomiCloudRouter
+- name: boomi-cloud-router
   type: cloud_router.py
   properties:
     name: boomi-cloud-router
@@ -86,7 +86,7 @@ resources:
     asn: 65001
     nat-name: boomi-nat
 
-- name: cloudFilestore
+- name: cloud-filestore
   type: cloud_filestore.py
   properties:
     consumerId: {{ 'project:' + env['project'] }}
@@ -129,7 +129,7 @@ resources:
       #mount filestore
       sudo yum -y update && sudo yum -y install nfs-utils
       sudo mkdir -p /mnt/boominfs
-      sudo mount $(ref.cloudFilestore.fileSharesIp):/boomifileshare /mnt/boominfs
+      sudo mount $(ref.cloud-filestore.fileSharesIp):/boomifileshare /mnt/boominfs
 
       export HOME='whoami'
       export KUBECONFIG=$HOME/.kube/config
