@@ -24,11 +24,6 @@ resources:
 
 - name: boomi-network
   type: network.py
-  metadata:
-    dependsOn:
-    - enableApis
-    runtimePolicy:
-    - UPDATE_ALWAYS
   properties:
     name: boomi-network
     autoCreateSubnetworks: false
@@ -92,9 +87,7 @@ resources:
   type: cloud_filestore.py
   metadata:
     dependsOn:
-    - enableApis
-    runtimePolicy:
-    - UPDATE_ALWAYS
+    - $(ref.enableApis.name)
   properties:
     consumerId: {{ 'project:' + env['project'] }}
     location: {{ properties["zone"] }}
