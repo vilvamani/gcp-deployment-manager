@@ -22,3 +22,4 @@
 .vscode/
 
 templates/boomi_molecule_gke_hpa.yaml
+templates/boomi_molecule_gke_ingress.yaml
