@@ -98,9 +98,6 @@ resources:
         capacityGb: 1024
     networks:
       - network: $(ref.boomi-network.vpcName)
-  metadata:
-    dependsOn:
-      - enable_apis
 
 - name: bastion-instance
   type: bastion_instance.py
