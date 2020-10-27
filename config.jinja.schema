@@ -13,11 +13,14 @@ imports:
 - name: network.py
   path: templates/network/network.py
 
+- name: globaladdress.py
+  path: templates/network/globaladdress.py
+
 - name: firewall.py
-  path: templates/firewall/firewall.py
+  path: templates/network/firewall.py
     
 - name: cloud_router.py
-  path: templates/cloud_router/cloud_router.py
+  path: templates/network/cloud_router.py
 
 - name: cloud_filestore.py
   path: templates/cloud_filestore/cloud_filestore.py

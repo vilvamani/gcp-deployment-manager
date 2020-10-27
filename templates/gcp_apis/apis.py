@@ -21,14 +21,4 @@ def generate_config(context):
         )
 
 
-    return {
-        'resources':
-            resources,
-        'outputs':
-            [
-                {
-                    'name': 'name',
-                    'value': api['name']
-                }
-            ]
-    }
+    return { 'resources': resources }
