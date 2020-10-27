@@ -13,7 +13,7 @@ git clone -b develop https://github.com/vilvamani/gcp-deployment-manager.git && 
 ```
 
 ```
-gcloud deployment-manager deployments create boomi-qs --config=config.yaml
+gcloud deployment-manager deployments create boomi-net --config=config.yaml
 ```
 
 # GKE Credentials

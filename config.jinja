@@ -21,7 +21,7 @@ resources:
         privateIpGoogleAccess: true
         enableFlowLogs: false
 
-- name: boomi-allow-firewall
+- name: boomi-firewall
   type: firewall.py
   properties:
     network: $(ref.boomi-network.selfLink)
