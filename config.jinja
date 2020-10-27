@@ -38,6 +38,9 @@ resources:
         ipCidrRange: 172.16.8.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
+  metadata:
+    dependsOn:
+      - enable-apis
 
 - name: boomi-firewall
   type: firewall.py
