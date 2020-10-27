@@ -26,25 +26,25 @@ def generate_config(context):
     resources = [
         {
             'type': 'compute.v1.network',
-            'name': 'static-ip',
+            'name': name,
             'properties':
                 {
-                    'name': 'static-ip',
+                    'name': name,
                     'autoCreateSubnetworks': auto_create_subnetworks
                 }
-        }
-    ]
-
-    resources.append(
+        },
         {
             'type': 'compute.v1.globalAddress',
-            'name': name,
+            'name': 'static-ip',
             'properties': {
-                'name': name,
+                'name': 'static-ip',
                 'ipVersion': 'IPV4',
                 'networkTier': 'PREMIUM'
             }
         }
+    ]
+
+    resources.append(
     )
 
     # Subnetworks:
