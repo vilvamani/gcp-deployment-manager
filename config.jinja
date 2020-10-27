@@ -4,7 +4,7 @@
 {% set CommonTags = properties["CommonTags"] %}
 
 resources:
-- name: boomi-network
+- name: network
   type: network.py
   properties:
     name: boomi-network
@@ -66,6 +66,6 @@ resources:
     nat-name: boomi-nat
   metadata:
     dependsOn:
-      - boomi-network
+      - network
     runtimePolicy:
       - UPDATE_ALWAYS
