@@ -96,7 +96,7 @@ resources:
       - network: $(ref.boomi-network.vpcName)
   metadata:
     dependsOn:
-    - enable-apis
+      - enable-apis
 
 - name: bastion-instance
   type: bastion_instance.py
