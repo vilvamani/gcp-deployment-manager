@@ -44,9 +44,6 @@ def generate_config(context):
         }
     ]
 
-    resources.append(
-    )
-
     # Subnetworks:
     out = {}
     for subnetwork in context.properties.get('subnetworks', []):
