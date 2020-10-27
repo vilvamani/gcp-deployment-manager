@@ -21,7 +21,10 @@ imports:
 
 - name: cloud_filestore.py
   path: templates/cloud_filestore/cloud_filestore.py
-    
+
+- name: bastion_instance.py
+  path: templates/bastion_instance/bastion_instance.py
+
 required:
   - region
   - zone

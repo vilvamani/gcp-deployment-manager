@@ -97,3 +97,12 @@ resources:
   metadata:
     dependsOn:
       - enable-apis
+
+- name: bastion-instance
+  type: bastion_instance.py
+  properties:
+    network: $(ref.boomi-network.selfLink)
+    machineType: f1-micro
+    machineImage: centos-cloud/global/images/family/centos-7
+    minSize: 1
+    maxSize: 5

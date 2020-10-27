@@ -1,0 +1,32 @@
+# Copyright 2016 Google Inc. All rights reserved.
+
+info:
+  title: VM-based high-availability service
+  author: Google, Inc.
+  description: |
+    A Debian image based IGM running in a region.
+    This templates creates:
+    + Instance Template
+    + Instance Group Manager
+    + Autoscaler
+    + Load Balancer
+
+required:
+- region
+
+properties:
+  region:
+    type: string
+    description: Region in which to run the service
+  minSize:
+    type: integer
+    description: Minimum size of the cluster.
+    default: 1
+  maxSize:
+    type: integer
+    description: Maximum size of the cluster for autoscaling
+    default: 90
+  port:
+    type: integer
+    description: The port on which the load balancer should listen
+    default: 80
