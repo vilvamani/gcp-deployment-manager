@@ -7,19 +7,18 @@ def generate_config(context):
 
     name = context.properties.get('name') or context.env['name']
 
-    resources = []
-    resources.append(
-    {
-        'name': name,
-        'action': 'gcp-types/compute-v1:globalAddresses',
-        'properties': 
-            {
-                'name': name,
-                'ipVersion': 'IPV4',
-                'networkTier': 'PREMIUM'
-            }
+    resources = [
+        {
+            'name': name,
+            'type': 'compute.v1.globalAddress',
+            'properties': 
+                {
+                    'name': name,
+                    'ipVersion': 'IPV4'
+                }
         }
-    )
+    ]
+
 
     return {
         'resources':
