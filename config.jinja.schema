@@ -13,9 +13,6 @@ imports:
 - name: network.py
   path: templates/network/network.py
 
-- name: globaladdress.py
-  path: templates/network/globaladdress.py
-
 - name: firewall.py
   path: templates/network/firewall.py
     

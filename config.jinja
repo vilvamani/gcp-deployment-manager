@@ -41,11 +41,6 @@ resources:
         privateIpGoogleAccess: true
         enableFlowLogs: false
 
-- name: boomi-staticIp
-  type: globaladdress.py
-  properties:
-    name: boomi-staticIp
-
 - name: boomi-firewall
   type: firewall.py
   properties:
@@ -155,7 +150,7 @@ resources:
     network: $(ref.boomi-network.vpcName)
     CLUSTER_NAME: $(ref.boomi-gke-cluster.name)
     ipaddress: $(ref.cloud-filestore.fileShareIp)
-    ingressStaticIpName: $(ref.boomi-staticIp.ingressStaticIpName)
+    ingressStaticIpName: $(ref.boomi-network.staticIpName)
 
 - name: bastion-instance
   type: bastion_instance.py
