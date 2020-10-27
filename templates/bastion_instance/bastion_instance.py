@@ -36,9 +36,7 @@ def GenerateConfig(context):
           'properties': {
               'properties': {
                   'tags':
-                    'items':
-                        - 'bastion'
-                        - 'allow-ssh-rpd'
+                    'items': ['bastion', 'allow-ssh-rpd']
                   'machineType':
                       context.properties['machineType'],
                   'networkInterfaces': [{
