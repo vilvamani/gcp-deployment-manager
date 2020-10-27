@@ -87,7 +87,7 @@ resources:
   type: cloud_filestore.py
   metadata:
     dependsOn:
-    - $(ref.enableApis.name)
+    - fileShareApi
   properties:
     consumerId: {{ 'project:' + env['project'] }}
     location: {{ properties["zone"] }}
