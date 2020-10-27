@@ -70,7 +70,7 @@ def GenerateConfig(context):
           'type': 'compute.v1.regionInstanceGroupManager',
           'properties': {
               'region': region,
-              'failoverAction': 'NO_FAILOVER'
+              'failoverAction': 'NO_FAILOVER',
               'baseInstanceName': deployment + '-instance',
               'instanceTemplate': '$(ref.' + instance_template + '.selfLink)',
               'targetSize': 1
