@@ -4,7 +4,7 @@
 {% set CommonTags = properties["CommonTags"] %}
 
 resources:
-- name: enable_apis
+- name: enableApis
   type: apis.py
   properties:
     consumerId: {{ 'project:' + env['project'] }}
@@ -22,7 +22,7 @@ resources:
       - name: gkeconnect-api
         serviceName: gkeconnect.googleapis.com
 
-- name: boomi-network
+- name: boomiNetwork
   type: network.py
   properties:
     name: boomi-network
@@ -40,9 +40,9 @@ resources:
         enableFlowLogs: false
   metadata:
     dependsOn:
-      - enable-apis
+    - enableApis
 
-- name: boomi-firewall
+- name: boomiFirewall
   type: firewall.py
   properties:
     network: $(ref.boomi-network.selfLink)
@@ -77,7 +77,7 @@ resources:
         sourceRanges:
           - 0.0.0.0/0
 
-- name: boomi-cloud-router
+- name: boomiCloudRouter
   type: cloud_router.py
   properties:
     name: boomi-cloud-router
@@ -86,7 +86,7 @@ resources:
     asn: 65001
     nat-name: boomi-nat
 
-- name: cloud-filestore
+- name: cloudFilestore
   type: cloud_filestore.py
   properties:
     consumerId: {{ 'project:' + env['project'] }}
@@ -98,6 +98,9 @@ resources:
         capacityGb: 1024
     networks:
       - network: $(ref.boomi-network.vpcName)
+  metadata:
+    dependsOn:
+    - enableApis
 
 - name: bastion-instance
   type: bastion_instance.py
@@ -126,7 +129,7 @@ resources:
       #mount filestore
       sudo yum -y update && sudo yum -y install nfs-utils
       sudo mkdir -p /mnt/boominfs
-      sudo mount $(ref.cloud-filestore.fileSharesIp):/boomifileshare /mnt/boominfs
+      sudo mount $(ref.cloudFilestore.fileSharesIp):/boomifileshare /mnt/boominfs
 
       export HOME='whoami'
       export KUBECONFIG=$HOME/.kube/config
