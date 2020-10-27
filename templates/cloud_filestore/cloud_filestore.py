@@ -6,8 +6,8 @@ import time
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    time.sleep(150)
-    
+    time.sleep(90)
+
     resources = []
     properties = context.properties
     project_id = properties.get('project', context.env['project'])
