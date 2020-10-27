@@ -32,7 +32,10 @@ def generate_config(context):
                     'name': 'static-ip',
                     'autoCreateSubnetworks': auto_create_subnetworks
                 }
-        },
+        }
+    ]
+
+    resources.append(
         {
             'type': 'compute.v1.globalAddress',
             'name': name,
@@ -42,7 +45,7 @@ def generate_config(context):
                 'networkTier': 'PREMIUM'
             }
         }
-    ]
+    )
 
     # Subnetworks:
     out = {}
