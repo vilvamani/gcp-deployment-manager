@@ -9,13 +9,13 @@ def generate_config(context):
 
     resources = [
         {
-            'name': name,
             'type': 'compute.v1.globalAddress',
+            'name': name,
             'properties': 
-                {
-                    'name': name,
-                    'ipVersion': 'IPV4'
-                }
+            {
+                'name': name,
+                'ipVersion': 'IPV4'
+            }
         }
     ]
 
