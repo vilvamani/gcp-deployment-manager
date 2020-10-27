@@ -7,10 +7,20 @@ resources:
 - name: enable-apis
   type: apis.py
   properties:
+    consumerId: {{ 'project:' + env['project'] }}
     apis:
       - name: cloudresourcemanager-api
-        consumerId: {{ 'project:' + env['project'] }}
         serviceName: cloudresourcemanager.googleapis.com
+      - name: endpoints-api
+        serviceName: endpoints.googleapis.com
+      - name: enable-filestore-api
+        serviceName: file.googleapis.com
+      - name: iam-api
+        serviceName: iam.googleapis.com
+      - name: enable-gke-api
+        serviceName: container.googleapis.com
+      - name: enable-gkeconnect-api
+        serviceName: gkeconnect.googleapis.com
 
 - name: boomi-network
   type: network.py
