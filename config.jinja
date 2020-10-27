@@ -21,6 +21,8 @@ resources:
         serviceName: container.googleapis.com
       - name: gkeconnectApi
         serviceName: gkeconnect.googleapis.com
+      - name: computeApi
+        serviceName: compute.googleapis.com
 
 - name: boomi-network
   type: network.py
@@ -84,18 +86,16 @@ resources:
     nat-name: boomi-nat
 
 - name: cloud-filestore
-  type: cloud_filestore.py
+  type: cloud_filestore.jinja
   properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    location: {{ properties["zone"] }}
     description: Boomi File Store
+    location: {{ properties["zone"] }}
     tier: STANDARD
     fileShares:
       - name: boomifileshare
         capacityGb: 1024
     networks:
       - network: $(ref.boomi-network.vpcName)
-    internalIp: $(ref.bastion-instance.internalIp)
   metadata:
     dependsOn:
       - fileShareApi
