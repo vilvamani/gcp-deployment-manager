@@ -15,6 +15,9 @@ imports:
     
 - name: cloud_router.py
   path: templates/cloud_router/cloud_router.py
+
+- name: cloud_filestore.py
+  path: templates/cloud_router/cloud_filestore.py
     
 required:
   - region

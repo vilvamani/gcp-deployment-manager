@@ -64,3 +64,15 @@ resources:
     region: us-central1
     asn: 65001
     nat-name: boomi-nat
+
+- name: test-filestore
+  type: cloud_filestore.py
+  properties:
+    location: "/boomifileshare"
+    description: Boomi File Store
+    tier: STANDARD
+    fileShares:
+      - name: boomifileshare
+        capacityGb: 1024
+    networks:
+      - network: $(ref.boomi-network.vpcName)
