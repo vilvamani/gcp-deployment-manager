@@ -40,6 +40,8 @@ def GenerateConfig(context):
                   'networkInterfaces': [{
                       'network':
                           context.properties['network'],
+                      'subnetwork':
+                          context.properties['publicsubnet'],
                       'accessConfigs': [{
                           'name': 'External NAT',
                           'type': 'ONE_TO_ONE_NAT'
