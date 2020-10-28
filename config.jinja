@@ -142,6 +142,10 @@ resources:
       autoscaling:
         enableNodeAutoprovisioning: True
         autoscalingProfile: OPTIMIZE_UTILIZATION
+        autoprovisioningNodePoolDefaults:
+          serviceAccount: $(ref.boomi-gke-sa.email)
+          oauthScopes:
+            - https://www.googleapis.com/auth/cloud-platform
         resourceLimits:
         - resourceType: cpu
           minimum: '1'
@@ -153,6 +157,8 @@ resources:
         httpLoadBalancing:
           disabled: false
         gcePersistentDiskCsiDriverConfig:
+          enabled: true
+        configConnectorConfig:
           enabled: true
       nodePools:
         - name: boomi-gke-pool
@@ -187,7 +193,9 @@ resources:
         servicesIpv4CidrBlock: 192.168.192.0/24
       masterAuth:
         clientCertificateConfig:
-          issueClientCertificate: False
+          issueClientCertificate: false
+      workloadIdentityConfig:
+        workloadPool: {{ env['project'] }}.svc.id.goog
       maintenancePolicy:
         window:
           recurringWindow:
