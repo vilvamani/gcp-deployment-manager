@@ -7,8 +7,11 @@ info:
 imports:
 - path: config.jinja
 
+- name: service-account.py
+  path: templates/iam/service-account.py
+
 - name: apis.py
-  path: templates/gcp_apis/apis.py
+  path: templates/iam/apis.py
 
 - name: network.py
   path: templates/network/network.py
