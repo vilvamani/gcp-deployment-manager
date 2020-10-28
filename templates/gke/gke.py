@@ -104,22 +104,13 @@ def generate_config(context):
         'endpoint',
         'currentMasterVersion',
         'servicesIpv4Cidr',
-        'instanceGroupUrls',
-        #'clientCertificate',
-        'clientKey',
-        'clusterCaCertificate'
+        'instanceGroupUrls'
     ]
 
     for outprop in output_props:
         output_obj = {}
         output_obj['name'] = outprop
-        ma_props = ['clusterCaCertificate', 'clientKey']
-        if outprop in ma_props:
-            output_obj['value'] = '$(ref.{}.masterAuth.{})'.format(
-                name,
-                outprop
-            )
-        elif outprop == 'instanceGroupUrls':
+        if outprop == 'instanceGroupUrls':
             for index, _ in enumerate(propc['nodePools']):
                 output_obj['value'] = '$(ref.{}.nodePools[{}].{})'.format(
                     name,
