@@ -45,8 +45,7 @@ def generate_config(context):
                     'network':
                         get_network(context.properties),
                     'region':
-                        context.properties['region'],
-                    'nats': context.properties['nat']
+                        context.properties['region']
                 }
         }
     ]
