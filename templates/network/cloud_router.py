@@ -30,6 +30,7 @@ def generate_config(context):
     """ Entry point for the deployment resources. """
 
     name = context.properties.get('name', context.env['name'])
+    project_id = context.properties.get('project', context.env['project'])
 
     resources = [
         {
@@ -41,6 +42,8 @@ def generate_config(context):
                         name,
                     'network':
                         get_network(context.properties),
+                    'project':
+                        project_id,
                     'region':
                         context.properties['region'],
                     'nats': [{
