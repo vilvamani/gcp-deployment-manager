@@ -113,8 +113,8 @@ resources:
     name: boomi-cloud-router
     network: $(ref.boomi-network.selfLink)
     region: {{ region }}
-    asn: 65001
     nat-name: boomi-nat
+    subnet: $(ref.boomi-private-subnet.selfLink)
 
 - name: cloud-filestore
   type: cloud_filestore.py

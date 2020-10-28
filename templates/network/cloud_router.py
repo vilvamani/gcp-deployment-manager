@@ -39,13 +39,19 @@ def generate_config(context):
                 {
                     'name':
                         name,
-                    'bgp': {
-                        'asn': context.properties['asn']
-                    },
                     'network':
                         get_network(context.properties),
                     'region':
-                        context.properties['region']
+                        context.properties['region'],
+                    'nats': [{
+                        "name": context.properties['nat-name'],
+                        "natIpAllocateOption": "AUTO_ONLY",
+                        "sourceSubnetworkIpRangesToNat": "LIST_OF_SUBNETWORKS",
+                        "subnetworks": [{
+                            "name": context.properties['subnet'],
+                            "sourceIpRangesToNat": ["PRIMARY_IP_RANGE"]
+                        }]
+                    }]
                 }
         }
     ]
