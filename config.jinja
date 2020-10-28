@@ -114,13 +114,7 @@ resources:
     network: $(ref.boomi-network.selfLink)
     region: {{ region }}
     asn: 65001
-    natGateway:
-    - name: boomi-nat
-      natIpAllocateOption: "AUTO_ONLY"
-      sourceSubnetworkIpRangesToNat: "LIST_OF_SUBNETWORKS"
-      subnetworks:
-      - name: $(ref.boomi-private-subnet.selfLink)
-        sourceIpRangesToNat: ["PRIMARY_IP_RANGE"]
+    nat-name: boomi-nat
 
 - name: cloud-filestore
   type: cloud_filestore.py
