@@ -105,7 +105,7 @@ def generate_config(context):
         'currentMasterVersion',
         'servicesIpv4Cidr',
         'instanceGroupUrls',
-        'clientCertificate',
+        #'clientCertificate',
         'clientKey',
         'clusterCaCertificate'
     ]
