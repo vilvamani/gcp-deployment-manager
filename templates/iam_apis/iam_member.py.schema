@@ -1,0 +1,44 @@
+# Copyright 2018 Google Inc. All rights reserved.
+
+info:
+  title: IAM policy member
+  author: Sourced Group Inc.
+  description: Manages an IAM policy member
+
+imports:
+  - path: iam_member.py
+
+required:
+  - roles
+
+properties:
+  projectId:
+    type: string
+    description:  |
+     Overwrite of project ID in case IAM bindings are referencing to
+     a different project.
+  roles:
+    type: array
+    description: An array of roles and members.
+    items:
+      role:
+        type: string
+        description: The role to grant to members.
+      members:
+        type: array
+        description: A list of identities.
+        items:
+          type: string
+          description: |
+            Specifies the identity requesting access to a Cloud Platform
+            resource. Can have the following values:
+              - user:{emailid} - An email address that represents a specific
+                IAM User account. For example, user:name@example.com
+              - serviceAccount:{emailid} - An email address that represents a
+                Service Account. For example,
+                serviceAccount:my-other-app@appspot.gserviceaccount.com
+              - group:{emailid} - An email address that represents a Google group.
+                For example, group:admins@example.com
+              - domain:{domain} - A Cloud Identity or G Suite domain name that 
+                represents all the users of that domain. For example, acme.com 
+                or example.com.

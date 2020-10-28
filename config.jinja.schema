@@ -11,7 +11,10 @@ imports:
   path: templates/iam/service-account.py
 
 - name: apis.py
-  path: templates/iam/apis.py
+  path: templates/iam_apis/apis.py
+
+- name: iam_member.py
+  path: templates/iam_apis/iam_member.py
 
 - name: network.py
   path: templates/network/network.py

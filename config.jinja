@@ -4,8 +4,38 @@
 {% set CommonTags = properties["CommonTags"] %}
 
 resources:
-- name: boomi-service-account
-  type: service-account.py
+
+- name: boomi-bastion-sa
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: bastion
+    displayName: Bastion Service Account
+
+- name: boomi-cloudbuild-sa
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: cloudbuild
+    displayName: CloudBuild Service Account
+
+- name: devopstar-bastion-iam-member
+  type: iam_member.py
+  properties:
+    roles:
+      - role: roles/container.admin
+        members:
+          - serviceAccount:$(ref.boomi-bastion-sa.email)
+          - serviceAccount:$(ref.boomi-cloudbuild-sa.email)
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
+      - role: roles/compute.instanceAdmin
+        members:
+          - serviceAccount:$(ref.boomi-bastion-sa.email)
+          - serviceAccount:$(ref.boomi-cloudbuild-sa.email)
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
+      - role: roles/storage.admin
+        members:
+          - serviceAccount:$(ref.boomi-bastion-sa.email)
+          - serviceAccount:$(ref.boomi-cloudbuild-sa.email)
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
 
 - name: enableApis
   type: apis.py
