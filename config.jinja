@@ -9,12 +9,14 @@ resources:
   type: iam.v1.serviceAccount
   properties:
     accountId: bastion
+    projectId: {{ project }}
     displayName: Bastion Service Account
 
 - name: boomi-cloudbuild-sa
   type: iam.v1.serviceAccount
   properties:
     accountId: cloudbuild
+    projectId: {{ project }}
     displayName: CloudBuild Service Account
 
 - name: devopstar-bastion-iam-member
@@ -25,16 +27,19 @@ resources:
         members:
           - serviceAccount:$(ref.boomi-bastion-sa.email)
           - serviceAccount:$(ref.boomi-cloudbuild-sa.email)
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
       - role: roles/compute.instanceAdmin
         members:
           - serviceAccount:$(ref.boomi-bastion-sa.email)
           - serviceAccount:$(ref.boomi-cloudbuild-sa.email)
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
       - role: roles/storage.admin
         members:
           - serviceAccount:$(ref.boomi-bastion-sa.email)
           - serviceAccount:$(ref.boomi-cloudbuild-sa.email)
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
 
 - name: enableApis
