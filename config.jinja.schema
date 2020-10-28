@@ -52,13 +52,13 @@ properties:
     description: The zone the cluster belongs to.
     
   BoomiUsername:
-    type: password
+    type: string
     default: vilvamani007@gmail.com
 
   BoomiPassword:
-    type: password
+    type: string
     default: google#2020
 
   BoomiAccount:
-    type: password
+    type: string
     default: google-microsoft
