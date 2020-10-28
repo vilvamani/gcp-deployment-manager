@@ -37,9 +37,9 @@ def GenerateConfig(context):
               'properties': {
                   'serviceAccounts': [{
                       'email': 
-                          context.properties['saEmail'],
+                          context.properties['serviceAccountEmail'],
                        'scopes':
-                          context.properties['saScopes']
+                          context.properties['serviceAccountScopes']
                   }],
                   'tags': context.properties['tags'],
                   'machineType':

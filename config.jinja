@@ -193,8 +193,8 @@ resources:
     machineImage: centos-cloud/global/images/family/centos-7
     minSize: 1
     maxSize: 2
-    saEmail: $(ref.boomi-service-account.boomiServiceAccountEmail)
-    saScopes:
+    serviceAccountEmail: $(ref.boomi-bastion-sa.email)
+    serviceAccountScopes:
       - https://www.googleapis.com/auth/compute
       - https://www.googleapis.com/auth/devstorage.read_only
       - https://www.googleapis.com/auth/logging.write
