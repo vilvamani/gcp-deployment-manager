@@ -19,25 +19,23 @@ resources:
     projectId: {{ project }}
     displayName: GKE Cluster Service Account
 
-- name: devopstar-bastion-iam-member
+- name: boomi-iam-member
   type: iam_member.py
   properties:
     roles:
       - role: roles/container.admin
         members:
           - "serviceAccount:$(ref.boomi-bastion-sa.email)"
+          - "serviceAccount:$(ref.boomi-gke-sa.email)"
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
-          - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
       - role: roles/compute.instanceAdmin
         members:
           - "serviceAccount:$(ref.boomi-bastion-sa.email)"
           - "serviceAccount:$(ref.boomi-gke-sa.email)"
-          - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
       - role: roles/storage.admin
         members:
           - "serviceAccount:$(ref.boomi-bastion-sa.email)"
           - "serviceAccount:$(ref.boomi-gke-sa.email)"
-          - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
 
 - name: enableApis
   type: apis.py
@@ -141,12 +139,28 @@ resources:
       network: $(ref.boomi-network.vpcName)
       subnetwork: $(ref.boomi-private-subnet.selfLink)
       initialClusterVersion: 1.17.12-gke.1501
+      autoscaling:
+        enableNodeAutoprovisioning: True
+        autoscalingProfile: OPTIMIZE_UTILIZATION
+        resourceLimits:
+        - resourceType: cpu
+          minimum: '1'
+          maximum: '10'
+        - resourceType: memory
+          minimum: '1'
+          maximum: '10'
+      addonsConfig:
+        httpLoadBalancing:
+          disabled: false
+        gcePersistentDiskCsiDriverConfig:
+          enabled: true
       nodePools:
         - name: boomi-gke-pool
           initialNodeCount: 1
           version: 1.17.12-gke.1501
           config:
             machineType: n1-standard-1
+            diskSizeGb: 50
             serviceAccount: $(ref.boomi-gke-sa.email)
             oauthScopes:
               - https://www.googleapis.com/auth/compute
@@ -174,6 +188,13 @@ resources:
       masterAuth:
         clientCertificateConfig:
           issueClientCertificate: True
+      maintenancePolicy:
+        window:
+          recurringWindow:
+            window:
+              startTime: "2020-11-01T07:00:25Z"
+              endTime: "2021-11-01T07:00:25Z"
+            recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
 
 - name: boomi-gke-cloudbuild
   type: cloudbuild.jinja
