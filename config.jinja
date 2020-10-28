@@ -13,6 +13,7 @@ resources:
   type: enable-apis.jinja
   properties:
     boomisa: $(ref.boomi-service-account.BoomiSA)
+    enableCloudApis: {{ properties["enableCloudApis"] }}
     
 - name: boomi-gke-network
   type: network.jinja

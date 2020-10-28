@@ -1,87 +1,56 @@
-{% set BOOMI_SA = properties["boomisa"] %}
+{% set boomiSA = properties["boomisa"] %}
+{% set enableCloudApis = properties["enableCloudApis"] %}
+{% set deployment = env["deployment"] %}
+{% set project = env["project"] %}
 
 resources:
-- name: resource-manager-api
+{% for api in enableCloudApis %}
+- name: {{ deployment + '-enable-api-' + api }}
   action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
   properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: cloudresourcemanager.googleapis.com
-
-- name: endpoints-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: endpoints.googleapis.com
-
-- name: iam-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: iam.googleapis.com
-
-- name: enable-gke-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: container.googleapis.com
-
-- name: enable-gkeconnect-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: gkeconnect.googleapis.com
-
-- name: enable-filestore-api
-  action: 'gcp-types/servicemanagement-v1:servicemanagement.services.enable'
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    serviceName: file.googleapis.com
+    consumerId: {{ 'project:' + project }}
+    serviceName: {{ api }}
+{% endfor %}
 
 {# Get the IAM policy first so that we do not remove any existing bindings. #}
-- name: get-iam-policy
+- name: {{ deployment  + '-get-iam-policy' }}
   action: gcp-types/cloudresourcemanager-v1:cloudresourcemanager.projects.getIamPolicy
   properties:
-    resource: {{ env['project'] }}
+    resource: {{ project }}
   metadata:
-    dependsOn:
-      - resource-manager-api
-      - iam-api
     runtimePolicy:
       - UPDATE_ALWAYS
 
-- name: patch-iam-policy
+- name: {{ deployment  + '-patch-iam-policy' }}
   action: gcp-types/cloudresourcemanager-v1:cloudresourcemanager.projects.setIamPolicy
   properties:
-    resource: {{ env['project'] }}
-    policy: $(ref.get-iam-policy)
+    resource: {{ project }}
+    policy: $(ref.{{ deployment  + '-get-iam-policy' }})
     gcpIamPolicyPatch:
       add:
       - role: roles/container.admin
         members:
-        - {{ 'serviceAccount:' +  BOOMI_SA }}
+        - {{ 'serviceAccount:' +  boomiSA }}
         - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
       - role: roles/iam.serviceAccountUser
         members:
-        - {{ 'serviceAccount:' +  BOOMI_SA }}
+        - {{ 'serviceAccount:' +  boomiSA }}
       - role: roles/servicemanagement.admin
         members:
-        - {{ 'serviceAccount:' +  BOOMI_SA }}
+        - {{ 'serviceAccount:' +  boomiSA }}
       - role: roles/compute.instanceAdmin
         members:
-        - {{ 'serviceAccount:' +  BOOMI_SA }}
+        - {{ 'serviceAccount:' +  boomiSA }}
       - role: roles/storage.admin
         members:
-        - {{ 'serviceAccount:' +  BOOMI_SA }}
+        - {{ 'serviceAccount:' +  boomiSA }}
       - role: roles/logging.logWriter
         members:
-        - {{ 'serviceAccount:' +  BOOMI_SA }}
+        - {{ 'serviceAccount:' +  boomiSA }}
       - role: roles/monitoring.metricWriter
         members:
-        - {{ 'serviceAccount:' +  BOOMI_SA }}
+        - {{ 'serviceAccount:' +  boomiSA }}
       remove: []
   metadata:
-    dependsOn:
-      - get-iam-policy
-      - iam-api
     runtimePolicy:
       - UPDATE_ALWAYS
