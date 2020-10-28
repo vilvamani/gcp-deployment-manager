@@ -12,6 +12,13 @@ resources:
     projectId: {{ project }}
     displayName: Bastion Service Account
 
+- name: boomi-gke-sa
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: bastion
+    projectId: {{ project }}
+    displayName: Bastion Service Account
+
 - name: devopstar-bastion-iam-member
   type: iam_member.py
   properties:
@@ -24,12 +31,12 @@ resources:
       - role: roles/compute.instanceAdmin
         members:
           - "serviceAccount:$(ref.boomi-bastion-sa.email)"
-          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+          - "serviceAccount:$(ref.boomi-gke-sa.email)"
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
       - role: roles/storage.admin
         members:
           - "serviceAccount:$(ref.boomi-bastion-sa.email)"
-          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+          - "serviceAccount:$(ref.boomi-gke-sa.email)"
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudservices.gserviceaccount.com' }}
 
 - name: enableApis
@@ -140,6 +147,7 @@ resources:
           version: 1.17.12-gke.1501
           config:
             machineType: n1-standard-1
+            serviceAccount: $(ref.boomi-gke-sa.email)
             oauthScopes:
               - https://www.googleapis.com/auth/compute
               - https://www.googleapis.com/auth/cloud-platform
