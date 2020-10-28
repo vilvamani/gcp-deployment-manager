@@ -168,13 +168,15 @@ resources:
             serviceAccount: $(ref.boomi-gke-sa.email)
             oauthScopes:
               - https://www.googleapis.com/auth/cloud-platform
+            workloadMetadataConfig:
+              nodeMetadata: SECURE
           autoscaling:
             enabled: True
             minNodeCount: 1
             maxNodeCount: 25
           management:
-            autoUpgrade: True
-            autoRepair: True
+            autoUpgrade: true
+            autoRepair: true
       loggingService: logging.googleapis.com/kubernetes
       monitoringService: monitoring.googleapis.com/kubernetes
       privateClusterConfig:
@@ -190,6 +192,9 @@ resources:
           issueClientCertificate: false
       workloadIdentityConfig:
         workloadPool: {{ project }}.svc.id.goog
+      networkPolicy:
+        provider: CALICO
+        enabled: true
       maintenancePolicy:
         window:
           recurringWindow:
