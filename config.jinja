@@ -37,7 +37,7 @@ resources:
           - "serviceAccount:$(ref.boomi-bastion-sa.email)"
           - "serviceAccount:$(ref.boomi-gke-sa.email)"
 
-- name: enableApis
+- name: boomi-enableApis
   type: apis.py
   properties:
     consumerId: {{ 'project:' + env['project'] }}
