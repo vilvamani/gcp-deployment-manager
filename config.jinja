@@ -114,7 +114,13 @@ resources:
     network: $(ref.boomi-network.selfLink)
     region: {{ region }}
     asn: 65001
-    nat-name: boomi-nat
+    nats:
+    - name: boomi-nat
+      natIpAllocateOption: "AUTO_ONLY"
+      sourceSubnetworkIpRangesToNat: "LIST_OF_SUBNETWORKS"
+      subnetworks:
+      - name: $(ref.boomi-private-subnet.selfLink)
+        sourceIpRangesToNat: ["PRIMARY_IP_RANGE"]
 
 - name: cloud-filestore
   type: cloud_filestore.py
@@ -157,8 +163,6 @@ resources:
         httpLoadBalancing:
           disabled: false
         gcePersistentDiskCsiDriverConfig:
-          enabled: true
-        configConnectorConfig:
           enabled: true
       nodePools:
         - name: boomi-gke-pool
