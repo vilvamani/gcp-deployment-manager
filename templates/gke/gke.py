@@ -113,7 +113,7 @@ def generate_config(context):
     for outprop in output_props:
         output_obj = {}
         output_obj['name'] = outprop
-        ma_props = ['clusterCaCertificate', 'clientCertificate', 'clientKey']
+        ma_props = ['clusterCaCertificate', 'clientKey']
         if outprop in ma_props:
             output_obj['value'] = '$(ref.{}.masterAuth.{})'.format(
                 name,
