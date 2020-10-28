@@ -15,9 +15,9 @@ resources:
 - name: boomi-gke-sa
   type: iam.v1.serviceAccount
   properties:
-    accountId: bastion
+    accountId: gke-cluster
     projectId: {{ project }}
-    displayName: Bastion Service Account
+    displayName: GKE Cluster Service Account
 
 - name: devopstar-bastion-iam-member
   type: iam_member.py
