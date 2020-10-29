@@ -139,20 +139,6 @@ resources:
       network: $(ref.boomi-network.vpcName)
       subnetwork: $(ref.boomi-private-subnet.selfLink)
       initialClusterVersion: 1.17.12-gke.1501
-      autoscaling:
-        enableNodeAutoprovisioning: True
-        autoscalingProfile: OPTIMIZE_UTILIZATION
-        autoprovisioningNodePoolDefaults:
-          serviceAccount: $(ref.boomi-gke-sa.email)
-          oauthScopes:
-            - https://www.googleapis.com/auth/cloud-platform
-        resourceLimits:
-        - resourceType: cpu
-          minimum: '1'
-          maximum: '16'
-        - resourceType: memory
-          minimum: '1'
-          maximum: '16'
       addonsConfig:
         httpLoadBalancing:
           disabled: false
