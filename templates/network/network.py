@@ -16,6 +16,7 @@
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
+    deployment = context.env['deployment']
     name = context.properties.get('name') or context.env['name']
     network_self_link = '$(ref.{}.selfLink)'.format(name)
     auto_create_subnetworks = context.properties.get(
@@ -35,9 +36,9 @@ def generate_config(context):
         },
         {
             'type': 'compute.v1.globalAddress',
-            'name': 'static-ip',
+            'name': deployment +'-static-ip',
             'properties': {
-                'name': 'static-ip',
+                'name':  deployment +'-static-ip',
                 'ipVersion': 'IPV4',
                 'networkTier': 'PREMIUM'
             }
