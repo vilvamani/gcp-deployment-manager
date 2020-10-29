@@ -77,7 +77,7 @@ resources:
   properties:
     network: $(ref.boomi-network.selfLink)
     rules:
-      - name: {{ deployment + '-boomi-allow-ssh-to-bastion' }}
+      - name: {{ deployment }}-boomi-allow-ssh-to-bastion
         description: Allow SSH from anywhere to Bastion
         allowed:
           - IPProtocol: tcp
@@ -89,7 +89,7 @@ resources:
           - 0.0.0.0/0
         targetTags:
           - bastion
-      - name: {{ deployment + '-boomi-allow-http-https' }}
+      - name: {{ deployment }}-boomi-allow-http-https
         description: Allow HTTP/HTTPS from anywhere
         allowed:
           - IPProtocol: tcp
@@ -99,7 +99,7 @@ resources:
         direction: INGRESS
         sourceRanges:
           - 0.0.0.0/0
-      - name: {{ deployment + '-boomi-allow-icmp' }}
+      - name: {{ deployment }}-boomi-allow-icmp
         description: Allow ICMP from anywhere
         allowed:
           - IPProtocol: ICMP
