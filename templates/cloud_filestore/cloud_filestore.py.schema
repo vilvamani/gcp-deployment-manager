@@ -1,4 +1,4 @@
-# Copyright 2018 Google Inc. All rights reserved.
+# Copyright 2020 Dell Boomi. All rights reserved.
 
 info:
   title: Google Cloud Filestore
@@ -6,13 +6,6 @@ info:
   version: 1.0.0
   description: |
     Supports creation of a Filestore instance.
-
-    For more information on this resource:
-    https://cloud.google.com/filestore/docs/reference/rest/.
-
-    APIs endpoints used by this template:
-    - gcp-types/file-v1beta1:instances =>
-        https://cloud.google.com/filestore/docs/reference/rest/v1beta1/projects.locations.instances/create
 
 additionalProperties: false
 

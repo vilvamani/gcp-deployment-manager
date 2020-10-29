@@ -1,3 +1,5 @@
+# Copyright 2020 Dell Boomi. All rights reserved.
+
 info:
   title: Boomi GKE Molecule
   author: Vilvamani Arumugam <vilvamani007@gmail.com>
