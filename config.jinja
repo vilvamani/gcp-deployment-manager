@@ -10,14 +10,14 @@ resources:
 - name: boomi-bastion-sa
   type: iam.v1.serviceAccount
   properties:
-    accountId: bastion
+    accountId: {{ deployment }}-bastion
     projectId: {{ project }}
     displayName: Bastion Service Account
 
 - name: boomi-gke-sa
   type: iam.v1.serviceAccount
   properties:
-    accountId: gke-cluster
+    accountId: {{ deployment }}-gke-cluster
     projectId: {{ project }}
     displayName: GKE Cluster Service Account
 
@@ -60,15 +60,15 @@ resources:
 - name: boomi-network
   type: network.py
   properties:
-    name: boomi-network
+    name: {{ deployment }}-boomi-network
     autoCreateSubnetworks: false
     subnetworks:
-      - name: boomi-public-subnet
+      - name: {{ deployment }}-boomi-{{ region }}-public-subnet
         region: {{ region }}
         ipCidrRange: 192.168.0.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
-      - name: boomi-private-subnet
+      - name: {{ deployment }}-boomi-{{ region }}-private-subnet
         region: {{ region }}
         ipCidrRange: 192.168.8.0/21
         privateIpGoogleAccess: true
@@ -79,7 +79,7 @@ resources:
   properties:
     network: $(ref.boomi-network.selfLink)
     rules:
-      - name: boomi-allow-ssh-to-bastion
+      - name: {{ deployment }}-boomi-allow-ssh-to-bastion
         description: Allow SSH from anywhere to Bastion
         allowed:
           - IPProtocol: tcp
@@ -91,7 +91,7 @@ resources:
           - 0.0.0.0/0
         targetTags:
           - bastion
-      - name: boomi-allow-http-https
+      - name: {{ deployment }}-boomi-allow-http-https
         description: Allow HTTP/HTTPS from anywhere
         allowed:
           - IPProtocol: tcp
@@ -101,7 +101,7 @@ resources:
         direction: INGRESS
         sourceRanges:
           - 0.0.0.0/0
-      - name: boomi-allow-icmp
+      - name: {{ deployment }}-boomi-allow-icmp
         description: Allow ICMP from anywhere
         allowed:
           - IPProtocol: ICMP
@@ -109,16 +109,16 @@ resources:
         sourceRanges:
           - 0.0.0.0/0
 
-- name: boomi-cloud-router
+- name: {{ deployment }}-boomi-{{ region }}-cloud-router
   type: cloud_router.py
   properties:
-    name: boomi-cloud-router
+    name: {{ deployment }}-boomi-{{ region }}-cloud-router
     network: $(ref.boomi-network.selfLink)
     region: {{ region }}
-    nat-name: boomi-nat
-    subnet: $(ref.boomi-private-subnet.selfLink)
+    nat-name: {{ deployment }}-boomi-{{ region }}-nat
+    subnet: $(ref.{{ deployment }}-boomi-{{ region }}-private-subnet.selfLink)
 
-- name: cloud-filestore
+- name: {{ deployment }}-cloud-filestore
   type: cloud_filestore.py
   properties:
     description: Boomi File Store
@@ -136,10 +136,10 @@ resources:
     clusterLocationType: Regional
     region: {{ region }}
     cluster:
-      name: boomi-gke-cluster
+      name: {{ deployment }}-boomi-gke-cluster
       description: Boomi k8s Cluster
       network: $(ref.boomi-network.vpcName)
-      subnetwork: $(ref.boomi-private-subnet.selfLink)
+      subnetwork: $(ref.{{ deployment }}-boomi-{{ region }}-private-subnet.selfLink)
       initialClusterVersion: 1.17.12-gke.1501
       addonsConfig:
         httpLoadBalancing:
@@ -199,14 +199,14 @@ resources:
     account: {{ properties["BoomiAccount"] }}
     network: $(ref.boomi-network.vpcName)
     CLUSTER_NAME: $(ref.boomi-gke-cluster.name)
-    ipaddress: $(ref.cloud-filestore.fileShareIp)
+    ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)
     ingressStaticIpName: $(ref.boomi-network.staticIpName)
 
 - name: bastion-instance
   type: bastion_instance.py
   properties:
     network: $(ref.boomi-network.selfLink)
-    publicSubnet: $(ref.boomi-public-subnet.selfLink)
+    publicSubnet: $(ref.{{ deployment }}-boomi-{{ region }}-public-subnet.selfLink)
     region: {{ region }}
     machineType: n1-standard-1
     machineImage: centos-cloud/global/images/family/centos-7
@@ -238,7 +238,7 @@ resources:
       #mount filestore
       sudo yum -y update && sudo yum -y install nfs-utils
       sudo mkdir -p /mnt/boominfs
-      sudo mount $(ref.cloud-filestore.fileShareIp):/boomifileshare /mnt/boominfs
+      sudo mount $(ref.{{ deployment }}-cloud-filestore.fileShareIp):/boomifileshare /mnt/boominfs
 
       export HOME='whoami'
       export KUBECONFIG=$HOME/.kube/config
