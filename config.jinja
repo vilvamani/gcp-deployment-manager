@@ -7,39 +7,39 @@
 
 resources:
 
-- name: boomi-bastion-sa
+- name: {{ deployment }}-bastion-sa
   type: iam.v1.serviceAccount
   properties:
     accountId: {{ deployment }}-bastion
     projectId: {{ project }}
     displayName: Bastion Service Account
 
-- name: boomi-gke-sa
+- name: {{ deployment }}-gke-sa
   type: iam.v1.serviceAccount
   properties:
     accountId: {{ deployment }}-gke-cluster
     projectId: {{ project }}
     displayName: GKE Cluster Service Account
 
-- name: boomi-iam-member
+- name: {{ deployment }}-iam-member
   type: iam_member.py
   properties:
     roles:
       - role: roles/container.admin
         members:
-          - "serviceAccount:$(ref.boomi-bastion-sa.email)"
-          - "serviceAccount:$(ref.boomi-gke-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
       - role: roles/compute.instanceAdmin
         members:
-          - "serviceAccount:$(ref.boomi-bastion-sa.email)"
-          - "serviceAccount:$(ref.boomi-gke-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
       - role: roles/storage.admin
         members:
-          - "serviceAccount:$(ref.boomi-bastion-sa.email)"
-          - "serviceAccount:$(ref.boomi-gke-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
 
-- name: boomi-enableApis
+- name: {{ deployment }}-enableApis
   type: apis.py
   properties:
     consumerId: {{ 'project:' + env['project'] }}
@@ -57,29 +57,29 @@ resources:
       - name: computeApi
         serviceName: compute.googleapis.com
 
-- name: boomi-network
+- name: {{ deployment }}-network
   type: network.py
   properties:
-    name: {{ deployment }}-boomi-network
+    name: {{ deployment }}-network
     autoCreateSubnetworks: false
     subnetworks:
-      - name: {{ deployment }}-boomi-{{ region }}-public-subnet
+      - name: {{ deployment }}-{{ region }}-public-subnet
         region: {{ region }}
         ipCidrRange: 192.168.0.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
-      - name: {{ deployment }}-boomi-{{ region }}-private-subnet
+      - name: {{ deployment }}-{{ region }}-private-subnet
         region: {{ region }}
         ipCidrRange: 192.168.8.0/21
         privateIpGoogleAccess: true
         enableFlowLogs: false
 
-- name: boomi-firewall
+- name: {{ deployment }}-firewall
   type: firewall.py
   properties:
-    network: $(ref.boomi-network.selfLink)
+    network: $(ref.{{ deployment }}-network.selfLink)
     rules:
-      - name: {{ deployment }}-boomi-allow-ssh-to-bastion
+      - name: {{ deployment }}-allow-ssh-to-bastion
         description: Allow SSH from anywhere to Bastion
         allowed:
           - IPProtocol: tcp
@@ -91,7 +91,7 @@ resources:
           - 0.0.0.0/0
         targetTags:
           - bastion
-      - name: {{ deployment }}-boomi-allow-http-https
+      - name: {{ deployment }}-allow-http-https
         description: Allow HTTP/HTTPS from anywhere
         allowed:
           - IPProtocol: tcp
@@ -101,7 +101,7 @@ resources:
         direction: INGRESS
         sourceRanges:
           - 0.0.0.0/0
-      - name: {{ deployment }}-boomi-allow-icmp
+      - name: {{ deployment }}-allow-icmp
         description: Allow ICMP from anywhere
         allowed:
           - IPProtocol: ICMP
@@ -109,37 +109,37 @@ resources:
         sourceRanges:
           - 0.0.0.0/0
 
-- name: {{ deployment }}-boomi-{{ region }}-cloud-router
+- name: {{ deployment }}-{{ region }}-cloud-router
   type: cloud_router.py
   properties:
-    name: {{ deployment }}-boomi-{{ region }}-cloud-router
-    network: $(ref.boomi-network.selfLink)
+    name: {{ deployment }}-{{ region }}-cloud-router
+    network: $(ref.{{ deployment }}-network.selfLink)
     region: {{ region }}
-    nat-name: {{ deployment }}-boomi-{{ region }}-nat
-    subnet: $(ref.{{ deployment }}-boomi-{{ region }}-private-subnet.selfLink)
+    nat-name: {{ deployment }}-{{ region }}-nat
+    subnet: $(ref.{{ deployment }}-{{ region }}-private-subnet.selfLink)
 
 - name: {{ deployment }}-cloud-filestore
   type: cloud_filestore.py
   properties:
-    description: Boomi File Store
+    description: {{ deployment }} File Store
     location: {{ properties["zone"] }}
     tier: STANDARD
     fileShares:
       - name: boomifileshare
         capacityGb: 1024
     networks:
-      - network: $(ref.boomi-network.vpcName)
+      - network: $(ref.{{ deployment }}-network.vpcName)
 
-- name: boomi-gke-cluster
+- name: {{ deployment }}-gke-cluster
   type: gke.py
   properties:
     clusterLocationType: Regional
     region: {{ region }}
     cluster:
-      name: {{ deployment }}-boomi-gke-cluster
-      description: Boomi k8s Cluster
-      network: $(ref.boomi-network.vpcName)
-      subnetwork: $(ref.{{ deployment }}-boomi-{{ region }}-private-subnet.selfLink)
+      name: {{ deployment }}-gke-cluster
+      description: {{ deployment }} k8s Cluster
+      network: $(ref.{{ deployment }}-network.vpcName)
+      subnetwork: $(ref.{{ deployment }}-{{ region }}-private-subnet.selfLink)
       initialClusterVersion: 1.17.12-gke.1501
       addonsConfig:
         httpLoadBalancing:
@@ -147,13 +147,13 @@ resources:
         gcePersistentDiskCsiDriverConfig:
           enabled: true
       nodePools:
-        - name: boomi-gke-pool
+        - name: {{ deployment }}-gke-pool
           initialNodeCount: 1
           version: 1.17.12-gke.1501
           config:
             machineType: n1-standard-1
             diskSizeGb: 50
-            serviceAccount: $(ref.boomi-gke-sa.email)
+            serviceAccount: $(ref.{{ deployment }}-gke-sa.email)
             oauthScopes:
               - https://www.googleapis.com/auth/cloud-platform
             workloadMetadataConfig:
@@ -190,29 +190,29 @@ resources:
               endTime: "2021-11-01T07:00:25Z"
             recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
 
-- name: boomi-gke-cloudbuild
+- name: {{ deployment }}-gke-cloudbuild
   type: cloudbuild.jinja
   properties:
     region: {{ region }}
     username: {{ properties["BoomiUsername"] }}
     password: {{ properties["BoomiPassword"] }}
     account: {{ properties["BoomiAccount"] }}
-    network: $(ref.boomi-network.vpcName)
-    CLUSTER_NAME: $(ref.boomi-gke-cluster.name)
+    network: $(ref.{{ deployment }}-network.vpcName)
+    CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
     ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)
-    ingressStaticIpName: $(ref.boomi-network.staticIpName)
+    ingressStaticIpName: $(ref.{{ deployment }}-network.staticIpName)
 
-- name: bastion-instance
+- name: {{ deployment }}-bastion-instance
   type: bastion_instance.py
   properties:
-    network: $(ref.boomi-network.selfLink)
-    publicSubnet: $(ref.{{ deployment }}-boomi-{{ region }}-public-subnet.selfLink)
+    network: $(ref.{{ deployment }}-network.selfLink)
+    publicSubnet: $(ref.{{ deployment }}-{{ region }}-public-subnet.selfLink)
     region: {{ region }}
     machineType: n1-standard-1
     machineImage: centos-cloud/global/images/family/centos-7
     minSize: 1
     maxSize: 2
-    serviceAccountEmail: $(ref.boomi-bastion-sa.email)
+    serviceAccountEmail: $(ref.{{ deployment }}-bastion-sa.email)
     serviceAccountScopes:
       - https://www.googleapis.com/auth/compute
       - https://www.googleapis.com/auth/devstorage.read_only
