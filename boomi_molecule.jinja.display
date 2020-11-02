@@ -20,9 +20,6 @@ description:
       version: 1.17.12-gke.1501
 input:
   properties:
-    - name: region
-      title: Region
-      tooltip: The region the cluster belongs to. Should be set when clusterLocationType is set to Regional.
     - name: zone
       title: Zone
       tooltip: The zone the cluster belongs to.

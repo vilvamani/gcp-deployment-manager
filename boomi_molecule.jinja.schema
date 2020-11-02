@@ -40,7 +40,6 @@ imports:
   path: templates/cloudbuild/cloudbuild.jinja
 
 required:
-  - region
   - zone
   - machineType
   - gkeMachineType
@@ -50,13 +49,7 @@ required:
   - boomiPassword
   - boomiAccountID
 
-properties:
-  region:
-    type: string
-    default: us-central1
-    x-googleProperty:
-      type: GCE_REGION
-      
+properties:      
   zone:
     type: string
     default: us-central1-a
