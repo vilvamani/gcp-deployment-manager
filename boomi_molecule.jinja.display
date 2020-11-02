@@ -34,7 +34,7 @@ input:
       title: GKE Cluster Machine type
       section: GKE_CLUSTER
     - name: diskSizeGb
-      title: Boot disk size in GB
+      title: GKE Node Instance disk size in GB
       section: GKE_CLUSTER
     - name: maxNodePerZone
       title: Maximum No. of Nodes per GKE Cluster

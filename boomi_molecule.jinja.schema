@@ -41,10 +41,11 @@ required:
   - zone
   - machineType
   - gkeMachineType
-  - maxNodeCount
-  - BoomiUsername
+  - diskSizeGb
+  - maxNodePerZone
+  - BoomiUserEmailID
   - BoomiPassword
-  - BoomiAccount
+  - BoomiUserEmailID
 
 properties:
   region:
@@ -66,20 +67,20 @@ properties:
       type: GCE_MACHINE_TYPE
       zoneProperty: zone
 
-  diskSizeGb:
-    type: integer
-    default: 10
-    minimum: 10
-    maximum: 10000
-    x-googleProperty:
-      type: GCE_DISK_SIZE
-
   gkeMachineType:
     type: string
     default: g1-small
     x-googleProperty:
       type: GCE_MACHINE_TYPE
       zoneProperty: zone
+
+  diskSizeGb:
+    type: integer
+    default: 50
+    minimum: 50
+    maximum: 100
+    x-googleProperty:
+      type: GCE_DISK_SIZE
 
   maxNodePerZone:
     type: integer
