@@ -43,9 +43,6 @@ required:
   - gkeMachineType
   - diskSizeGb
   - maxNodePerZone
-  - BoomiUserEmailID
-  - BoomiPassword
-  - BoomiUserEmailID
 
 properties:
   region:
@@ -66,6 +63,9 @@ properties:
     x-googleProperty:
       type: GCE_MACHINE_TYPE
       zoneProperty: zone
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 3.75
 
   gkeMachineType:
     type: string
@@ -88,20 +88,21 @@ properties:
     minimum: 10
     maximum: 100
     
-  BoomiUserEmailID:
+  boomiUserEmailID:
     type: string
     default: vilvamani007@gmail.com
 
-  BoomiPassword:
+  boomiPassword:
     type: string
     default: google#2020
 
-  BoomiAccountID:
+  boomiAccountID:
     type: string
     default: google-microsoft
 
 outputs:
   deployment:
     type: string
+
   project:
     type: string

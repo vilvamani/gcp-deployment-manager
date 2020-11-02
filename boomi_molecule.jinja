@@ -12,9 +12,9 @@
 {% set maxNodePerZone = properties["maxNodePerZone"] %}
 {% set diskSizeGb = properties["diskSizeGb"] %}
 
-{% set BoomiUserEmailID = properties["BoomiUserEmailID"] %}
-{% set BoomiPassword = properties["BoomiPassword"] %}
-{% set BoomiAccountID = properties["BoomiAccountID"] %}
+{% set boomiUserEmailID = properties["boomiUserEmailID"] %}
+{% set boomiPassword = properties["boomiPassword"] %}
+{% set boomiAccountID = properties["boomiAccountID"] %}
 
 resources:
 
@@ -203,9 +203,9 @@ resources:
   type: cloudbuild.jinja
   properties:
     region: {{ region }}
-    BoomiUserEmailID: {{ BoomiUserEmailID }}
-    BoomiPassword: {{ BoomiPassword }}
-    BoomiAccountID: {{ BoomiAccountID }}
+    BoomiUserEmailID: {{ boomiUserEmailID }}
+    BoomiPassword: {{ boomiPassword }}
+    BoomiAccountID: {{ boomiAccountID }}
     network: $(ref.{{ deployment }}-network.vpcName)
     CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
     ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)

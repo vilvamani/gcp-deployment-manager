@@ -38,17 +38,18 @@ input:
       section: GKE_CLUSTER
     - name: maxNodePerZone
       title: Maximum No. of Nodes per GKE Cluster
+      tooltip: Specify a value between 1 and 100.
       section: GKE_CLUSTER
 
-    - name: BoomiUserEmailID
+    - name: boomiUserEmailID
       title: Boomi user Email ID
       tooltip: The email account associated with the Boomi account.
       section: BOOMI_MOLECULE
-    - name: BoomiPassword
+    - name: boomiPassword
       title: Boomi password
       tooltip: The password associated with the Boomi account.
       section: BOOMI_MOLECULE
-    - name: BoomiAccountID
+    - name: boomiAccountID
       title: Boomi account ID
       tooltip: The Boomi account ID that you want to associate with the new Molecule cluster.
       section: BOOMI_MOLECULE
