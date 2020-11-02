@@ -9,7 +9,7 @@ gcloud projects add-iam-policy-binding [project-id] --member=serviceAccount:[pro
 ### Step 2: Open GCP CloudShell and clone the project repository.
 
 ```
-git clone -b develop https://github.com/vilvamani/gcp-deployment-manager.git && cd gcp-deployment-manager
+git clone -b develop https://github.com/vilvamani/gcp-deployment-manager.git  boomi_quickstart && cd boomi_quickstart
 ```
 
 ### Step 3: Update Boomi Username, Password and Account details in the config.jinja file or config.jinja.schema.

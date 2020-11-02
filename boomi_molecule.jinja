@@ -161,7 +161,11 @@ resources:
           disabled: false
       nodePools:
         - name: {{ deployment }}-gke-pool
+          {% if properties["enableRegionalGKECluster"] == True %}
           initialNodeCount: 1
+          {% else %}
+          initialNodeCount: 3
+          {% endif %}
           version: 1.17.12-gke.1501
           config:
             machineType: {{ gkeMachineType }}
