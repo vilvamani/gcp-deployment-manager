@@ -1,13 +1,13 @@
 # Copyright 2020 Dell Boomi. All rights reserved.
 
 info:
-  title: Boomi GKE Molecule
+  title: Boomi Molecule GKE Cluster
   author: Vilvamani Arumugam <vilvamani007@gmail.com>
   description: Deploy Dell Boomi Molecule in GKE
   version: 1.0
 
 imports:
-- path: config.jinja
+- path: boomi_molecule.jinja
 
 - name: apis.py
   path: templates/iam_apis/apis.py
@@ -39,21 +39,55 @@ imports:
 required:
   - region
   - zone
+  - machineType
+  - gkeMachineType
+  - maxNodeCount
+  - BoomiUsername
+  - BoomiPassword
+  - BoomiAccount
 
 properties:
   region:
     type: string
     default: us-central1
-    description: |
-      The region the cluster belongs to. Should be set when clusterLocationType
-      is set to Regional
+    x-googleProperty:
+      type: GCE_REGION
       
   zone:
     type: string
     default: us-central1-a
-    description: The zone the cluster belongs to.
+    x-googleProperty:
+      type: GCE_ZONE
+
+  machineType:
+    type: string
+    default: g1-small
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+
+  diskSizeGb:
+    type: integer
+    default: 10
+    minimum: 10
+    maximum: 10000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+
+  gkeMachineType:
+    type: string
+    default: g1-small
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+
+  maxNodePerZone:
+    type: integer
+    default: 10
+    minimum: 10
+    maximum: 100
     
-  BoomiUsername:
+  BoomiUserEmailID:
     type: string
     default: vilvamani007@gmail.com
 
@@ -61,6 +95,12 @@ properties:
     type: string
     default: google#2020
 
-  BoomiAccount:
+  BoomiAccountID:
     type: string
     default: google-microsoft
+
+outputs:
+  deployment:
+    type: string
+  project:
+    type: string

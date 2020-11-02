@@ -3,7 +3,18 @@
 {% set project = env["project"] %}
 {% set deployment = env["deployment"] %}
 {% set region = properties["region"] %}
-{% set CommonTags = properties["CommonTags"] %}
+{% set zone = properties["zone"] %}
+{% set machineType = properties["machineType"] %}
+{% set bootDiskType = properties["bootDiskType"] %}
+
+
+{% set gkeMachineType = properties["gkeMachineType"] %}
+{% set maxNodePerZone = properties["maxNodePerZone"] %}
+{% set diskSizeGb = properties["diskSizeGb"] %}
+
+{% set BoomiUserEmailID = properties["BoomiUserEmailID"] %}
+{% set BoomiPassword = properties["BoomiPassword"] %}
+{% set BoomiAccountID = properties["BoomiAccountID"] %}
 
 resources:
 
@@ -122,7 +133,7 @@ resources:
   type: cloud_filestore.py
   properties:
     description: {{ deployment }} File Store
-    location: {{ properties["zone"] }}
+    location: {{ zone }}
     tier: STANDARD
     fileShares:
       - name: boomifileshare
@@ -144,15 +155,13 @@ resources:
       addonsConfig:
         httpLoadBalancing:
           disabled: false
-        gcePersistentDiskCsiDriverConfig:
-          enabled: true
       nodePools:
         - name: {{ deployment }}-gke-pool
           initialNodeCount: 1
           version: 1.17.12-gke.1501
           config:
-            machineType: n1-standard-1
-            diskSizeGb: 50
+            machineType: {{ gkeMachineType }}
+            diskSizeGb: {{ diskSizeGb }}
             serviceAccount: $(ref.{{ deployment }}-gke-sa.email)
             oauthScopes:
               - https://www.googleapis.com/auth/cloud-platform
@@ -160,8 +169,8 @@ resources:
               nodeMetadata: SECURE
           autoscaling:
             enabled: True
-            minNodeCount: 3
-            maxNodeCount: 200
+            minNodeCount: 1
+            maxNodeCount: {{ maxNodePerZone }}
           management:
             autoUpgrade: true
             autoRepair: true
@@ -194,9 +203,9 @@ resources:
   type: cloudbuild.jinja
   properties:
     region: {{ region }}
-    username: {{ properties["BoomiUsername"] }}
-    password: {{ properties["BoomiPassword"] }}
-    account: {{ properties["BoomiAccount"] }}
+    BoomiUserEmailID: {{ BoomiUserEmailID }}
+    BoomiPassword: {{ BoomiPassword }}
+    BoomiAccountID: {{ BoomiAccountID }}
     network: $(ref.{{ deployment }}-network.vpcName)
     CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
     ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)
@@ -208,7 +217,7 @@ resources:
     network: $(ref.{{ deployment }}-network.selfLink)
     publicSubnet: $(ref.{{ deployment }}-{{ region }}-public-subnet.selfLink)
     region: {{ region }}
-    machineType: n1-standard-1
+    machineType: {{ machineType }}
     machineImage: centos-cloud/global/images/family/centos-7
     minSize: 1
     maxSize: 2

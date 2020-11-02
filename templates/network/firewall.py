@@ -35,7 +35,7 @@ def generate_config(context):
         resources.append(
             {
                 'name': rule['name'],
-                'type': 'compute.beta.firewall',
+                'type': 'compute.v1.firewall',
                 'properties': rule
             }
         )

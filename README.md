@@ -1,22 +1,35 @@
-# gcp-deployment-manager
+# quickstart-boomi-gke-molecule
 
-```
-gcloud projects add-iam-policy-binding [project-id] --member=serviceAccount:[project-no]@cloudservices.gserviceaccount.com --role=roles/resourcemanager.projectIamAdmin
-```
+### Step 1: Adding IAM SecurityAdmin Role to [project-no]@cloudservices.gserviceaccount.com
 
 ```
 gcloud projects add-iam-policy-binding [project-id] --member=serviceAccount:[project-no]@cloudservices.gserviceaccount.com --role=roles/iam.securityAdmin
 ```
 
+### Step 2: Open GCP CloudShell and clone the project repository.
+
 ```
 git clone -b develop https://github.com/vilvamani/gcp-deployment-manager.git && cd gcp-deployment-manager
 ```
 
+### Step 3: Update Boomi Username, Password and Account details in the config.jinja file or config.jinja.schema.
+
 ```
-gcloud deployment-manager deployments create boomi-net --config=config.yaml
+  BoomiUsername:
+    type: string
+    default: vilvamani007@gmail.com
+
+  BoomiPassword:
+    type: string
+    default: google#2020
+
+  BoomiAccount:
+    type: string
+    default: google-microsoft
 ```
 
-# GKE Credentials
+### Step 4: Execute below command on CloudShell
+
 ```
-gcloud container clusters get-credentials  boomi-qs-gke-cluster --zone=us-central1
+gcloud deployment-manager deployments create boomi --config=config.yaml
 ```
