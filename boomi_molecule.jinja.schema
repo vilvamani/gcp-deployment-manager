@@ -87,8 +87,8 @@ properties:
 
   maxNodePerZone:
     type: integer
-    default: 10
-    minimum: 10
+    default: 50
+    minimum: 1
     maximum: 100
     
   boomiUserEmailID:
