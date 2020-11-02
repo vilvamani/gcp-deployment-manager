@@ -68,7 +68,7 @@ properties:
 
   enableRegionalGKECluster:
     type: boolean
-    default: True
+    default: False
 
   gkeMachineType:
     type: string
