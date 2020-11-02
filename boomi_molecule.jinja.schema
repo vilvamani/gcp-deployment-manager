@@ -88,7 +88,7 @@ properties:
   maxNodePerZone:
     type: integer
     default: 50
-    minimum: 1
+    minimum: 10
     maximum: 100
     
   boomiUserEmailID:
@@ -102,6 +102,10 @@ properties:
   boomiAccountID:
     type: string
     default: google-microsoft
+
+  helmGITRepoURL:
+    type: string
+    default: https://github.com/vilvamani/quickstart-boomi-gke-molecule.git
 
 outputs:
   deployment:

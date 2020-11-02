@@ -17,6 +17,7 @@
 {% set boomiUserEmailID = properties["boomiUserEmailID"] %}
 {% set boomiPassword = properties["boomiPassword"] %}
 {% set boomiAccountID = properties["boomiAccountID"] %}
+{% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
 resources:
 
@@ -174,7 +175,11 @@ resources:
             {% endif %}
           autoscaling:
             enabled: True
+            {% if properties["enableRegionalGKECluster"] == True %}
             minNodeCount: 1
+            {% else %}
+            minNodeCount: 3
+            {% endif %}
             maxNodeCount: {{ maxNodePerZone }}
           management:
             autoUpgrade: true
@@ -212,10 +217,10 @@ resources:
     {% else %}
     region: {{ zone }}
     {% endif %}
-
-    BoomiUserEmailID: {{ boomiUserEmailID }}
-    BoomiPassword: {{ boomiPassword }}
-    BoomiAccountID: {{ boomiAccountID }}
+    helmGITRepoURL: {{ helmGITRepoURL }}
+    boomiUserEmailID: {{ boomiUserEmailID }}
+    boomiPassword: {{ boomiPassword }}
+    boomiAccountID: {{ boomiAccountID }}
     network: $(ref.{{ deployment }}-network.vpcName)
     CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
     ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)

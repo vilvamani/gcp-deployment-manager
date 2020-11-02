@@ -54,6 +54,9 @@ input:
       title: Boomi account ID
       tooltip: The Boomi account ID that you want to associate with the new Molecule cluster.
       section: BOOMI_MOLECULE
+    - name: helmGITRepoURL
+      title: Boomi Helm Git Repo URL
+      section: BOOMI_MOLECULE
 
   sections:
     - name: NETWORKING

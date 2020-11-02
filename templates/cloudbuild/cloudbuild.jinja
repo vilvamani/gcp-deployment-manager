@@ -18,14 +18,13 @@ resources:
       name: 'gcr.io/cloud-builders/git'
       args:
       - clone
-      - -b
-      - develop
-      - https://github.com/vilvamani/gcp-deployment-manager.git
+      - {{ properties["helmGITRepoURL"] }}
+      - quick_start
 
     - id: 'build_image'
       name: 'gcr.io/cloud-builders/docker'
       args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
-      dir: gcp-deployment-manager/kubernetes
+      dir: quick_start/kubernetes
       waitFor: [git_clone]
 
     - id: helm_repo_update
@@ -78,9 +77,9 @@ resources:
         - --namespace
         - default
         - --set
-        - secrets.username={{ properties["BoomiUserEmailID"] }},secrets.password={{ properties["BoomiPassword"] }},secrets.account={{ properties["BoomiAccountID"] }},volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }},ingress.staticIpName={{ properties["ingressStaticIpName"] }}
+        - secrets.username={{ properties["boomiUserEmailID"] }},secrets.password={{ properties["boomiPassword"] }},secrets.account={{ properties["boomiAccountID"] }},volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }},ingress.staticIpName={{ properties["ingressStaticIpName"] }}
         - '.'
-      dir: gcp-deployment-manager/kubernetes/helm
+      dir: quick_start/kubernetes/helm
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
@@ -93,7 +92,7 @@ resources:
         - apply
         - --filename=./templates/boomi_molecule_gke_hpa.yaml
         - --validate=false
-      dir: gcp-deployment-manager/kubernetes/helm
+      dir: quick_start/kubernetes/helm
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
