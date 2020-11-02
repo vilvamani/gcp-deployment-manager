@@ -9,6 +9,9 @@ info:
 imports:
 - path: boomi_molecule.jinja
 
+- name: path_utils.jinja
+  path: path_utils.jinja
+
 - name: apis.py
   path: templates/iam_apis/apis.py
 

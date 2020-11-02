@@ -15,15 +15,15 @@ git clone -b develop https://github.com/vilvamani/gcp-deployment-manager.git && 
 ### Step 3: Update Boomi Username, Password and Account details in the config.jinja file or config.jinja.schema.
 
 ```
-  BoomiUsername:
+  boomiUserEmailID:
     type: string
     default: vilvamani007@gmail.com
 
-  BoomiPassword:
+  boomiPassword:
     type: string
     default: google#2020
 
-  BoomiAccount:
+  boomiAccountID:
     type: string
     default: google-microsoft
 ```
