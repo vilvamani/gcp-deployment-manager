@@ -148,6 +148,7 @@ resources:
   properties:
     clusterLocationType: {{ enableRegionalGKECluster }}
     region: {{ region }}
+    zone: {{ zone }}
     cluster:
       name: {{ deployment }}-gke-cluster
       description: {{ deployment }} k8s Cluster
@@ -167,8 +168,10 @@ resources:
             serviceAccount: $(ref.{{ deployment }}-gke-sa.email)
             oauthScopes:
               - https://www.googleapis.com/auth/cloud-platform
+            {% if properties["enableRegionalGKECluster"] == True %}
             workloadMetadataConfig:
               nodeMetadata: SECURE
+            {% endif %}
           autoscaling:
             enabled: True
             minNodeCount: 1
