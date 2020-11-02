@@ -207,7 +207,12 @@ resources:
 - name: {{ deployment }}-gke-cloudbuild
   type: cloudbuild.jinja
   properties:
+    {% if properties["enableRegionalGKECluster"] == True %}
     region: {{ region }}
+    {% else %}
+    region: {{ zone }}
+    {% endif %}
+
     BoomiUserEmailID: {{ boomiUserEmailID }}
     BoomiPassword: {{ boomiPassword }}
     BoomiAccountID: {{ boomiAccountID }}
