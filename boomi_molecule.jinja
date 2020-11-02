@@ -9,7 +9,7 @@
 {% set machineType = properties["machineType"] %}
 {% set bootDiskType = properties["bootDiskType"] %}
 
-
+{% set enableRegionalGKECluster = "Regional" if properties["enableRegionalGKECluster"] else "Zonal" %}
 {% set gkeMachineType = properties["gkeMachineType"] %}
 {% set maxNodePerZone = properties["maxNodePerZone"] %}
 {% set diskSizeGb = properties["diskSizeGb"] %}
@@ -146,7 +146,7 @@ resources:
 - name: {{ deployment }}-gke-cluster
   type: gke.py
   properties:
-    clusterLocationType: Regional
+    clusterLocationType: {{ enableRegionalGKECluster }}
     region: {{ region }}
     cluster:
       name: {{ deployment }}-gke-cluster

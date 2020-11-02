@@ -66,6 +66,10 @@ properties:
         minCpu: 1
         minRamGb: 3.75
 
+  enableRegionalGKECluster:
+    type: boolean
+    default: False
+
   gkeMachineType:
     type: string
     default: g1-small

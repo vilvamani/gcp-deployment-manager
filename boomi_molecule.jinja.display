@@ -22,11 +22,15 @@ input:
   properties:
     - name: zone
       title: Zone
-      tooltip: The zone the cluster belongs to.
+      tooltip: GKE Cluster Zone to run.
 
     - name: machineType
       title: Bastion Machine type
 
+    - name: enableRegionalGKECluster
+      title: Enable Reginoal GKE Cluster
+      tooltip: 'GKE Cluster: Regional (or) Zonal'
+      section: GKE_CLUSTER
     - name: gkeMachineType
       title: GKE Cluster Machine type
       section: GKE_CLUSTER
