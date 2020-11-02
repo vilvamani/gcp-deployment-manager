@@ -44,6 +44,8 @@ required:
   - diskSizeGb
   - maxNodePerZone
   - boomiUserEmailID
+  - boomiPassword
+  - boomiAccountID
 
 properties:
   region:
