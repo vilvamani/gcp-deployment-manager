@@ -43,6 +43,7 @@ required:
   - gkeMachineType
   - diskSizeGb
   - maxNodePerZone
+  - boomiUserEmailID
 
 properties:
   region:
