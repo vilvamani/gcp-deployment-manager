@@ -6,6 +6,14 @@
 # Must have reference to the global env object, so when including this file,
 # use the jinja import "with context" option.
 
+{% macro projectPrefix() -%}
+{{ "https://compute.googleapis.com/compute/v1/projects/%s"|format(env["project"]) }}
+{%- endmacro %}
+
 {% macro zoneToRegion(zone) -%}
 {{ zone.split('-')[0:2]|join('-') }}
+{%- endmacro %}
+
+{% macro zones(zone) -%}
+{{ "%s/regions/%s"|format(projectPrefix(), zoneToRegion(zone)) }}
 {%- endmacro %}

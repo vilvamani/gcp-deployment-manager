@@ -68,13 +68,13 @@ properties:
 
   tcp80SourceRanges:
     type: string
-    default: '0.0.0.0/0, 192.169.0.2/24'
+    default: '0.0.0.0/0, 192.169.0.0/24'
     x-googleProperty:
       type: GCE_FIREWALL_RANGE
 
   tcp443SourceRanges:
     type: string
-    default: '0.0.0.0/0, 192.169.0.2/24'
+    default: '0.0.0.0/0, 192.169.0.0/24'
     x-googleProperty:
       type: GCE_FIREWALL_RANGE
 
