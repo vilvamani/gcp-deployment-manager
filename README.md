@@ -56,7 +56,7 @@ To deploy your resources, use the `gcloud` command-line tool to create a new
 deployment, using your configuration file:
 
 ```sh
-gcloud deployment-manager deployments create quickstart-deployment --config=config.yaml
+gcloud deployment-manager deployments create boomi-quickstart --config=config.yaml
 ```
 
 ## Check on your deployment
@@ -64,7 +64,7 @@ gcloud deployment-manager deployments create quickstart-deployment --config=conf
 To check the status of the deployment, run this command:
 
 ```sh
-gcloud deployment-manager deployments describe quickstart-deployment
+gcloud deployment-manager deployments describe boomi-quickstart
 ```
 
 ## Review your resources
@@ -85,5 +85,5 @@ To avoid incurring charges on your Cloud Platform account, delete the deployment
 all the resources that you created:
 
 ```sh
-gcloud deployment-manager deployments delete quickstart-deployment
+gcloud deployment-manager deployments delete boomi-quickstart
 ```
