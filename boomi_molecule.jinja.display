@@ -27,6 +27,17 @@ input:
     - name: machineType
       title: Bastion Machine type
 
+    - name: tcp80SourceRanges
+      title: Source IP ranges for HTTP traffic
+      tooltip: 'Traffic is only allowed from sources within these IP address ranges. Use CIDR notation when entering ranges. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'
+      placeholder: '0.0.0.0/0, 192.169.0.2/24'
+      section: NETWORKING
+    - name: tcp443SourceRanges
+      title: Source IP ranges for HTTPS traffic
+      tooltip: 'Traffic is only allowed from sources within these IP address ranges. Use CIDR notation when entering ranges. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'
+      placeholder: '0.0.0.0/0, 192.169.0.2/24'
+      section: NETWORKING
+
     - name: enableRegionalGKECluster
       title: Enable Reginoal GKE Cluster
       tooltip: 'GKE Cluster: Regional (or) Zonal'

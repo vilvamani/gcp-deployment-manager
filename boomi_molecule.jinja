@@ -105,16 +105,38 @@ resources:
           - 0.0.0.0/0
         targetTags:
           - bastion
-      - name: {{ deployment }}-allow-http-https
+      - name: {{ deployment }}-allow-http
         description: Allow HTTP/HTTPS from anywhere
         allowed:
           - IPProtocol: tcp
             ports:
               - "80"
-              - "443"
         direction: INGRESS
+        {% if properties.get("tcp80SourceRanges") %}
+        sourceRanges:
+          {% for source in properties["tcp80SourceRanges"].split(',') %}
+          - '{{ source | trim }}'
+          {% endfor %}
+        {% else %}
         sourceRanges:
           - 0.0.0.0/0
+        {% endif %}
+      - name: {{ deployment }}-allow-https
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "443"
+        direction: INGRESS
+        {% if properties.get("tcp443SourceRanges") %}
+        sourceRanges:
+          {% for source in properties["tcp443SourceRanges"].split(',') %}
+          - '{{ source | trim }}'
+          {% endfor %}
+        {% else %}
+        sourceRanges:
+          - 0.0.0.0/0
+        {% endif %}
       - name: {{ deployment }}-allow-icmp
         description: Allow ICMP from anywhere
         allowed:

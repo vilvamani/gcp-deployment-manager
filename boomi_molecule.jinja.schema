@@ -66,6 +66,16 @@ properties:
         minCpu: 1
         minRamGb: 3.75
 
+  tcp80SourceRanges:
+    type: string
+    x-googleProperty:
+      type: GCE_FIREWALL_RANGE
+
+  tcp443SourceRanges:
+    type: string
+    x-googleProperty:
+      type: GCE_FIREWALL_RANGE
+
   enableRegionalGKECluster:
     type: boolean
     default: False
