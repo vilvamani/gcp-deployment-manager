@@ -6,3 +6,8 @@ resources:
   type: boomi_molecule_existing_vpc.jinja
   properties:
     zone: us-central1-a
+    gkeClusterNetwork:
+    gkeClusterPrivateSubnetwork:
+    gkeClusterPublicSubnetwork:
+    
+
