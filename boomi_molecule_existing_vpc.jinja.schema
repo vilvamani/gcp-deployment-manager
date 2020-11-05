@@ -44,6 +44,7 @@ imports:
 
 required:
   - zone
+  - gkeClusterNetwork
   - machineType
   - gkeMachineType
   - diskSizeGb
@@ -67,8 +68,8 @@ properties:
     x-googleProperty:
       type: GCE_NETWORK
       gceNetwork:
-        allowSharedVpcs: True
         machineTypeProperty: machineType
+
   gkeClusterPrivateSubnetwork:
     type: string
     default: "default"
@@ -77,6 +78,7 @@ properties:
       zoneProperty: zone
       gceSubnetwork:
         networkProperty: gkeClusterNetwork
+
   gkeClusterPublicSubnetwork:
     type: string
     default: "default"
@@ -84,6 +86,22 @@ properties:
       type: GCE_SUBNETWORK
       zoneProperty: zone
       gceSubnetwork:
+        networkProperty: gkeClusterNetwork
+
+  tcp80SourceRanges:
+    type: string
+    default: '0.0.0.0/0, 192.169.0.0/24'
+    x-googleProperty:
+      type: GCE_FIREWALL_RANGE
+      gceFirewall:
+        networkProperty: gkeClusterNetwork
+
+  tcp443SourceRanges:
+    type: string
+    default: '0.0.0.0/0, 192.169.0.0/24'
+    x-googleProperty:
+      type: GCE_FIREWALL_RANGE
+      gceFirewall:
         networkProperty: gkeClusterNetwork
         
   machineType:
@@ -95,18 +113,6 @@ properties:
       gceMachineType:
         minCpu: 1
         minRamGb: 3.75
-
-  tcp80SourceRanges:
-    type: string
-    default: '0.0.0.0/0, 192.169.0.0/24'
-    x-googleProperty:
-      type: GCE_FIREWALL_RANGE
-
-  tcp443SourceRanges:
-    type: string
-    default: '0.0.0.0/0, 192.169.0.0/24'
-    x-googleProperty:
-      type: GCE_FIREWALL_RANGE
 
   enableRegionalGKECluster:
     type: boolean

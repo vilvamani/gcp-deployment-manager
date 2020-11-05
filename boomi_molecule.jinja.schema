@@ -56,16 +56,6 @@ properties:
     x-googleProperty:
       type: GCE_ZONE
 
-  machineType:
-    type: string
-    default: g1-small
-    x-googleProperty:
-      type: GCE_MACHINE_TYPE
-      zoneProperty: zone
-      gceMachineType:
-        minCpu: 1
-        minRamGb: 3.75
-
   tcp80SourceRanges:
     type: string
     default: '0.0.0.0/0, 192.169.0.0/24'
@@ -77,6 +67,16 @@ properties:
     default: '0.0.0.0/0, 192.169.0.0/24'
     x-googleProperty:
       type: GCE_FIREWALL_RANGE
+      
+  machineType:
+    type: string
+    default: g1-small
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 3.75
 
   enableRegionalGKECluster:
     type: boolean
