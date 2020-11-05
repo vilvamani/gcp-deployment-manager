@@ -1,9 +1,8 @@
 imports:
-- path: boomi_molecule.jinja
+- path: boomi_molecule_existing_vpc.jinja
 
 resources:
 - name: boomi-gke-quickstart
-  type: boomi_molecule.jinja
+  type: boomi_molecule_existing_vpc.jinja
   properties:
-    region: us-central1
     zone: us-central1-a

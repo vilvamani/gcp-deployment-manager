@@ -5,5 +5,4 @@ resources:
 - name: boomi-gke-quickstart
   type: boomi_molecule.jinja
   properties:
-    region: us-central1
     zone: us-central1-a
