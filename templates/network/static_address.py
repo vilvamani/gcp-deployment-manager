@@ -6,7 +6,6 @@ def generate_config(context):
     """ Entry point for the deployment resources. """
 
     name = context.properties.get('name', context.env['name'])
-    project_id = context.properties.get('project', context.env['project'])
 
     resources = [
         {

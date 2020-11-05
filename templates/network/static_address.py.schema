@@ -26,7 +26,7 @@ properties:
     description: The IP version that will be used by this address. Valid options are IPV4 or IPV6.
   networkTier:
     type: string
-    description: This signifies the networking tier used for configuring this address and can only take the following values: PREMIUM or STANDARD.
+    description: This signifies the networking tier used for configuring this address and can only take the following values PREMIUM or STANDARD.
 
 outputs:
   properties:
