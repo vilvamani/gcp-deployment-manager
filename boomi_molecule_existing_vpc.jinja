@@ -156,23 +156,6 @@ resources:
     networks:
       - network: {{ properties["gkeClusterNetwork"] }}
 
-- name: {{ deployment }}-gke-cloudbuild
-  type: cloudbuild.jinja
-  properties:
-    {% if properties["enableRegionalGKECluster"] == True %}
-    region: {{ region }}
-    {% else %}
-    region: {{ zone }}
-    {% endif %}
-    helmGITRepoURL: {{ helmGITRepoURL }}
-    boomiUserEmailID: {{ boomiUserEmailID }}
-    boomiPassword: {{ boomiPassword }}
-    boomiAccountID: {{ boomiAccountID }}
-    network: {{ properties["gkeClusterNetwork"] }}
-    CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
-    ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)
-    ingressStaticIpName: $(ref.{{ deployment }}-static-ip.staticIpName)
-
 - name: {{ deployment }}-gke-cluster
   type: gke.py
   properties:
@@ -242,6 +225,23 @@ resources:
               endTime: "2021-11-01T07:00:25Z"
             recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
 
+- name: {{ deployment }}-gke-cloudbuild
+  type: cloudbuild.jinja
+  properties:
+    {% if properties["enableRegionalGKECluster"] == True %}
+    region: {{ region }}
+    {% else %}
+    region: {{ zone }}
+    {% endif %}
+    helmGITRepoURL: {{ helmGITRepoURL }}
+    boomiUserEmailID: {{ boomiUserEmailID }}
+    boomiPassword: {{ boomiPassword }}
+    boomiAccountID: {{ boomiAccountID }}
+    network: {{ properties["gkeClusterNetwork"] }}
+    CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
+    ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)
+    ingressStaticIpName: $(ref.{{ deployment }}-static-ip.staticIpName)
+    
 - name: {{ deployment }}-bastion-instance
   type: bastion_instance.py
   properties:
