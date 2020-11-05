@@ -56,7 +56,9 @@ To deploy your resources, use the `gcloud` command-line tool to create a new
 deployment, using your configuration file:
 
 ```sh
-gcloud deployment-manager deployments create boomi-quickstart --config=config.yaml
+gcloud deployment-manager deployments create boomi-quickstart --config=test_data/config.yaml
+
+gcloud deployment-manager deployments create boomi-quickstart --config=test_data/config_existing_vpc.yaml
 ```
 
 ## Check on your deployment
