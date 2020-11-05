@@ -19,7 +19,7 @@
 {% set boomiAccountID = properties["boomiAccountID"] %}
 {% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
-{% set networks = path_utils.networkPath(properties["gkeClusterNetwork"]) %}
+{% set network = path_utils.networkPath(properties["gkeClusterNetwork"]) %}
 {% set privateSubnetwork = path_utils.subnetworkPath(zone, properties["gkeClusterPrivateSubnetwork"]) %}
 {% set publicSubnetwork = path_utils.subnetworkPath(zone, properties["gkeClusterPublicSubnetwork"]) %}
 
