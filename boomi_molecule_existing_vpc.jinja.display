@@ -24,11 +24,14 @@ input:
       title: Zone
       tooltip: GKE Cluster Zone to run.
 
-    - name: network
-      title: Network name
+    - name: gkeClusterNetwork
+      title: Gke Cluster Network name
       section: NETWORKING
-    - name: subnetwork
-      title: Subnetwork name
+    - name: gkeClusterPrivateSubnetwork
+      title: Gke Cluster private Subnetwork name
+      section: NETWORKING
+    - name: gkeClusterPublicSubnetwork
+      title: Gke Cluster public Subnetwork name
       section: NETWORKING
 
     - name: machineType

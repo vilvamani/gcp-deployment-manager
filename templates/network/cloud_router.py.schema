@@ -16,7 +16,6 @@ imports:
 required:
   - network
   - region
-  - asn
   - nat-name
 
 properties:
@@ -29,16 +28,6 @@ properties:
   region:
     type: string
     description: The URI of the region where the Cloud Router resides.
-  asn:
-    type: integer
-    description: |
-      The local BGP Autonomous System Number (ASN). Must be an RFC6996 private ASN,
-      either 16-bit or 32-bit. The value will be fixed for this router.
-      All VPN tunnels that link to this router will have the same
-      local ASN.
-  nat-name:
-    type: string
-    description: The name of the CloudNAT instance
 
 outputs:
   properties:

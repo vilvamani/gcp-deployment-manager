@@ -56,9 +56,9 @@ properties:
     x-googleProperty:
       type: GCE_ZONE
 
-  network:
-    type: array
-    default: [default]
+  gkeClusterNetwork:
+    type: string
+    default: test-vpc
     minItems: 1
     maxItems: 8
     x-googleProperty:
@@ -66,16 +66,23 @@ properties:
       gceNetwork:
         allowSharedVpcs: True
         machineTypeProperty: machineType
-  subnetwork:
-    type: array
-    minItems: 1
-    maxItems: 8
+  gkeClusterPrivateSubnetwork:
+    type: string
+    default: test-subnet-1
     x-googleProperty:
       type: GCE_SUBNETWORK
       zoneProperty: zone
       gceSubnetwork:
-        networkProperty: network
-
+        networkProperty: gkeClusterNetwork
+  gkeClusterPublicSubnetwork:
+    type: string
+    default: test-subnet-2
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: gkeClusterNetwork
+        
   machineType:
     type: string
     default: g1-small
