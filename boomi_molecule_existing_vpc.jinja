@@ -25,6 +25,55 @@
 
 resources:
 
+- name: {{ deployment }}-bastion-sa
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: {{ deployment }}-bastion
+    projectId: {{ project }}
+    displayName: Bastion Service Account
+
+- name: {{ deployment }}-gke-sa
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: {{ deployment }}-gke-cluster
+    projectId: {{ project }}
+    displayName: GKE Cluster Service Account
+
+- name: {{ deployment }}-iam-member
+  type: iam_member.py
+  properties:
+    roles:
+      - role: roles/container.admin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - role: roles/compute.instanceAdmin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+      - role: roles/storage.admin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+
+- name: {{ deployment }}-enableApis
+  type: apis.py
+  properties:
+    consumerId: {{ 'project:' + env['project'] }}
+    apis:
+      - name: cloudResourceManagerApi
+        serviceName: cloudresourcemanager.googleapis.com
+      - name: endpointsApi
+        serviceName: endpoints.googleapis.com
+      - name: iamApi
+        serviceName: iam.googleapis.com
+      - name: containerApi
+        serviceName: container.googleapis.com
+      - name: gkeconnectApi
+        serviceName: gkeconnect.googleapis.com
+      - name: computeApi
+        serviceName: compute.googleapis.com
 
 - name: {{ deployment }}-firewall
   type: firewall.py
@@ -91,3 +140,15 @@ resources:
     region: {{ region }}
     nat-name: {{ deployment }}-{{ region }}-nat
     subnet: {{ privateSubnetwork }}
+
+- name: {{ deployment }}-cloud-filestore
+  type: cloud_filestore.py
+  properties:
+    description: {{ deployment }} File Store
+    location: {{ zone }}
+    tier: STANDARD
+    fileShares:
+      - name: boomifileshare
+        capacityGb: 1024
+    networks:
+      - network: {{ properties["gkeClusterNetwork"] }}
