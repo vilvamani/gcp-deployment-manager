@@ -255,8 +255,8 @@ resources:
 - name: {{ deployment }}-bastion-instance
   type: bastion_instance.py
   properties:
-    network: {{ network }}
-    publicSubnet: {{ publicSubnetwork }}
+    network: $(ref.{{ deployment }}-network.selfLink)
+    publicSubnet: $(ref.{{ deployment }}-{{ region }}-public-subnet.selfLink)
     region: {{ region }}
     machineType: {{ machineType }}
     machineImage: centos-cloud/global/images/family/centos-7
