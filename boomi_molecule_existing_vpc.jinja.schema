@@ -12,6 +12,9 @@ imports:
 - name: path_utils.jinja
   path: path_utils.jinja
 
+- name: static_address
+  path: templates/network/static_address.py
+
 - name: apis.py
   path: templates/iam_apis/apis.py
 
