@@ -19,12 +19,9 @@
 {% set boomiAccountID = properties["boomiAccountID"] %}
 {% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
-{% set networks = [] %}
-{% for network in properties["network"] %}
-{% set _ = networks.append(path_utils.networkPath(network)) %}
-{% endfor %}
-
-{% set subnetwork = path_utils.subnetworkPath(zone, properties["subnetwork"]) %}
+{% set networks = path_utils.networkPath(properties["gkeClusterNetwork"]) %}
+{% set privateSubnetwork = path_utils.subnetworkPath(zone, properties["gkeClusterPrivateSubnetwork"]) %}
+{% set publicSubnetwork = path_utils.subnetworkPath(zone, properties["gkeClusterPublicSubnetwork"]) %}
 
 resources:
 
@@ -32,10 +29,7 @@ resources:
 - name: {{ deployment }}-firewall
   type: firewall.py
   properties:
-    network: 
-      {% for network in networks %}
-        {{ network }}
-      {% endfor %}
+    network: {{ network }}
     rules:
       - name: {{ deployment }}-allow-ssh-to-bastion
         description: Allow SSH from anywhere to Bastion
@@ -93,10 +87,7 @@ resources:
   type: cloud_router.py
   properties:
     name: {{ deployment }}-{{ region }}-cloud-router
-    network:
-      {% for network in networks %}
-        {{ network }}
-      {% endfor %}
+    network: {{ network }}
     region: {{ region }}
     nat-name: {{ deployment }}-{{ region }}-nat
-    subnet: {{ subnetwork }}
+    subnet: {{ privateSubnetwork }}
