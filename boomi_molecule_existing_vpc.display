@@ -1,0 +1,85 @@
+description:
+  author:
+    title: Google Click to Deploy
+    descriptionHtml: Popular open stacks on Google Compute Engine packaged by Google.
+    shortDescription: Popular open stacks on Google Compute Engine packaged by Google.
+    url: https://cloud.google.com/solutions/#click-to-deploy
+  descriptionHtml: TDevelopment stack featuring GKE Cluster, Managed Instance Group and Dell Boomi Molecule.
+  logo: '@media/lamp_store.png'
+  tagline: Development stack featuring GKE Cluster, Managed Instance Group and Dell Boomi Molecule.
+  title: GKE Dell Boomi Molecule
+  url: https://help.boomi.com/bundle/integration/page/c-atm-Molecules.html
+  version: '1.0'
+  softwareGroups:
+  - type: SOFTWARE_GROUP_OS
+    software:
+    - title: CentOS 
+      version: '7'
+  - software:
+    - title: Kubernetes
+      version: 1.17.12-gke.1501
+input:
+  properties:
+    - name: zone
+      title: Zone
+      tooltip: GKE Cluster Zone to run.
+
+    - name: network
+      title: Network name
+      section: NETWORKING
+    - name: subnetwork
+      title: Subnetwork name
+      section: NETWORKING
+
+    - name: machineType
+      title: Bastion Machine type
+
+    - name: tcp80SourceRanges
+      title: Source IP ranges for HTTP traffic
+      tooltip: 'Traffic is only allowed from sources within these IP address ranges. Use CIDR notation when entering ranges. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'
+      placeholder: '0.0.0.0/0, 192.169.0.0/24'
+      section: NETWORKING
+    - name: tcp443SourceRanges
+      title: Source IP ranges for HTTPS traffic
+      tooltip: 'Traffic is only allowed from sources within these IP address ranges. Use CIDR notation when entering ranges. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'
+      placeholder: '0.0.0.0/0, 192.169.0.0/24'
+      section: NETWORKING
+
+    - name: enableRegionalGKECluster
+      title: Enable Reginoal GKE Cluster
+      tooltip: 'GKE Cluster: Regional (or) Zonal'
+      section: GKE_CLUSTER
+    - name: gkeMachineType
+      title: GKE Cluster Machine type
+      section: GKE_CLUSTER
+    - name: diskSizeGb
+      title: GKE Node Instance disk size in GB
+      section: GKE_CLUSTER
+    - name: maxNodePerZone
+      title: Maximum No. of Nodes per GKE Cluster
+      tooltip: Specify a value between 1 and 100.
+      section: GKE_CLUSTER
+
+    - name: boomiUserEmailID
+      title: Boomi user Email ID
+      tooltip: The email account associated with the Boomi account.
+      section: BOOMI_MOLECULE
+    - name: boomiPassword
+      title: Boomi password
+      tooltip: The password associated with the Boomi account.
+      section: BOOMI_MOLECULE
+    - name: boomiAccountID
+      title: Boomi account ID
+      tooltip: The Boomi account ID that you want to associate with the new Molecule cluster.
+      section: BOOMI_MOLECULE
+    - name: helmGITRepoURL
+      title: Boomi Helm Git Repo URL
+      section: BOOMI_MOLECULE
+
+  sections:
+    - name: NETWORKING
+      title: Networking
+    - name: GKE_CLUSTER
+      title: GCP GKE Cluster configuration
+    - name: BOOMI_MOLECULE
+      title: Dell Boomi Molecule configuration

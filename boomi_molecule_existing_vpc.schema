@@ -1,0 +1,147 @@
+# Copyright 2020 Dell Boomi. All rights reserved.
+
+info:
+  title: Boomi Molecule GKE Cluster
+  author: Vilvamani Arumugam <vilvamani007@gmail.com>
+  description: Deploy Dell Boomi Molecule in GKE
+  version: 1.0
+
+imports:
+- path: boomi_molecule.jinja
+
+- name: path_utils.jinja
+  path: path_utils.jinja
+
+- name: apis.py
+  path: templates/iam_apis/apis.py
+
+- name: iam_member.py
+  path: templates/iam_apis/iam_member.py
+
+- name: network.py
+  path: templates/network/network.py
+
+- name: firewall.py
+  path: templates/network/firewall.py
+    
+- name: cloud_router.py
+  path: templates/network/cloud_router.py
+
+- name: cloud_filestore.py
+  path: templates/cloud_filestore/cloud_filestore.py
+
+- name: bastion_instance.py
+  path: templates/bastion_instance/bastion_instance.py
+
+- name: gke.py
+  path: templates/gke/gke.py
+
+- name: cloudbuild.jinja
+  path: templates/cloudbuild/cloudbuild.jinja
+
+required:
+  - zone
+  - machineType
+  - gkeMachineType
+  - diskSizeGb
+  - maxNodePerZone
+  - boomiUserEmailID
+  - boomiPassword
+  - boomiAccountID
+
+properties:      
+  zone:
+    type: string
+    default: us-central1-a
+    x-googleProperty:
+      type: GCE_ZONE
+
+  network:
+    type: array
+    default: [default]
+    minItems: 1
+    maxItems: 8
+    x-googleProperty:
+      type: GCE_NETWORK
+      gceNetwork:
+        allowSharedVpcs: True
+        machineTypeProperty: machineType
+  subnetwork:
+    type: array
+    minItems: 1
+    maxItems: 8
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: network
+        
+  machineType:
+    type: string
+    default: g1-small
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 3.75
+
+  tcp80SourceRanges:
+    type: string
+    default: '0.0.0.0/0, 192.169.0.0/24'
+    x-googleProperty:
+      type: GCE_FIREWALL_RANGE
+
+  tcp443SourceRanges:
+    type: string
+    default: '0.0.0.0/0, 192.169.0.0/24'
+    x-googleProperty:
+      type: GCE_FIREWALL_RANGE
+
+  enableRegionalGKECluster:
+    type: boolean
+    default: False
+
+  gkeMachineType:
+    type: string
+    default: g1-small
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+
+  diskSizeGb:
+    type: integer
+    default: 50
+    minimum: 50
+    maximum: 100
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+
+  maxNodePerZone:
+    type: integer
+    default: 50
+    minimum: 10
+    maximum: 100
+    
+  boomiUserEmailID:
+    type: string
+    default: vilvamani007@gmail.com
+
+  boomiPassword:
+    type: string
+    default: google#2020
+
+  boomiAccountID:
+    type: string
+    default: google-microsoft
+
+  helmGITRepoURL:
+    type: string
+    default: https://github.com/vilvamani/quickstart-boomi-gke-molecule.git
+
+outputs:
+  deployment:
+    type: string
+
+  project:
+    type: string

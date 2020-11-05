@@ -1,0 +1,138 @@
+# Copyright 2020 Dell Boomi. All rights reserved.
+
+{% import "path_utils.jinja" as path_utils with context %}
+
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+{% set region = path_utils.zoneToRegion(properties["zone"]) %}
+{% set zone = properties["zone"] %}
+{% set machineType = properties["machineType"] %}
+{% set bootDiskType = properties["bootDiskType"] %}
+
+{% set enableRegionalGKECluster = "Regional" if properties["enableRegionalGKECluster"] else "Zonal" %}
+{% set gkeMachineType = properties["gkeMachineType"] %}
+{% set maxNodePerZone = properties["maxNodePerZone"] %}
+{% set diskSizeGb = properties["diskSizeGb"] %}
+
+{% set boomiUserEmailID = properties["boomiUserEmailID"] %}
+{% set boomiPassword = properties["boomiPassword"] %}
+{% set boomiAccountID = properties["boomiAccountID"] %}
+{% set helmGITRepoURL = properties["helmGITRepoURL"] %}
+
+{% set networks = [] %}
+{% for network in properties["network"] %}
+{% set _ = networks.append(path_utils.networkPath(network)) %}
+{% endfor %}
+{% set subnetworks = properties["subnetwork"] %}
+
+resources:
+
+- name: {{ deployment }}-bastion-sa
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: {{ deployment }}-bastion
+    projectId: {{ project }}
+    displayName: Bastion Service Account
+
+- name: {{ deployment }}-gke-sa
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: {{ deployment }}-gke-cluster
+    projectId: {{ project }}
+    displayName: GKE Cluster Service Account
+
+- name: {{ deployment }}-iam-member
+  type: iam_member.py
+  properties:
+    roles:
+      - role: roles/container.admin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - role: roles/compute.instanceAdmin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+      - role: roles/storage.admin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+
+- name: {{ deployment }}-enableApis
+  type: apis.py
+  properties:
+    consumerId: {{ 'project:' + env['project'] }}
+    apis:
+      - name: cloudResourceManagerApi
+        serviceName: cloudresourcemanager.googleapis.com
+      - name: endpointsApi
+        serviceName: endpoints.googleapis.com
+      - name: iamApi
+        serviceName: iam.googleapis.com
+      - name: containerApi
+        serviceName: container.googleapis.com
+      - name: gkeconnectApi
+        serviceName: gkeconnect.googleapis.com
+      - name: computeApi
+        serviceName: compute.googleapis.com
+
+- name: {{ deployment }}-firewall
+  type: firewall.py
+  properties:
+    network: 
+      {% for network in networks %}
+        {{ network }}
+      {% endfor %}
+    rules:
+      - name: {{ deployment }}-allow-ssh-to-bastion
+        description: Allow SSH from anywhere to Bastion
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "22"
+              - "3389"
+        direction: INGRESS
+        sourceRanges:
+          - 0.0.0.0/0
+        targetTags:
+          - bastion
+      - name: {{ deployment }}-allow-http
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "80"
+        direction: INGRESS
+        {% if properties.get("tcp80SourceRanges") %}
+        sourceRanges:
+          {% for source in properties["tcp80SourceRanges"].split(',') %}
+          - '{{ source | trim }}'
+          {% endfor %}
+        {% else %}
+        sourceRanges:
+          - 0.0.0.0/0
+        {% endif %}
+      - name: {{ deployment }}-allow-https
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "443"
+        direction: INGRESS
+        {% if properties.get("tcp443SourceRanges") %}
+        sourceRanges:
+          {% for source in properties["tcp443SourceRanges"].split(',') %}
+          - '{{ source | trim }}'
+          {% endfor %}
+        {% else %}
+        sourceRanges:
+          - 0.0.0.0/0
+        {% endif %}
+      - name: {{ deployment }}-allow-icmp
+        description: Allow ICMP from anywhere
+        allowed:
+          - IPProtocol: ICMP
+        direction: INGRESS
+        sourceRanges:
+          - 0.0.0.0/0
