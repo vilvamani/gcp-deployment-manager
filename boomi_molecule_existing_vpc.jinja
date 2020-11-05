@@ -156,6 +156,23 @@ resources:
     networks:
       - network: {{ properties["gkeClusterNetwork"] }}
 
+- name: {{ deployment }}-gke-cloudbuild
+  type: cloudbuild.jinja
+  properties:
+    {% if properties["enableRegionalGKECluster"] == True %}
+    region: {{ region }}
+    {% else %}
+    region: {{ zone }}
+    {% endif %}
+    helmGITRepoURL: {{ helmGITRepoURL }}
+    boomiUserEmailID: {{ boomiUserEmailID }}
+    boomiPassword: {{ boomiPassword }}
+    boomiAccountID: {{ boomiAccountID }}
+    network: $(ref.{{ deployment }}-network.vpcName)
+    CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
+    ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)
+    ingressStaticIpName: $(ref.{{ deployment }}-static-ip.staticIpName)
+
 - name: {{ deployment }}-gke-cluster
   type: gke.py
   properties:

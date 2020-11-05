@@ -13,10 +13,6 @@ info:
 imports:
   - path: static_address.py
 
-required:
-  - ipVersion
-  - networkTier
-
 properties:
   name:
     type: string
