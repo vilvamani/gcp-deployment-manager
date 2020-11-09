@@ -135,15 +135,6 @@ resources:
         sourceRanges:
           - 0.0.0.0/0
 
-- name: {{ deployment }}-{{ region }}-cloud-router
-  type: cloud_router.py
-  properties:
-    name: {{ deployment }}-{{ region }}-cloud-router
-    network: {{ network }}
-    region: {{ region }}
-    nat-name: {{ deployment }}-{{ region }}-nat
-    subnet: {{ privateSubnetwork }}
-
 - name: {{ deployment }}-cloud-filestore
   type: cloud_filestore.py
   properties:
