@@ -213,13 +213,11 @@ resources:
       loggingService: logging.googleapis.com/kubernetes
       monitoringService: monitoring.googleapis.com/kubernetes
       privateClusterConfig:
-        enablePrivateNodes: false
-        enablePrivateEndpoint: False
+        enablePrivateNodes: true
+        enablePrivateEndpoint: true
         masterIpv4CidrBlock: 172.16.0.0/28
       ipAllocationPolicy:
         useIpAliases: True
-        clusterIpv4CidrBlock: 10.1.0.0/16
-        servicesIpv4CidrBlock: 192.168.192.0/24
       masterAuth:
         clientCertificateConfig:
           issueClientCertificate: false
