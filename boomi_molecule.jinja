@@ -44,6 +44,9 @@ resources:
           - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
           - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - roles/container.developer
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
       - role: roles/compute.instanceAdmin
         members:
           - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
