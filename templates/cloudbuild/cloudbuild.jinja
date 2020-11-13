@@ -14,12 +14,21 @@ resources:
   properties:
     timeout: 120s
     steps:
+    # Configure a kubectl workspace for this project
+    - name: gcr.io/cloud-builders/kubectl
+      args:
+        - cluster-info
+      env:
+        - CLOUDSDK_COMPUTE_REGION={{ region }}
+        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
+        - KUBECONFIG=/workspace/.kube/config
+        
     - id: git_clone
       name: 'gcr.io/cloud-builders/git'
       args:
-      - clone
-      - {{ properties["helmGITRepoURL"] }}
-      - quick_start
+        - clone
+        - {{ properties["helmGITRepoURL"] }}
+        - quick_start
 
     - id: 'build_image'
       name: 'gcr.io/cloud-builders/docker'
@@ -41,17 +50,6 @@ resources:
         - HELM_REPO_URL=https://kubernetes-charts.storage.googleapis.com
       waitFor: [build_image]
 
-    - id: helm_list
-      name: 'gcr.io/$PROJECT_ID/helm:latest'
-      args: 
-        - repo
-        - list
-      env:
-        - CLOUDSDK_COMPUTE_REGION={{ region }}
-        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
-        - KUBECONFIG=/workspace/.kube/config
-      waitFor: [helm_repo_update]
-
     - id: helm_nfs_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args: 
@@ -66,7 +64,7 @@ resources:
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
         - HELM_REPO_NAME=stable/nfs-client-provisioner
-      waitFor: [helm_list]
+      waitFor: [helm_repo_update]
 
     - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'

@@ -80,7 +80,7 @@ properties:
 
   enableRegionalGKECluster:
     type: boolean
-    default: False
+    default: True
 
   gkeMachineType:
     type: string
