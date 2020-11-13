@@ -14,12 +14,6 @@ resources:
   properties:
     timeout: 120s
     steps:
-    - name: 'gcr.io/cloud-builders/gcloud'
-      entrypoint: 'bash'
-      args:
-      - '-c'
-      - |
-        gcloud container clusters get-credentials {{ CLUSTER_NAME }} --zone {{ region }}
     - id: git_clone
       name: 'gcr.io/cloud-builders/git'
       args:
