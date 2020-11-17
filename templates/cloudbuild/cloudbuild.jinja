@@ -43,7 +43,7 @@ resources:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
-      waitFor: [git_clone]
+      waitFor: [build_image]
 
     - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
