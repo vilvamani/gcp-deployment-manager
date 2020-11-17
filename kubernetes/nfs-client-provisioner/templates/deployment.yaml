@@ -44,4 +44,3 @@ spec:
           nfs:
             server: {{ .Values.nfs.server }}
             path: {{ .Values.nfs.path }}
-{{- end }}
