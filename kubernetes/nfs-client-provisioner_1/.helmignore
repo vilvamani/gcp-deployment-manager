@@ -19,3 +19,6 @@
 .project
 .idea/
 *.tmproj
+.vscode/
+
+templates/boomi_molecule_gke_hpa.yaml
