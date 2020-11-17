@@ -34,7 +34,7 @@ resources:
       args:
         - upgrade
         - --install
-        - nfsdeployment
+        - nfsprovisioner
         - --set
         - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany
         - '.'
@@ -56,7 +56,7 @@ resources:
         - --set
         - secrets.username={{ properties["boomiUserEmailID"] }},secrets.password={{ properties["boomiPassword"] }},secrets.account={{ properties["boomiAccountID"] }},volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }},ingress.staticIpName={{ properties["ingressStaticIpName"] }}
         - '.'
-      dir: quick_start/kubernetes/helm
+      dir: quick_start/kubernetes/boomi-molecule
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
@@ -69,7 +69,7 @@ resources:
         - apply
         - --filename=./templates/boomi_molecule_gke_hpa.yaml
         - --validate=false
-      dir: quick_start/kubernetes/helm
+      dir: quick_start/kubernetes/boomi-molecule
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
