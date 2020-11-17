@@ -29,31 +29,6 @@ resources:
       dir: quick_start/kubernetes
       waitFor: [git_clone]
 
-    - id: helm_repo_update
-      name: 'gcr.io/$PROJECT_ID/helm:latest'
-      args: 
-        - repo
-        - add
-        - stable
-        - https://kubernetes-charts.storage.googleapis.com
-      env:
-        - CLOUDSDK_COMPUTE_REGION={{ region }}
-        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
-        - KUBECONFIG=/workspace/.kube/config
-        - HELM_REPO_URL=https://kubernetes-charts.storage.googleapis.com
-      waitFor: [build_image]
-
-    - id: helm_list
-      name: 'gcr.io/$PROJECT_ID/helm:latest'
-      args: 
-        - repo
-        - list
-      env:
-        - CLOUDSDK_COMPUTE_REGION={{ region }}
-        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
-        - KUBECONFIG=/workspace/.kube/config
-      waitFor: [helm_repo_update]
-
     - id: helm_nfs_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args:
@@ -68,7 +43,7 @@ resources:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
-      waitFor: [helm_list]
+      waitFor: [build_image]
 
     - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
