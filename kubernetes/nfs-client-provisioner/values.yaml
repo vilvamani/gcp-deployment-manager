@@ -40,7 +40,7 @@ storageClass:
   archiveOnDelete: true
 
   # Set access mode - ReadWriteOnce, ReadOnlyMany or ReadWriteMany
-  accessModes: ReadWriteOnce
+  accessModes: ReadWriteMany
 
 ## For RBAC support:
 rbac:
