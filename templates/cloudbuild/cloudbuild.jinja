@@ -60,12 +60,12 @@ resources:
         - boomi-nfs
         - --set
         - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany
-        - stable/nfs-client-provisioner
+        - ckotzbauer/nfs-client-provisioner
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
-        - HELM_REPO_NAME=stable/nfs-client-provisioner
+        - HELM_REPO_NAME=ckotzbauer/nfs-client-provisioner
       waitFor: [helm_list]
 
     - id: helm_boomi_deployment
