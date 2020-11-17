@@ -21,52 +21,36 @@ resources:
       - {{ properties["helmGITRepoURL"] }}
       - quick_start
 
+    - id: nfs_git_clone
+      name: 'gcr.io/cloud-builders/git'
+      args:
+      - clone
+      - https://github.com/vilvamani/charts.git
+      - nfs_client_provisioner
+
     - id: 'build_image'
       name: 'gcr.io/cloud-builders/docker'
       args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
       dir: quick_start/kubernetes
       waitFor: [git_clone]
 
-    - id: helm_repo_update
-      name: 'gcr.io/$PROJECT_ID/helm:latest'
-      args: 
-        - repo
-        - add
-        - stable
-        - https://kubernetes-charts.storage.googleapis.com
-      env:
-        - CLOUDSDK_COMPUTE_REGION={{ region }}
-        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
-        - KUBECONFIG=/workspace/.kube/config
-        - HELM_REPO_URL=https://kubernetes-charts.storage.googleapis.com
-      waitFor: [build_image]
-
-    - id: helm_list
-      name: 'gcr.io/$PROJECT_ID/helm:latest'
-      args: 
-        - repo
-        - list
-      env:
-        - CLOUDSDK_COMPUTE_REGION={{ region }}
-        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
-        - KUBECONFIG=/workspace/.kube/config
-      waitFor: [helm_repo_update]
-
     - id: helm_nfs_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args: 
         - upgrade
         - --install
-        - boomi-nfs
+        - nfs_client_provisioner
+        - --namespace
+        - default
         - --set
         - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany
-        - stable/nfs-client-provisioner
+        - '.'
+      dir: nfs_client_provisioner/stable/nfs-client-provisioner
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
-        - HELM_REPO_NAME=stable/nfs-client-provisioner
-      waitFor: [helm_list]
+      waitFor: [nfs_git_clone]
 
     - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
