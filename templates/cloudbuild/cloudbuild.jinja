@@ -18,17 +18,8 @@ resources:
       name: 'gcr.io/cloud-builders/git'
       args:
       - clone
-      - -b
-      - develop
-      - https://github.com/vilvamani/gcp-deployment-manager.git
+      - {{ properties["helmGITRepoURL"] }}
       - quick_start
-
-    - id: nfs_git_clone
-      name: 'gcr.io/cloud-builders/git'
-      args:
-      - clone
-      - https://github.com/vilvamani/charts.git
-      - nfs_client_provisioner
 
     - id: 'build_image'
       name: 'gcr.io/cloud-builders/docker'
@@ -38,21 +29,21 @@ resources:
 
     - id: helm_nfs_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
-      args: 
+      args:
         - upgrade
         - --install
-        - nfs_client_provisioner
+        - helm_nfs_deployment
         - --namespace
         - default
         - --set
         - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany
         - '.'
-      dir: nfs_client_provisioner/stable/nfs-client-provisioner
+      dir: quick_start/kubernetes/nfs-client-provisioner
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
-      waitFor: [nfs_git_clone]
+      waitFor: [git_clone]
 
     - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
