@@ -18,7 +18,9 @@ resources:
       name: 'gcr.io/cloud-builders/git'
       args:
       - clone
-      - {{ properties["helmGITRepoURL"] }}
+      - -b
+      - develop
+      - https://github.com/vilvamani/gcp-deployment-manager.git
       - quick_start
 
     - id: 'build_image'
