@@ -34,7 +34,7 @@ resources:
       args:
         - upgrade
         - --install
-        - helm_nfs_deployment
+        - nfsdeployment
         - --set
         - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany
         - '.'
