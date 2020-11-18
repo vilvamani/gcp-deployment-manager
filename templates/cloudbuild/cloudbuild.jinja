@@ -14,21 +14,14 @@ resources:
   properties:
     timeout: 120s
     steps:
-    # Configure a kubectl workspace for this project
-    - name: gcr.io/cloud-builders/kubectl
-      args:
-        - cluster-info
-      env:
-        - CLOUDSDK_COMPUTE_REGION={{ region }}
-        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
-        - KUBECONFIG=/workspace/.kube/config
-        
     - id: git_clone
       name: 'gcr.io/cloud-builders/git'
       args:
-        - clone
-        - {{ properties["helmGITRepoURL"] }}
-        - quick_start
+      - clone
+      - -b
+      - develop
+      - https://github.com/vilvamani/gcp-deployment-manager.git
+      - quick_start
 
     - id: 'build_image'
       name: 'gcr.io/cloud-builders/docker'
@@ -36,35 +29,21 @@ resources:
       dir: quick_start/kubernetes
       waitFor: [git_clone]
 
-    - id: helm_repo_update
-      name: 'gcr.io/$PROJECT_ID/helm:latest'
-      args: 
-        - repo
-        - add
-        - stable
-        - https://kubernetes-charts.storage.googleapis.com
-      env:
-        - CLOUDSDK_COMPUTE_REGION={{ region }}
-        - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
-        - KUBECONFIG=/workspace/.kube/config
-        - HELM_REPO_URL=https://kubernetes-charts.storage.googleapis.com
-      waitFor: [build_image]
-
     - id: helm_nfs_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
-      args: 
+      args:
         - upgrade
         - --install
-        - boomi-nfs
+        - nfsprovisioner
         - --set
         - nfs.server={{ properties["ipaddress"] }},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany
-        - stable/nfs-client-provisioner
+        - '.'
+      dir: quick_start/kubernetes/nfs-client-provisioner
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
-        - HELM_REPO_NAME=stable/nfs-client-provisioner
-      waitFor: [helm_repo_update]
+      waitFor: [build_image]
 
     - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
@@ -77,7 +56,7 @@ resources:
         - --set
         - secrets.username={{ properties["boomiUserEmailID"] }},secrets.password={{ properties["boomiPassword"] }},secrets.account={{ properties["boomiAccountID"] }},volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }},ingress.staticIpName={{ properties["ingressStaticIpName"] }}
         - '.'
-      dir: quick_start/kubernetes/helm
+      dir: quick_start/kubernetes/boomi-molecule
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
@@ -90,12 +69,20 @@ resources:
         - apply
         - --filename=./templates/boomi_molecule_gke_hpa.yaml
         - --validate=false
-      dir: quick_start/kubernetes/helm
+      dir: quick_start/kubernetes/boomi-molecule
       env:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
       waitFor: [helm_boomi_deployment]
+
+    - id: enable_master_authorized_network
+      name: 'gcr.io/cloud-builders/gcloud'
+      entrypoint: 'bash'
+      args:
+        - -c 
+        - gcloud container clusters update {{ CLUSTER_NAME }} --enable-master-authorized-networks --region {{ region }} --async
+      waitFor: [kubectl_hpa_deployment]
 
     substitutions:
       _HELM_VERSION: 3.2.0

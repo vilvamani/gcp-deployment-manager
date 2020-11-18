@@ -200,6 +200,9 @@ resources:
         enablePrivateNodes: true
         enablePrivateEndpoint: false
         masterIpv4CidrBlock: 172.16.0.0/28
+      masterAuthorizedNetworksConfig: 
+        enabled: false
+        cidrBlocks: []
       ipAllocationPolicy:
         useIpAliases: True
       masterAuth:
