@@ -76,5 +76,13 @@ resources:
         - KUBECONFIG=/workspace/.kube/config
       waitFor: [helm_boomi_deployment]
 
+    - id: enable_master_authorized_network
+      name: 'gcr.io/cloud-builders/gcloud'
+      entrypoint: 'bash'
+      args:
+        - -c 
+        - gcloud container clusters update {{ CLUSTER_NAME }} --enable-master-authorized-networks --region {{ region }} --async
+      waitFor: [kubectl_hpa_deployment]
+
     substitutions:
       _HELM_VERSION: 3.2.0
