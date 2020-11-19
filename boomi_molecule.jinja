@@ -44,9 +44,6 @@ resources:
           - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
           - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
-      - role: roles/container.developer
-        members:
-          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
       - role: roles/compute.instanceAdmin
         members:
           - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
@@ -231,13 +228,6 @@ resources:
         workloadPool: {{ project }}.svc.id.goog
       networkPolicy:
         enabled: true
-      maintenancePolicy:
-        window:
-          recurringWindow:
-            window:
-              startTime: "2020-11-01T07:00:25Z"
-              endTime: "2021-11-01T07:00:25Z"
-            recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
 
 - name: {{ deployment }}-gke-cloudbuild
   type: cloudbuild.jinja
