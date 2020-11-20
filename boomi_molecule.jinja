@@ -14,9 +14,9 @@
 {% set maxNodePerZone = properties["maxNodePerZone"] %}
 {% set diskSizeGb = properties["diskSizeGb"] %}
 
-{% set boomiUserEmailID = properties["boomiUserEmailID"] %}
-{% set boomiPassword = properties["boomiPassword"] %}
-{% set boomiAccountID = properties["boomiAccountID"] %}
+{% set boomiUserEmailID = properties["secretEmailID"] %}
+{% set boomiPassword = properties["secretPassword"] %}
+{% set boomiAccountID = properties["secretAccountID"] %}
 {% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
 resources:
@@ -52,6 +52,9 @@ resources:
         members:
           - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
           - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+      - role: roles/secretmanager.secretAccessor
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
 
 - name: {{ deployment }}-enableApis
   type: apis.py
@@ -70,6 +73,8 @@ resources:
         serviceName: gkeconnect.googleapis.com
       - name: computeApi
         serviceName: compute.googleapis.com
+      - name: secretApi
+        serviceName: secretmanager.googleapis.com
 
 - name: {{ deployment }}-network
   type: network.py

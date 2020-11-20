@@ -6,6 +6,6 @@ resources:
   type: boomi_molecule.jinja
   properties:
     zone: us-central1-a
-    boomiUserEmailID: vilvamani007@gmail.com
-    boomiPassword: google#2020
-    boomiAccountID: google-microsoft
+    secretEmailID: boomiUserEmailID
+    secretPassword: boomiPassword
+    secretAccountID: boomiAccountID

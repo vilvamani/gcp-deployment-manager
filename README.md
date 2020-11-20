@@ -34,20 +34,30 @@ To begin, run these commands to open the quickstart
 git clone -b develop https://github.com/vilvamani/gcp-deployment-manager.git  boomi_quickstart && cd boomi_quickstart
 ```
 
+## Securely store sensitive data in secret manager.
+
+```
+  echo -n "vilvamani007@gmail.com" | gcloud secrets create boomiUserEmailID --replication-policy="automatic" --data-file=-
+
+  echo -n "google#2020" | gcloud secrets create boomiPassword --replication-policy="automatic" --data-file=-
+  
+  echo -n "google-microsoft" | gcloud secrets create boomiAccountID --replication-policy="automatic" --data-file=-
+
+```
 ## Update Boomi Username, Password and Account details in the config.jinja file or config.jinja.schema.
 
 ```
-  boomiUserEmailID:
+  secretEmailID:
     type: string
-    default: vilvamani007@gmail.com
+    default: boomiUserEmailID
 
-  boomiPassword:
+  secretPassword:
     type: string
-    default: google#2020
+    default: boomiPassword
 
-  boomiAccountID:
+  secretAccountID:
     type: string
-    default: google-microsoft
+    default: boomiAccountID
 ```
 
 ## Deploy the resources
@@ -94,3 +104,13 @@ all the resources that you created:
 ```sh
 gcloud deployment-manager deployments delete boomi-quickstart
 ```
+
+## Deploying or updating applications in the existing private kuberenetes cluster
+
+The private GKE cluster has Public endpoint access enabled and authorized networks enabled. Machines with public IP addresses can use kubectl to communicate with the public endpoint only if their public IP addresses are included in the list of authorized networks.
+Reference document : https://cloud.google.com/kubernetes-engine/docs/concepts/private-cluster-concept#overview
+
+## Security best practices
+
+When creating new project set organizational level policy constraint to skip default network creation.
+Reference document : https://cloud.google.com/resource-manager/docs/organization-policy/org-policy-constraints#constraints-for-specific-services

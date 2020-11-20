@@ -29,6 +29,22 @@ resources:
       dir: quick_start/kubernetes
       waitFor: [git_clone]
 
+    - id: boomi_account_details
+      name: 'gcr.io/cloud-builders/gcloud'
+      entrypoint: 'bash'
+      args:
+        - -c 
+        - |
+          # store multiple values as environment variables
+          # name all values with a common prefix (we'll use "boomi_")
+          export boomi_UserEmailID=$(gcloud secrets versions access latest --secret={{ properties["boomiUserEmailID"] }}) &&
+          export boomi_Password=$(gcloud secrets versions access latest --secret={{ properties["boomiPassword"] }}) &&
+          export boomi_AccountID=$(gcloud secrets versions access latest --secret={{ properties["boomiAccountID"] }}) &&
+          
+          # write all "boomi_" variables to the persistent volume "/workspace"
+          env | grep "^boomi_" > /workspace/build_vars
+      waitFor: [build_image]
+
     - id: helm_nfs_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args:
@@ -43,18 +59,23 @@ resources:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
-      waitFor: [build_image]
+      waitFor: [boomi_account_details]
 
     - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
+      entrypoint: 'bash'
       args: 
+        - -c
+        - |
+          # Read environment variables from disk
+          source /workspace/build_vars
         - upgrade
         - --install
         - boomimolecule
         - --namespace
         - default
         - --set
-        - secrets.username={{ properties["boomiUserEmailID"] }},secrets.password={{ properties["boomiPassword"] }},secrets.account={{ properties["boomiAccountID"] }},volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }},ingress.staticIpName={{ properties["ingressStaticIpName"] }}
+        - secrets.username=$boomi_UserEmailID,secrets.password=$boomi_Password,secrets.account=$boomi_AccountID,volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }},ingress.staticIpName={{ properties["ingressStaticIpName"] }}
         - '.'
       dir: quick_start/kubernetes/boomi-molecule
       env:
@@ -81,8 +102,9 @@ resources:
       entrypoint: 'bash'
       args:
         - -c 
-        - gcloud container clusters update {{ CLUSTER_NAME }} --enable-master-authorized-networks --region {{ region }} --async
+        - gcloud container clusters update {{ CLUSTER_NAME }} --enable-master-authorized-networks --region {{ region }}
       waitFor: [kubectl_hpa_deployment]
 
+    timeout: 600s
     substitutions:
       _HELM_VERSION: 3.2.0
