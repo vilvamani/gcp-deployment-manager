@@ -107,7 +107,11 @@ gcloud deployment-manager deployments delete boomi-quickstart
 
 ## Deploying or updating applications in the existing private kuberenetes cluster
 
-The private GKE cluster has Public endpoint access enabled and authorized networks enabled. Machines with public IP addresses can use kubectl to communicate with the public endpoint only if their public IP addresses are included in the list of authorized networks.
+- The private GKE cluster has Public endpoint access enabled and authorized networks enabled. Machines with public IP addresses can use kubectl to communicate with the public endpoint only if their public IP addresses are included in the list of authorized networks.
+- To update the GKE cluster via deployment manager make sure the disable the master authorised network using below command before updating the deployment:
+```
+  gcloud container clusters update CLUSTER_NAME --no-enable-master-authorized-networks --region region 
+```
 Reference document : https://cloud.google.com/kubernetes-engine/docs/concepts/private-cluster-concept#overview
 
 ## Security best practices
