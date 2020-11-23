@@ -14,9 +14,9 @@
 {% set maxNodePerZone = properties["maxNodePerZone"] %}
 {% set diskSizeGb = properties["diskSizeGb"] %}
 
-{% set boomiUserEmailID = properties["boomiUserEmailID"] %}
-{% set boomiPassword = properties["boomiPassword"] %}
-{% set boomiAccountID = properties["boomiAccountID"] %}
+{% set boomiUserEmailID = properties["secretEmailID"] %}
+{% set boomiPassword = properties["secretPassword"] %}
+{% set boomiAccountID = properties["secretAccountID"] %}
 {% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
 {% set network = path_utils.networkPath(properties["gkeClusterNetwork"]) %}
