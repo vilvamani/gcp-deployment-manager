@@ -17,11 +17,11 @@ resources:
     - id: git_clone
       name: 'gcr.io/cloud-builders/git'
       args:
-      - clone
-      - -b
-      - develop
-      - https://github.com/vilvamani/gcp-deployment-manager.git
-      - quick_start
+        - clone
+        - -b
+        - develop
+        - https://github.com/vilvamani/gcp-deployment-manager.git
+        - quick_start
 
     - id: 'build_image'
       name: 'gcr.io/cloud-builders/docker'
