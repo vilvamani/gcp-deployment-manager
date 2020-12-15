@@ -57,11 +57,7 @@ def GenerateConfig(context):
                     '--install',
                     'nfsprovisioner',
                     '--set',
-                    'nfs.server=${ipaddress}',
-                    'nfs.path=/boomifileshare',
-                    'storageClass.defaultClass=true',
-                    'storageClass.reclaimPolicy=Retain',
-                    'storageClass.accessModes=ReadWriteMany',
+                    'nfs.server=${ipaddress},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany',
                     '.'
                    ],
                   'dir': 'quick_start/kubernetes/nfs-client-provisioner',
