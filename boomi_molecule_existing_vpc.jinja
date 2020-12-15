@@ -211,7 +211,7 @@ resources:
         enabled: true
 
 - name: {{ deployment }}-gke-cloudbuild
-  type: cloudbuild.jinja
+  type: cloudbuild.py
   properties:
     {% if properties["enableRegionalGKECluster"] == True %}
     region: {{ region }}
