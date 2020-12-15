@@ -21,7 +21,13 @@ def GenerateConfig(context):
               '_HELM_VERSION': '3.2.0',
               '_REGION': properties.get('region'),
               '_CLUSTER_NAME': properties.get('CLUSTER_NAME'),
-              '_IP_ADDRESS': properties.get('ipaddress')
+              '_IP_ADDRESS': properties.get('ipaddress'),
+              '_BoomiUserEmailId': properties.get('boomi_UserEmailID'),
+              '_BoomiPassword': properties.get('boomi_Password'),
+              '_BoomiAccountId': properties.get('boomi_AccountID'),
+              '_ReservedIpRange': properties.get('reservedIpRange'),
+              '_NETWORK': properties.get('network'),
+              '_IngressStaticIpName': properties.get('ingressStaticIpName')
           },
           'steps': [
               {
@@ -67,6 +73,56 @@ def GenerateConfig(context):
                     'KUBECONFIG=/workspace/.kube/config'
                    ],
                   'waitFor': ['build_image']
+              },
+              {
+                  'id': 'helm_boomi_deployment',
+                  'name': 'gcr.io/$PROJECT_ID/helm:latest',
+                  'entrypoint': 'bash',
+                  'args': [
+                    '-c',
+                    '|',
+                    'upgrade',
+                    '--install',
+                    'boomimolecule',
+                    '--namespace',
+                    'default',
+                    '--set',
+                    'secrets.username=${_BoomiUserEmailId},secrets.password=${_BoomiPassword},secrets.account=${_BoomiAccountId},volume.server=${_IP_ADDRESS},storage.reservedIpRange=${_ReservedIpRange},storage.network=${_NETWORK},ingress.staticIpName=${_IngressStaticIpName}',
+                    '.'
+                   ],
+                  'dir': 'quick_start/kubernetes/boomi-molecule',
+                  'env': [
+                    'CLOUDSDK_COMPUTE_REGION=${_REGION}',
+                    'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}', 
+                    'KUBECONFIG=/workspace/.kube/config'
+                   ],
+                  'waitFor': ['helm_nfs_deployment']
+              },
+              {
+                  'id': 'kubectl_hpa_deployment',
+                  'name': 'gcr.io/cloud-builders/kubectl',
+                  'args': [
+                    'apply',
+                    '--filename=./templates/boomi_molecule_gke_hpa.yaml',
+                    '--validate=false'
+                   ],
+                  'dir': 'quick_start/kubernetes/boomi-molecule',
+                  'env': [
+                    'CLOUDSDK_COMPUTE_REGION=${_REGION}',
+                    'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}', 
+                    'KUBECONFIG=/workspace/.kube/config'
+                   ],
+                  'waitFor': ['helm_boomi_deployment']
+              },
+              {
+                  'id': 'enable_master_authorized_network',
+                  'name': 'gcr.io/cloud-builders/gcloud',
+                  'entrypoint': 'bash',
+                  'args': [
+                    '-c',
+                    'gcloud container clusters update ${_CLUSTER_NAME} --enable-master-authorized-networks --region ${_REGION}'
+                   ],
+                  'waitFor': ['kubectl_hpa_deployment']
               }
           ]
       }
