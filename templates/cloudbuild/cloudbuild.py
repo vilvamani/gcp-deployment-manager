@@ -21,7 +21,7 @@ def GenerateConfig(context):
               '_HELM_VERSION': '3.2.0',
               '_REGION': properties.get('region'),
               '_CLUSTER_NAME': properties.get('CLUSTER_NAME'),
-              'ipaddress': properties.get('ipaddress')
+              '_IP_ADDRESS': properties.get('ipaddress')
           },
           'steps': [
               {
@@ -57,7 +57,7 @@ def GenerateConfig(context):
                     '--install',
                     'nfsprovisioner',
                     '--set',
-                    'nfs.server=${ipaddress},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany',
+                    'nfs.server=${_IP_ADDRESS},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany',
                     '.'
                    ],
                   'dir': 'quick_start/kubernetes/nfs-client-provisioner',
