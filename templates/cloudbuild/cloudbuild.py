@@ -6,7 +6,7 @@ import json
 def GenerateConfig(context):
   """Generate YAML resource configuration."""
   
-  name = propc.get(context.env['name'], '-cloudbuild')
+  name = context.env['name'] + '-cloudbuild'
 
   resources = [{
       'name': name,
