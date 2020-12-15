@@ -22,12 +22,12 @@ def GenerateConfig(context):
               '_REGION': properties.get('region'),
               '_CLUSTER_NAME': properties.get('CLUSTER_NAME'),
               '_IP_ADDRESS': properties.get('ipaddress'),
-              '_BoomiUserEmailId': properties.get('boomiUserEmailID'),
-              '_BoomiPassword': properties.get('boomiPassword'),
-              '_BoomiAccountId': properties.get('boomiAccountID'),
-              '_ReservedIpRange': properties.get('ipaddress'),
+              '_BOOMIUSEREMAILID': properties.get('boomiUserEmailID'),
+              '_BOOMIPASSWORD': properties.get('boomiPassword'),
+              '_BOOMIACCOUNTID': properties.get('boomiAccountID'),
+              '_RESERVEDIPRANGE': properties.get('ipaddress'),
               '_NETWORK': properties.get('network'),
-              '_IngressStaticIpName': properties.get('ingressStaticIpName')
+              '_STATICIPADDRESS': properties.get('ingressStaticIpName')
           },
           'steps': [
               {
@@ -87,7 +87,7 @@ def GenerateConfig(context):
                     '--namespace',
                     'default',
                     '--set',
-                    'secrets.username=${_BoomiUserEmailId},secrets.password=${_BoomiPassword},secrets.account=${_BoomiAccountId},volume.server=${_IP_ADDRESS},storage.reservedIpRange=${_ReservedIpRange},storage.network=${_NETWORK},ingress.staticIpName=${_IngressStaticIpName}',
+                    'secrets.username=${_BOOMIUSEREMAILID},secrets.password=${_BOOMIPASSWORD},secrets.account=${_BOOMIACCOUNTID},volume.server=${_IP_ADDRESS},storage.reservedIpRange=${_RESERVEDIPRANGE},storage.network=${_NETWORK},ingress.staticIpName=${_STATICIPADDRESS}',
                     '.'
                    ],
                   'dir': 'quick_start/kubernetes/boomi-molecule',
