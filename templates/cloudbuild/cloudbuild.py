@@ -39,9 +39,9 @@ def GenerateConfig(context):
               {
                   'id': 'helm_nfs_deployment',
                   'name': 'gcr.io/$PROJECT_ID/helm:latest',
-                  'args': ['upgrade', '--install', 'nfsprovisioner', '--set', 'nfs.server= $ipaddress, nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany', '.'],
+                  'args': ['upgrade', '--install', 'nfsprovisioner', '--set', 'nfs.server='+ ipaddress +', nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany', '.'],
                   'dir': 'quick_start/kubernetes/nfs-client-provisioner',
-                  'env': ['CLOUDSDK_COMPUTE_REGION=$REGION', 'CLOUDSDK_CONTAINER_CLUSTER=$CLUSTER_NAME', 'KUBECONFIG=/workspace/.kube/config'],
+                  'env': ['CLOUDSDK_COMPUTE_REGION=' + REGION + ', CLOUDSDK_CONTAINER_CLUSTER='+ CLUSTER_NAME +', KUBECONFIG=/workspace/.kube/config'],
                   'waitFor': ['build_image']
               }
           ]
