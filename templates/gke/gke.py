@@ -1,7 +1,6 @@
 # Copyright 2020 Dell Boomi. All rights reserved.
 
 """ This template creates a Google Kubernetes Engine cluster. """
-import time
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
@@ -26,22 +25,6 @@ def generate_config(context):
                             propc.get('initialClusterVersion')
                     }
             }
-    }
-
-    starttime = f'{time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}'
-    nextyear = int(time.strftime("%Y", time.gmtime())) + 1
-    endtime = f'{nextyear}-{time.strftime("%m-%dT%H:%M:%SZ", time.gmtime())}'
-
-    maintenancePolicy = {
-        'window': {
-            'recurringWindow': {
-                'window': {
-                    'startTime': starttime,
-                    'endTime': endtime
-                },
-                'recurrence': "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
-            }
-        }
     }
 
     if cluster_type == 'Regional':
@@ -109,8 +92,6 @@ def generate_config(context):
     ]
 
     for oprop in optional_props:
-        if oprop == 'maintenancePolicy':
-            cluster_props[oprop] = maintenancePolicy
         if oprop in propc:
             cluster_props[oprop] = propc[oprop]
 

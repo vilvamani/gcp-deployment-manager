@@ -14,9 +14,9 @@
 {% set maxNodePerZone = properties["maxNodePerZone"] %}
 {% set diskSizeGb = properties["diskSizeGb"] %}
 
-{% set boomiUserEmailID = properties["secretEmailID"] %}
-{% set boomiPassword = properties["secretPassword"] %}
-{% set boomiAccountID = properties["secretAccountID"] %}
+{% set boomiUserEmailID = properties["boomiUserEmailID"] %}
+{% set boomiPassword = properties["boomiPassword"] %}
+{% set boomiAccountID = properties["boomiAccountID"] %}
 {% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
 {% set network = path_utils.networkPath(properties["gkeClusterNetwork"]) %}
@@ -209,6 +209,13 @@ resources:
         workloadPool: {{ project }}.svc.id.goog
       networkPolicy:
         enabled: true
+      maintenancePolicy:
+        window:
+          recurringWindow:
+            window:
+              startTime: "2020-11-01T07:00:25Z"
+              endTime: "2025-12-31T07:00:25Z"
+            recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
 
 - name: {{ deployment }}-gke-cloudbuild
   type: cloudbuild.py

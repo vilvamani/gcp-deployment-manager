@@ -6,6 +6,6 @@ resources:
   type: boomi_molecule.jinja
   properties:
     zone: us-central1-a
-    secretEmailID: boomiUserEmailID
-    secretPassword: boomiPassword
-    secretAccountID: boomiAccountID
+    boomiUserEmailID: boomiUserEmailID
+    boomiPassword: boomiPassword
+    boomiAccountID: boomiAccountID

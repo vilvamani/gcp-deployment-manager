@@ -9,7 +9,7 @@ resources:
     gkeClusterNetwork: default
     gkeClusterPrivateSubnetwork: default
     gkeClusterPublicSubnetwork: default
-    secretEmailID: boomiUserEmailID
-    secretPassword: boomiPassword
-    secretAccountID: boomiAccountID
+    boomiUserEmailID: boomiUserEmailID
+    boomiPassword: boomiPassword
+    boomiAccountID: boomiAccountID
 
