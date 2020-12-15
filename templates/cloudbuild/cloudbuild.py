@@ -8,8 +8,7 @@ def GenerateConfig(context):
   
   name = context.env['name'] + '-cloudbuild'
   properties = context.properties
-  ipaddress = properties.get('ipaddress')
-
+  
   resources = [{
       'name': name,
       'action': 'gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create',
@@ -21,7 +20,8 @@ def GenerateConfig(context):
           'substitutions': {
               '_HELM_VERSION': '3.2.0',
               '_REGION': properties.get('region'),
-              '_CLUSTER_NAME': properties.get('CLUSTER_NAME')
+              '_CLUSTER_NAME': properties.get('CLUSTER_NAME'),
+              'ipaddress': properties.get('ipaddress')
           },
           'steps': [
               {
@@ -57,7 +57,7 @@ def GenerateConfig(context):
                     '--install',
                     'nfsprovisioner',
                     '--set',
-                    'nfs.server='+ ipaddress,
+                    'nfs.server=${ipaddress}',
                     'nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany',
                     '.'
                    ],
