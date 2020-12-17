@@ -6,9 +6,9 @@ resources:
   type: boomi_molecule_existing_vpc.jinja
   properties:
     zone: us-central1-a
-    gkeClusterNetwork: default
-    gkeClusterPrivateSubnetwork: default
-    gkeClusterPublicSubnetwork: default
+    network: default
+    vmSubnetwork: default
+    gkeSubetwork: default
     boomiUserEmailID: boomiUserEmailID
     boomiPassword: boomiPassword
     boomiAccountID: boomiAccountID
