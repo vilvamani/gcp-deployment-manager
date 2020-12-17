@@ -31,7 +31,7 @@ gcloud projects add-iam-policy-binding [project-id] --member=serviceAccount:[pro
 To begin, run these commands to open the quickstart
 
 ```sh
-git clone -b develop https://github.com/vilvamani/gcp-deployment-manager.git  boomi_quickstart && cd boomi_quickstart
+git clone -b test https://github.com/vilvamani/gcp-deployment-manager.git  boomi_quickstart && cd boomi_quickstart
 ```
 
 ## Securely store sensitive data in secret manager.

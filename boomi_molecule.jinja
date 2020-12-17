@@ -19,6 +19,9 @@
 {% set boomiAccountID = properties["boomiAccountID"] %}
 {% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
+{% set subnetCidrOne = properties["subnetCidrOne"] %}
+{% set subnetCidrTwo = properties["subnetCidrTwo"] %}
+
 resources:
 
 - name: {{ deployment }}-bastion-sa
@@ -34,6 +37,26 @@ resources:
     accountId: {{ deployment }}-gke-cluster
     projectId: {{ project }}
     displayName: GKE Cluster Service Account
+
+- name: {{ deployment }}-enableApis
+  type: apis.py
+  properties:
+    consumerId: {{ 'project:' + env['project'] }}
+    apis:
+      - name: cloudResourceManagerApi
+        serviceName: cloudresourcemanager.googleapis.com
+      - name: endpointsApi
+        serviceName: endpoints.googleapis.com
+      - name: iamApi
+        serviceName: iam.googleapis.com
+      - name: containerApi
+        serviceName: container.googleapis.com
+      - name: gkeconnectApi
+        serviceName: gkeconnect.googleapis.com
+      - name: computeApi
+        serviceName: compute.googleapis.com
+      - name: secretApi
+        serviceName: secretmanager.googleapis.com
 
 - name: {{ deployment }}-iam-member
   type: iam_member.py
@@ -56,40 +79,20 @@ resources:
         members:
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
 
-- name: {{ deployment }}-enableApis
-  type: apis.py
-  properties:
-    consumerId: {{ 'project:' + env['project'] }}
-    apis:
-      - name: cloudResourceManagerApi
-        serviceName: cloudresourcemanager.googleapis.com
-      - name: endpointsApi
-        serviceName: endpoints.googleapis.com
-      - name: iamApi
-        serviceName: iam.googleapis.com
-      - name: containerApi
-        serviceName: container.googleapis.com
-      - name: gkeconnectApi
-        serviceName: gkeconnect.googleapis.com
-      - name: computeApi
-        serviceName: compute.googleapis.com
-      - name: secretApi
-        serviceName: secretmanager.googleapis.com
-
 - name: {{ deployment }}-network
   type: network.py
   properties:
     name: {{ deployment }}-network
     autoCreateSubnetworks: false
     subnetworks:
-      - name: {{ deployment }}-{{ region }}-public-subnet
+      - name: {{ deployment }}-{{ region }}-vm-subnet
         region: {{ region }}
-        ipCidrRange: 192.168.0.0/21
+        ipCidrRange: {{ subnetCidrOne }}
         privateIpGoogleAccess: true
         enableFlowLogs: false
-      - name: {{ deployment }}-{{ region }}-private-subnet
+      - name: {{ deployment }}-{{ region }}-gke-subnet
         region: {{ region }}
-        ipCidrRange: 192.168.8.0/21
+        ipCidrRange: {{ subnetCidrTwo }}
         privateIpGoogleAccess: true
         enableFlowLogs: false
 
@@ -157,7 +160,7 @@ resources:
     network: $(ref.{{ deployment }}-network.selfLink)
     region: {{ region }}
     nat-name: {{ deployment }}-{{ region }}-nat
-    subnet: $(ref.{{ deployment }}-{{ region }}-private-subnet.selfLink)
+    subnet: $(ref.{{ deployment }}-{{ region }}-gke-subnet.selfLink)
 
 - name: {{ deployment }}-cloud-filestore
   type: cloud_filestore.py
@@ -181,7 +184,7 @@ resources:
       name: {{ deployment }}-gke-cluster
       description: {{ deployment }} k8s Cluster
       network: $(ref.{{ deployment }}-network.vpcName)
-      subnetwork: $(ref.{{ deployment }}-{{ region }}-private-subnet.selfLink)
+      subnetwork: $(ref.{{ deployment }}-{{ region }}-gke-subnet.selfLink)
       initialClusterVersion: 1.17.12-gke.1501
       addonsConfig:
         httpLoadBalancing:
@@ -262,7 +265,7 @@ resources:
   type: bastion_instance.py
   properties:
     network: $(ref.{{ deployment }}-network.selfLink)
-    publicSubnet: $(ref.{{ deployment }}-{{ region }}-public-subnet.selfLink)
+    publicSubnet: $(ref.{{ deployment }}-{{ region }}-vm-subnet.selfLink)
     region: {{ region }}
     machineType: {{ machineType }}
     machineImage: centos-cloud/global/images/family/centos-7

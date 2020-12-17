@@ -47,8 +47,10 @@ imports:
 
 required:
   - zone
-  - gkeClusterNetwork
   - machineType
+  - network
+  - bootDiskType
+  - bootDiskSizeGb
   - gkeMachineType
   - diskSizeGb
   - maxNodePerZone
@@ -56,57 +58,12 @@ required:
   - boomiPassword
   - boomiAccountID
 
-properties:      
+properties:
   zone:
     type: string
     default: us-central1-a
     x-googleProperty:
       type: GCE_ZONE
-
-  gkeClusterNetwork:
-    type: string
-    default: "default"
-    minItems: 1
-    maxItems: 8
-    x-googleProperty:
-      type: GCE_NETWORK
-      gceNetwork:
-        machineTypeProperty: machineType
-
-  gkeClusterPrivateSubnetwork:
-    type: string
-    default: "default"
-    x-googleProperty:
-      type: GCE_SUBNETWORK
-      zoneProperty: zone
-      gceSubnetwork:
-        networkProperty: gkeClusterNetwork
-
-  gkeClusterPublicSubnetwork:
-    type: string
-    default: "default"
-    x-googleProperty:
-      type: GCE_SUBNETWORK
-      zoneProperty: zone
-      gceSubnetwork:
-        networkProperty: gkeClusterNetwork
-
-  tcp80SourceRanges:
-    type: string
-    default: '0.0.0.0/0, 192.169.0.0/24'
-    x-googleProperty:
-      type: GCE_FIREWALL_RANGE
-      gceFirewall:
-        networkProperty: gkeClusterNetwork
-
-  tcp443SourceRanges:
-    type: string
-    default: '0.0.0.0/0, 192.169.0.0/24'
-    x-googleProperty:
-      type: GCE_FIREWALL_RANGE
-      gceFirewall:
-        networkProperty: gkeClusterNetwork
-        
   machineType:
     type: string
     default: g1-small
@@ -116,6 +73,62 @@ properties:
       gceMachineType:
         minCpu: 1
         minRamGb: 3.75
+  network:
+    type: array
+    default: [default]
+    minItems: 1
+    maxItems: 1
+    x-googleProperty:
+      type: GCE_NETWORK
+      gceNetwork:
+        allowSharedVpcs: True
+        machineTypeProperty: machineType
+  vmSubnetwork:
+    type: array
+    default: [default]
+    minItems: 1
+    maxItems: 1
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: network
+  gkeSubetwork:
+    type: array
+    default: [default]
+    minItems: 1
+    maxItems: 1
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: network
+  externalIP:
+    type: array
+    default: [EPHEMERAL]
+    minItems: 1
+    maxItems: 1
+    x-googleProperty:
+      type: GCE_EXTERNAL_IP
+      gceExternalIp:
+        networkProperty: network
+        notConfigurable: False
+        allowStaticIps: True
+  bootDiskType:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  bootDiskSizeGb:
+    type: integer
+    default: 10
+    minimum: 10
+    maximum: 10000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: bootDiskType
 
   enableRegionalGKECluster:
     type: boolean

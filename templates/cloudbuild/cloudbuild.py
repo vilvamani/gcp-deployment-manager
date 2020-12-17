@@ -16,7 +16,7 @@ def GenerateConfig(context):
           'runtimePolicy': ['UPDATE_ALWAYS']
       },
       'properties': {
-          'timeout': '120s',
+          'timeout': '300s',
           'substitutions': {
               '_HELM_VERSION': '3.2.0',
               '_REGION': properties.get('region'),
@@ -77,10 +77,7 @@ def GenerateConfig(context):
               {
                   'id': 'helm_boomi_deployment',
                   'name': 'gcr.io/$PROJECT_ID/helm:latest',
-                  'entrypoint': 'bash',
                   'args': [
-                    '-c',
-                    '|',
                     'upgrade',
                     '--install',
                     'boomimolecule',

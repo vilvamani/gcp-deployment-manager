@@ -34,7 +34,7 @@ def GenerateConfig(context):
                       'network':
                           context.properties['network'],
                       'subnetwork':
-                          context.properties['publicSubnet'],
+                          context.properties['subnetworks'],
                       'accessConfigs': [{
                           'name': 'External NAT',
                           'type': 'ONE_TO_ONE_NAT'

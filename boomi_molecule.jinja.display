@@ -27,6 +27,14 @@ input:
     - name: machineType
       title: Bastion Machine type
 
+    - name: subnetCidrOne
+      title: Virtual Machine Subnet CIRD Range
+      placeholder: 'Example: 192.168.0.0/21'
+      section: NETWORKING
+    - name: subnetCidrTwo
+      title: GCP Kubernetes Subnet CIRD Range
+      placeholder: 'Example: 192.168.8.0/21'
+      section: NETWORKING
     - name: tcp80SourceRanges
       title: Source IP ranges for HTTP traffic
       tooltip: 'Traffic is only allowed from sources within these IP address ranges. Use CIDR notation when entering ranges. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'

@@ -19,9 +19,13 @@
 {% set boomiAccountID = properties["boomiAccountID"] %}
 {% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
-{% set network = path_utils.networkPath(properties["gkeClusterNetwork"]) %}
-{% set privateSubnetwork = path_utils.subnetworkPath(zone, properties["gkeClusterPrivateSubnetwork"]) %}
-{% set publicSubnetwork = path_utils.subnetworkPath(zone, properties["gkeClusterPublicSubnetwork"]) %}
+{% set network = path_utils.networkPath(properties["network"]) %}
+{% set gkeSubetwork = path_utils.subnetworkPath(zone, properties["gkeSubetwork"]) %}
+{% set vmSubnetwork = path_utils.subnetworkPath(zone, properties["vmSubnetwork"]) %}
+
+{% set externalIPs = properties["externalIP"] %}
+{% set bootDiskType = properties["bootDiskType"] %}
+{% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
 
 resources:
 
@@ -42,24 +46,6 @@ resources:
     projectId: {{ project }}
     displayName: GKE Cluster Service Account
 
-- name: {{ deployment }}-iam-member
-  type: iam_member.py
-  properties:
-    roles:
-      - role: roles/container.admin
-        members:
-          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
-          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
-          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
-      - role: roles/compute.instanceAdmin
-        members:
-          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
-          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
-      - role: roles/storage.admin
-        members:
-          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
-          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
-
 - name: {{ deployment }}-enableApis
   type: apis.py
   properties:
@@ -77,6 +63,29 @@ resources:
         serviceName: gkeconnect.googleapis.com
       - name: computeApi
         serviceName: compute.googleapis.com
+      - name: secretApi
+        serviceName: secretmanager.googleapis.com
+
+- name: {{ deployment }}-iam-member
+  type: iam_member.py
+  properties:
+    roles:
+      - role: roles/container.admin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - role: roles/compute.instanceAdmin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+      - role: roles/storage.admin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+      - role: roles/secretmanager.secretAccessor
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
 
 - name: {{ deployment }}-firewall
   type: firewall.py
@@ -95,6 +104,7 @@ resources:
           - 0.0.0.0/0
         targetTags:
           - bastion
+      {% if properties["enableTcp80"] %}
       - name: {{ deployment }}-allow-http
         description: Allow HTTP/HTTPS from anywhere
         allowed:
@@ -111,6 +121,8 @@ resources:
         sourceRanges:
           - 0.0.0.0/0
         {% endif %}
+      {% endif %}
+      {% if properties["enableTcp443"] %}
       - name: {{ deployment }}-allow-https
         description: Allow HTTP/HTTPS from anywhere
         allowed:
@@ -127,6 +139,7 @@ resources:
         sourceRanges:
           - 0.0.0.0/0
         {% endif %}
+      {% endif %}
       - name: {{ deployment }}-allow-icmp
         description: Allow ICMP from anywhere
         allowed:
@@ -238,21 +251,32 @@ resources:
   type: bastion_instance.py
   properties:
     network: {{ network }}
-    publicSubnet: {{ publicSubnetwork }}
+    subnetworks: {{ vmSubnetwork }}
+    {% if externalIPs is defined and externalIPs %}
+    externalIPs:
+      {% for externalIP in externalIPs %}
+      - {{ externalIP }}
+      {% endfor %}
+    {% endif %}
     region: {{ region }}
     machineType: {{ machineType }}
     machineImage: centos-cloud/global/images/family/centos-7
     minSize: 1
     maxSize: 2
+    bootDiskType: {{ bootDiskType }}
+    bootDiskSizeGb: {{ bootDiskSizeGb }}
     serviceAccountEmail: $(ref.{{ deployment }}-bastion-sa.email)
     serviceAccountScopes:
       - https://www.googleapis.com/auth/compute
-      - https://www.googleapis.com/auth/devstorage.read_only
-      - https://www.googleapis.com/auth/logging.write
-      - https://www.googleapis.com/auth/monitoring
+      - 'https://www.googleapis.com/auth/cloud.useraccounts.readonly'
+      - 'https://www.googleapis.com/auth/devstorage.read_only'
+      - 'https://www.googleapis.com/auth/logging.write'
+      - 'https://www.googleapis.com/auth/monitoring.write'
+      - 'https://www.googleapis.com/auth/cloudruntimeconfig'
     tags:
       items:
         - bastion
+        - {{ deployment }}-deployment
     startupScript: |
       #!/bin/bash
       #### Log the execution to a file ####

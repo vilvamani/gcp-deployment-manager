@@ -69,6 +69,16 @@ properties:
         minCpu: 1
         minRamGb: 3.75
 
+  subnetCidrOne:
+    type: string
+    default: '192.168.0.0/21'
+    pattern: ^(?!0\.0\.0\.0/0)([0-9]{1,3}\.){3}[0-9]{1,3}/([0-9]|[1-2][0-9]|3[0-2])|$
+
+  subnetCidrTwo:
+    type: string
+    default: '192.168.8.0/21'
+    pattern: ^(?!0\.0\.0\.0/0)([0-9]{1,3}\.){3}[0-9]{1,3}/([0-9]|[1-2][0-9]|3[0-2])|$
+
   tcp80SourceRanges:
     type: string
     default: '0.0.0.0/0, 192.169.0.0/24'

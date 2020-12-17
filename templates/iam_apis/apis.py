@@ -11,7 +11,7 @@ def generate_config(context):
         resources.append(
             {
                 'name': api['name'],
-                'action': 'gcp-types/servicemanagement-v1:servicemanagement.services.enable',
+                'type': 'gcp-types/servicemanagement-v1:servicemanagement.services.enable',
                 'properties': 
                     {
                         'consumerId': context.properties['consumerId'],

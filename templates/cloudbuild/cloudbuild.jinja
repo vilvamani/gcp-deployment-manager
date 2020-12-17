@@ -29,22 +29,6 @@ resources:
       dir: quick_start/kubernetes
       waitFor: [git_clone]
 
-    - id: boomi_account_details
-      name: 'gcr.io/cloud-builders/gcloud'
-      entrypoint: 'bash'
-      args:
-        - -c 
-        - |
-          # store multiple values as environment variables
-          # name all values with a common prefix (we'll use "boomi_")
-          export boomi_UserEmailID=$(gcloud secrets versions access latest --secret={{ properties["boomiUserEmailID"] }}) &&
-          export boomi_Password=$(gcloud secrets versions access latest --secret={{ properties["boomiPassword"] }}) &&
-          export boomi_AccountID=$(gcloud secrets versions access latest --secret={{ properties["boomiAccountID"] }}) &&
-          
-          # write all "boomi_" variables to the persistent volume "/workspace"
-          env | grep "^boomi_" > /workspace/build_vars
-      waitFor: [build_image]
-
     - id: helm_nfs_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
       args:
@@ -59,7 +43,7 @@ resources:
         - CLOUDSDK_COMPUTE_REGION={{ region }}
         - CLOUDSDK_CONTAINER_CLUSTER={{ CLUSTER_NAME }}
         - KUBECONFIG=/workspace/.kube/config
-      waitFor: [boomi_account_details]
+      waitFor: [build_image]
 
     - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
@@ -75,7 +59,7 @@ resources:
         - --namespace
         - default
         - --set
-        - secrets.username=$boomi_UserEmailID,secrets.password=$boomi_Password,secrets.account=$boomi_AccountID,volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }},ingress.staticIpName={{ properties["ingressStaticIpName"] }}
+        - secrets.username={{ properties["boomiUserEmailID"] }},secrets.password={{ properties["boomiPassword"] }},secrets.account={{ properties["boomiAccountID"] }},volume.server={{ properties["ipaddress"] }},storage.reservedIpRange={{ properties["reservedIpRange"] }},storage.network={{ properties["network"] }},ingress.staticIpName={{ properties["ingressStaticIpName"] }}
         - '.'
       dir: quick_start/kubernetes/boomi-molecule
       env:
