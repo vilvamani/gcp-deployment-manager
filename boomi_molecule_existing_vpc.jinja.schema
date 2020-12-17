@@ -74,8 +74,8 @@ properties:
         minCpu: 1
         minRamGb: 3.75
   network:
-    type: array
-    default: [default]
+    type: string
+    default: default
     minItems: 1
     maxItems: 1
     x-googleProperty:
@@ -84,8 +84,8 @@ properties:
         allowSharedVpcs: True
         machineTypeProperty: machineType
   vmSubnetwork:
-    type: array
-    default: [default]
+    type: string
+    default: default
     minItems: 1
     maxItems: 1
     x-googleProperty:
@@ -94,8 +94,8 @@ properties:
       gceSubnetwork:
         networkProperty: network
   gkeSubetwork:
-    type: array
-    default: [default]
+    type: string
+    default: default
     minItems: 1
     maxItems: 1
     x-googleProperty:
@@ -162,7 +162,7 @@ properties:
 
   gkeMachineType:
     type: string
-    default: g1-small
+    default: n1-standard-1
     x-googleProperty:
       type: GCE_MACHINE_TYPE
       zoneProperty: zone
