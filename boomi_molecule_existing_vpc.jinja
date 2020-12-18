@@ -86,7 +86,10 @@ resources:
       - role: roles/secretmanager.secretAccessor
         members:
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
-
+      - role: roles/editor
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+          
 - name: {{ deployment }}-firewall
   type: firewall.py
   properties:
