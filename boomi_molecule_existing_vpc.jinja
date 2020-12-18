@@ -89,7 +89,7 @@ resources:
       - role: roles/editor
         members:
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
-          
+
 - name: {{ deployment }}-firewall
   type: firewall.py
   properties:
@@ -224,7 +224,7 @@ resources:
       workloadIdentityConfig:
         workloadPool: {{ project }}.svc.id.goog
       networkPolicy:
-        enabled: true
+        enabled: false
       maintenancePolicy:
         window:
           recurringWindow:
