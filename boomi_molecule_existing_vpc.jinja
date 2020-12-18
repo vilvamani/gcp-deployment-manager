@@ -224,13 +224,13 @@ resources:
       workloadIdentityConfig:
         workloadPool: {{ project }}.svc.id.goog
       networkPolicy:
-        enabled: false
+        enabled: true
       maintenancePolicy:
         window:
           recurringWindow:
             window:
               startTime: "2020-11-01T07:00:25Z"
-              endTime: "2025-12-31T07:00:25Z"
+              endTime: "2030-12-31T07:00:25Z"
             recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
 
 - name: {{ deployment }}-gke-cloudbuild
