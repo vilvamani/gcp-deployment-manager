@@ -138,6 +138,7 @@ properties:
         networkProperty: network
   tcp80SourceRanges:
     type: string
+    default: 0.0.0.0/0, 100.0.0.0/8
     x-googleProperty:
       type: GCE_FIREWALL_RANGE
       gceFirewallRange:
@@ -151,6 +152,7 @@ properties:
         networkProperty: network
   tcp443SourceRanges:
     type: string
+    default: 0.0.0.0/0, 100.0.0.0/8
     x-googleProperty:
       type: GCE_FIREWALL_RANGE
       gceFirewallRange:
@@ -158,7 +160,7 @@ properties:
 
   enableRegionalGKECluster:
     type: boolean
-    default: False
+    default: True
 
   gkeMachineType:
     type: string
