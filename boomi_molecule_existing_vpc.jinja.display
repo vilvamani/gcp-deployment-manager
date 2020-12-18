@@ -66,6 +66,10 @@ input:
       title: Enable Reginoal GKE Cluster
       tooltip: 'GKE Cluster: Regional (or) Zonal'
       section: GKE_CLUSTER
+    - name: gkeClusterAuthorizedNetworkCidr
+      title: GKE Cluster Master Authorized Networks CIDR
+      placeholder: '172.16.254.0/28'
+      section: GKE_CLUSTER
     - name: gkeMachineType
       title: GKE Cluster Machine type
       section: GKE_CLUSTER

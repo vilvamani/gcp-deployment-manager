@@ -212,7 +212,7 @@ resources:
       privateClusterConfig:
         enablePrivateNodes: true
         enablePrivateEndpoint: false
-        masterIpv4CidrBlock: 172.16.254.0/28
+        masterIpv4CidrBlock: {{ properties["gkeClusterAuthorizedNetworkCidr"] }}
       masterAuthorizedNetworksConfig: 
         enabled: false
         cidrBlocks: []

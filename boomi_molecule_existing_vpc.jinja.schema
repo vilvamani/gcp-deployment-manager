@@ -169,6 +169,13 @@ properties:
       type: GCE_MACHINE_TYPE
       zoneProperty: zone
 
+  gkeClusterAuthorizedNetworkCidr:
+    type: string
+    default: 172.16.254.0/28
+    pattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(28))$
+    x-googleProperty:
+      type: GCE_FIREWALL_RANGE
+
   diskSizeGb:
     type: integer
     default: 50

@@ -9,6 +9,7 @@ resources:
     network: test-vpc
     vmSubnetwork: vm-subnet
     gkeSubetwork: gke-subnet
+    gkeClusterAuthorizedNetworkCidr: 172.16.254.0/28
     boomiUserEmailID: boomiUserEmailID
     boomiPassword: boomiPassword
     boomiAccountID: boomiAccountID
