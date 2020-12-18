@@ -12,7 +12,7 @@ def generate_config(context):
 
     apiresource = {
         'name': 'enableapi',
-        'action': 'gcp-types/servicemanagement-v1:servicemanagement.services.enable',
+        'type': 'gcp-types/servicemanagement-v1:servicemanagement.services.enable',
         'properties': {
             'consumerId': 'project:{}'.format(context.env['project']),
             'serviceName': 'file.googleapis.com'
