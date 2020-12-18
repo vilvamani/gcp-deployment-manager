@@ -52,6 +52,7 @@ required:
   - bootDiskType
   - bootDiskSizeGb
   - gkeMachineType
+  - gkeClusterAuthorizedNetworkCidr
   - diskSizeGb
   - maxNodePerZone
   - boomiUserEmailID

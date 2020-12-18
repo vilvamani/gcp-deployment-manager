@@ -68,6 +68,7 @@ input:
       section: GKE_CLUSTER
     - name: gkeClusterAuthorizedNetworkCidr
       title: GKE Cluster Master Authorized Networks CIDR
+      tooltip: 'Authorized network cidr with in your VPC range'
       placeholder: '172.16.254.0/28'
       section: GKE_CLUSTER
     - name: gkeMachineType
