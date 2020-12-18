@@ -185,7 +185,7 @@ resources:
       description: {{ deployment }} k8s Cluster
       network: $(ref.{{ deployment }}-network.vpcName)
       subnetwork: $(ref.{{ deployment }}-{{ region }}-gke-subnet.selfLink)
-      initialClusterVersion: 1.17.12-gke.1501
+      initialClusterVersion: 1.17.14-gke.1200
       addonsConfig:
         httpLoadBalancing:
           disabled: false
@@ -196,7 +196,7 @@ resources:
           {% else %}
           initialNodeCount: 3
           {% endif %}
-          version: 1.17.12-gke.1501
+          version: 1.17.14-gke.1200
           config:
             machineType: {{ gkeMachineType }}
             diskSizeGb: {{ diskSizeGb }}

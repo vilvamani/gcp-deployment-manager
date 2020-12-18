@@ -158,7 +158,7 @@ resources:
       - name: boomifileshare
         capacityGb: 1024
     networks:
-      - network: {{ network }}
+      - network: {{ properties["network"] }}
 
 - name: {{ deployment }}-gke-cluster
   type: gke.py
@@ -171,7 +171,7 @@ resources:
       description: {{ deployment }} k8s Cluster
       network: {{ network }}
       subnetwork: {{ gkeSubetwork }}
-      initialClusterVersion: 1.17.12-gke.1501
+      initialClusterVersion: 1.17.14-gke.1200
       addonsConfig:
         httpLoadBalancing:
           disabled: false
@@ -182,7 +182,7 @@ resources:
           {% else %}
           initialNodeCount: 3
           {% endif %}
-          version: 1.17.12-gke.1501
+          version: 1.17.14-gke.1200
           config:
             machineType: {{ gkeMachineType }}
             diskSizeGb: {{ diskSizeGb }}
@@ -242,7 +242,7 @@ resources:
     boomiUserEmailID: {{ boomiUserEmailID }}
     boomiPassword: {{ boomiPassword }}
     boomiAccountID: {{ boomiAccountID }}
-    network: {{ gkeSubetwork }}
+    network: {{ network }}
     CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
     ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)
     ingressStaticIpName: $(ref.{{ deployment }}-static-ip.staticIpName)

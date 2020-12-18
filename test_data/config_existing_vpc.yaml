@@ -6,9 +6,10 @@ resources:
   type: boomi_molecule_existing_vpc.jinja
   properties:
     zone: us-central1-a
-    network: sravopen-vpc-dev
-    vmSubnetwork: sravopen-private-0-dev
-    gkeSubetwork: sravopen-private-1-dev
+    network: test-vpc
+    vmSubnetwork: vm-subnet
+    gkeSubetwork: gke-subnet
     boomiUserEmailID: boomiUserEmailID
     boomiPassword: boomiPassword
     boomiAccountID: boomiAccountID
+
