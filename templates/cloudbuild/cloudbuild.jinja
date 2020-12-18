@@ -47,12 +47,7 @@ resources:
 
     - id: helm_boomi_deployment
       name: 'gcr.io/$PROJECT_ID/helm:latest'
-      entrypoint: 'bash'
       args: 
-        - -c
-        - |
-          # Read environment variables from disk
-          source /workspace/build_vars
         - upgrade
         - --install
         - boomimolecule
@@ -88,7 +83,6 @@ resources:
         - -c 
         - gcloud container clusters update {{ CLUSTER_NAME }} --enable-master-authorized-networks --region {{ region }}
       waitFor: [kubectl_hpa_deployment]
-
     timeout: 600s
     substitutions:
       _HELM_VERSION: 3.2.0

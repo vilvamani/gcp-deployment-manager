@@ -245,7 +245,7 @@ resources:
             recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
 
 - name: {{ deployment }}-gke-cloudbuild
-  type: cloudbuild.py
+  type: cloudbuild.jinja
   properties:
     {% if properties["enableRegionalGKECluster"] == True %}
     region: {{ region }}

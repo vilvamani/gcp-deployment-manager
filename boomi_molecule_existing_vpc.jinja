@@ -169,7 +169,7 @@ resources:
     cluster:
       name: {{ deployment }}-gke-cluster
       description: {{ deployment }} k8s Cluster
-      network: {{ network }}
+      network: {{ properties["network"] }}
       subnetwork: {{ gkeSubetwork }}
       initialClusterVersion: 1.17.14-gke.1200
       addonsConfig:
@@ -231,7 +231,7 @@ resources:
             recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
 
 - name: {{ deployment }}-gke-cloudbuild
-  type: cloudbuild.py
+  type: cloudbuild.jinja
   properties:
     {% if properties["enableRegionalGKECluster"] == True %}
     region: {{ region }}
@@ -242,7 +242,7 @@ resources:
     boomiUserEmailID: {{ boomiUserEmailID }}
     boomiPassword: {{ boomiPassword }}
     boomiAccountID: {{ boomiAccountID }}
-    network: {{ network }}
+    network: {{ properties["network"] }}
     CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
     ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)
     ingressStaticIpName: $(ref.{{ deployment }}-static-ip.staticIpName)
@@ -267,7 +267,7 @@ resources:
     bootDiskSizeGb: {{ bootDiskSizeGb }}
     serviceAccountEmail: $(ref.{{ deployment }}-bastion-sa.email)
     serviceAccountScopes:
-      - https://www.googleapis.com/auth/compute
+      - 'https://www.googleapis.com/auth/compute'
       - 'https://www.googleapis.com/auth/cloud.useraccounts.readonly'
       - 'https://www.googleapis.com/auth/devstorage.read_only'
       - 'https://www.googleapis.com/auth/logging.write'
