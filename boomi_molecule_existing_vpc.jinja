@@ -86,6 +86,10 @@ resources:
       - role: roles/secretmanager.secretAccessor
         members:
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - role: roles/container.clusterAdmin
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
       - role: roles/editor
         members:
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
@@ -270,6 +274,7 @@ resources:
     bootDiskSizeGb: {{ bootDiskSizeGb }}
     serviceAccountEmail: $(ref.{{ deployment }}-bastion-sa.email)
     serviceAccountScopes:
+      - 'https://www.googleapis.com/auth/cloud-platform'
       - 'https://www.googleapis.com/auth/compute'
       - 'https://www.googleapis.com/auth/cloud.useraccounts.readonly'
       - 'https://www.googleapis.com/auth/devstorage.read_only'
