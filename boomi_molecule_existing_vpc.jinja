@@ -252,23 +252,6 @@ resources:
               startTime: "2020-11-01T07:00:25Z"
               endTime: "2030-12-31T07:00:25Z"
             recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
-
-- name: {{ deployment }}-gke-cloudbuild
-  type: cloudbuild.jinja
-  properties:
-    {% if properties["enableRegionalGKECluster"] == True %}
-    region: {{ region }}
-    {% else %}
-    region: {{ zone }}
-    {% endif %}
-    helmGITRepoURL: {{ helmGITRepoURL }}
-    boomiUserEmailID: {{ boomiUserEmailID }}
-    boomiPassword: {{ boomiPassword }}
-    boomiAccountID: {{ boomiAccountID }}
-    network: {{ properties["network"] }}
-    CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
-    ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)
-    ingressStaticIpName: $(ref.{{ deployment }}-static-ip.staticIpName)
     
 - name: {{ deployment }}-bastion-instance
   type: bastion_instance.py
@@ -321,3 +304,70 @@ resources:
 
       export HOME='whoami'
       export KUBECONFIG=$HOME/.kube/config
+
+
+- name: {{ deployment }}-gke-cloudbuild
+  type: cloudbuild.py
+  properties:
+    steps:
+      - id: git_clone,
+        name: 'gcr.io/cloud-builders/git'
+        args:
+          - clone
+          - -b
+          - develop
+          - https://github.com/vilvamani/gcp-deployment-manager.git
+          - quick_start
+
+      - id: build_image,
+        name: 'gcr.io/cloud-builders/docker'
+        args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
+        dir: quick_start/kubernetes
+    
+      - id: helm_nfs_deployment
+        name: 'gcr.io/$PROJECT_ID/helm:latest'
+        args:
+          - upgrade
+          - --install
+          - nfsprovisioner
+          - --set
+          - nfs.server=$(ref.{{ deployment }}-cloud-filestore.fileShareIp),nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany
+          - '.'
+        dir: quick_start/kubernetes/nfs-client-provisioner
+        env:
+          - CLOUDSDK_COMPUTE_REGION={{ region }}
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ deployment }}-gke-cluster.name)
+          - KUBECONFIG=/workspace/.kube/config
+
+      - id: helm_boomi_deployment
+        name: 'gcr.io/$PROJECT_ID/helm:latest'
+        args: 
+          - upgrade
+          - --install
+          - boomimolecule
+          - --namespace
+          - default
+          - --set
+          - secrets.username={{ boomiUserEmailID }},secrets.password={{ boomiPassword }},secrets.account={{ boomiAccountID }},volume.server=$(ref.{{ deployment }}-cloud-filestore.fileShareIp),storage.network={{ properties["network"] }},ingress.staticIpName=$(ref.{{ deployment }}-static-ip.staticIpName)
+          - '.'
+        dir: quick_start/kubernetes/boomi-molecule
+        env:
+          - CLOUDSDK_COMPUTE_REGION={{ region }}
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ deployment }}-gke-cluster.name)
+          - KUBECONFIG=/workspace/.kube/config
+
+      - id: kubectl_hpa_deployment
+        name: 'gcr.io/cloud-builders/kubectl'
+        args: 
+          - apply
+          - --filename=./templates/boomi_molecule_gke_hpa.yaml
+          - --validate=false
+        dir: quick_start/kubernetes/boomi-molecule
+        env:
+          - CLOUDSDK_COMPUTE_REGION={{ region }}
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ deployment }}-gke-cluster.name)
+          - KUBECONFIG=/workspace/.kube/config
+
+    timeout: 600s
+    substitutions:
+      _HELM_VERSION: 3.2.0
