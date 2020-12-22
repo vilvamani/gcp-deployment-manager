@@ -1,128 +1,61 @@
-"""Creates a Cloud Container Builder build."""
+# Copyright 2018 Google Inc. All rights reserved.
 
-import json
+""" This template creates a Cloud Build resource. """
 
 
-def GenerateConfig(context):
-    """Generate YAML resource configuration."""
+def generate_config(context):
+    """ Entry point for the deployment resources. """
 
-    name = context.env['name'] + '-cloudbuild'
+    resources = []
+    outputs = []
     properties = context.properties
-
-    resources = [{
+    project_id = properties.get('project', context.env['project'])
+    name = context.env['name']
+    build_steps = properties['steps']
+    cloud_build = {
         'name': name,
+        # https://cloud.google.com/cloud-build/docs/api/reference/rest/v1/projects.builds/create
         'type': 'gcp-types/cloudbuild-v1:cloudbuild.projects.builds.create',
-        'metadata': {
-            'runtimePolicy': ['UPDATE_ALWAYS']
-        },
         'properties': {
-            'timeout': '300s',
-            'substitutions': {
-                '_HELM_VERSION': '3.2.0',
-                '_REGION': properties.get('region'),
-                '_CLUSTER_NAME': properties.get('CLUSTER_NAME'),
-                '_IP_ADDRESS': properties.get('ipaddress'),
-                '_BOOMIUSEREMAILID': properties.get('boomiUserEmailID'),
-                '_BOOMIPASSWORD': properties.get('boomiPassword'),
-                '_BOOMIACCOUNTID': properties.get('boomiAccountID'),
-                '_RESERVEDIPRANGE': properties.get('ipaddress'),
-                '_NETWORK': properties.get('network'),
-                '_STATICIPADDRESS': properties.get('ingressStaticIpName')
-            },
-            'steps': [
-                {
-                    'id': 'git_clone',
-                    'name': 'gcr.io/cloud-builders/git',
-                    'args': [
-                        'clone',
-                        '-b',
-                        'develop',
-                        'https://github.com/vilvamani/gcp-deployment-manager.git',
-                        'quick_start'
-                    ]
-                },
-                {
-                    'id': 'build_image',
-                    'name': 'gcr.io/cloud-builders/docker',
-                    'args': [
-                        'build',
-                        '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}',
-                        '--tag=gcr.io/$PROJECT_ID/helm:latest',
-                        '--build-arg',
-                        'HELM_VERSION=v${_HELM_VERSION}',
-                        '.'
-                    ],
-                    'dir': 'quick_start/kubernetes',
-                    'waitFor': ['git_clone']
-                },
-                {
-                    'id': 'helm_nfs_deployment',
-                    'name': 'gcr.io/$PROJECT_ID/helm:latest',
-                    'args': [
-                        'upgrade',
-                        '--install',
-                        'nfsprovisioner',
-                        '--set',
-                        'nfs.server=${_IP_ADDRESS},nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany',
-                        '.'
-                    ],
-                    'dir': 'quick_start/kubernetes/nfs-client-provisioner',
-                    'env': [
-                        'CLOUDSDK_COMPUTE_REGION=${_REGION}',
-                        'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}',
-                        'KUBECONFIG=/workspace/.kube/config'
-                    ],
-                    'waitFor': ['build_image']
-                },
-                {
-                    'id': 'helm_boomi_deployment',
-                    'name': 'gcr.io/$PROJECT_ID/helm:latest',
-                    'args': [
-                        'upgrade',
-                        '--install',
-                        'boomimolecule',
-                        '--namespace',
-                        'default',
-                        '--set',
-                        'secrets.username=${_BOOMIUSEREMAILID},secrets.password=${_BOOMIPASSWORD},secrets.account=${_BOOMIACCOUNTID},volume.server=${_IP_ADDRESS},storage.reservedIpRange=${_RESERVEDIPRANGE},storage.network=${_NETWORK},ingress.staticIpName=${_STATICIPADDRESS}',
-                        '.'
-                    ],
-                    'dir': 'quick_start/kubernetes/boomi-molecule',
-                    'env': [
-                        'CLOUDSDK_COMPUTE_REGION=${_REGION}',
-                        'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}',
-                        'KUBECONFIG=/workspace/.kube/config'
-                    ],
-                    'waitFor': ['helm_nfs_deployment']
-                },
-                {
-                    'id': 'kubectl_hpa_deployment',
-                    'name': 'gcr.io/cloud-builders/kubectl',
-                    'args': [
-                        'apply',
-                        '--filename=./templates/boomi_molecule_gke_hpa.yaml',
-                        '--validate=false'
-                    ],
-                    'dir': 'quick_start/kubernetes/boomi-molecule',
-                    'env': [
-                        'CLOUDSDK_COMPUTE_REGION=${_REGION}',
-                        'CLOUDSDK_CONTAINER_CLUSTER=${_CLUSTER_NAME}',
-                        'KUBECONFIG=/workspace/.kube/config'
-                    ],
-                    'waitFor': ['helm_boomi_deployment']
-                },
-                {
-                    'id': 'enable_master_authorized_network',
-                    'name': 'gcr.io/cloud-builders/gcloud',
-                    'entrypoint': 'bash',
-                    'args': [
-                        '-c',
-                        'gcloud container clusters update ${_CLUSTER_NAME} --enable-master-authorized-networks --region ${_REGION}'
-                    ],
-                    'waitFor': ['kubectl_hpa_deployment']
-                }
-            ]
+            'projectId': project_id,
+            'steps': build_steps
         }
-    }]
+    }
 
-    return {'resources': resources}
+    optional_properties = [
+        'source',
+        'timeout',
+        'images',
+        'artifacts',
+        'logsBucket',
+        'options',
+        'substitutions',
+        'tags',
+        'secrets'
+    ]
+
+    for prop in optional_properties:
+        if prop in properties:
+            cloud_build['properties'][prop] = properties[prop]
+
+    resources.append(cloud_build)
+
+    # Output variables
+    output_props = [
+        'id',
+        'status',
+        'results',
+        'createTime',
+        'startTime',
+        'finishTime',
+        'logUrl',
+        'sourceProvenance'
+    ]
+
+    for outprop in output_props:
+        output_obj = {}
+        output_obj['name'] = outprop
+        output_obj['value'] = '$(ref.{}.{})'.format(name, outprop)
+        outputs.append(output_obj)
+
+    return {'resources': resources, 'outputs': outputs}
