@@ -75,6 +75,11 @@ resources:
           - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
           - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - role: roles/container.clusterAdmin
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
       - role: roles/compute.instanceAdmin
         members:
           - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
@@ -86,10 +91,6 @@ resources:
       - role: roles/secretmanager.secretAccessor
         members:
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
-      - role: roles/container.clusterAdmin
-        members:
-          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
-          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
       - role: roles/editor
         members:
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
@@ -147,6 +148,15 @@ resources:
           - 0.0.0.0/0
         {% endif %}
       {% endif %}
+      - name: {{ deployment }}-out-https
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "443"
+        direction: EGRESS
+        destinationRanges:
+          - 0.0.0.0/0
       - name: {{ deployment }}-allow-icmp
         description: Allow ICMP from anywhere
         allowed:
@@ -195,7 +205,13 @@ resources:
             diskSizeGb: {{ diskSizeGb }}
             serviceAccount: $(ref.{{ deployment }}-gke-sa.email)
             oauthScopes:
-              - https://www.googleapis.com/auth/cloud-platform
+              - 'https://www.googleapis.com/auth/cloud-platform'
+              - 'https://www.googleapis.com/auth/compute'
+              - 'https://www.googleapis.com/auth/cloud.useraccounts.readonly'
+              - 'https://www.googleapis.com/auth/devstorage.read_only'
+              - 'https://www.googleapis.com/auth/logging.write'
+              - 'https://www.googleapis.com/auth/monitoring.write'
+              - 'https://www.googleapis.com/auth/cloudruntimeconfig'
             {% if properties["enableRegionalGKECluster"] == True %}
             workloadMetadataConfig:
               nodeMetadata: SECURE

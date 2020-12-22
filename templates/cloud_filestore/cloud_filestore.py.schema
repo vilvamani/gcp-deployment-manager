@@ -94,7 +94,7 @@ properties:
             enum:
               - MODE_IPV4
         reservedIpRange:
-          type: integer
+          type: string
           description: |
             A /29 CIDR block in one of the internal IP address ranges that identifies the range of IP addresses
             reserved for this instance. For example, 10.0.0.0/29 or 192.168.0.0/29. The range you specify can't
