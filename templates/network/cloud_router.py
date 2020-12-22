@@ -2,56 +2,59 @@
 
 """ This template creates a Cloud Router. """
 
-def get_network(properties):
-    """ Gets a network name. """
 
-    network_name = properties.get('network')
-    if network_name:
-        is_self_link = '/' in network_name or '.' in network_name
+def append_optional_property(res, properties, prop_name):
+    """ If the property is set, it is added to the resource. """
 
-        if is_self_link:
-            network_url = network_name
-        else:
-            network_url = 'global/networks/{}'.format(network_name)
+    val = properties.get(prop_name)
+    if val:
+        res['properties'][prop_name] = val
+    return
 
-    return network_url
 
 def generate_config(context):
     """ Entry point for the deployment resources. """
 
-    name = context.properties.get('name', context.env['name'])
-    project_id = context.properties.get('project', context.env['project'])
+    properties = context.properties
+    name = properties.get('name', context.env['name'])
+    project_id = properties.get('project', context.env['project'])
 
-    resources = [
-        {
-            'name': context.env['name'],
-            'type': 'compute.v1.router',
-            'properties':
-                {
-                    'name':
-                        name,
-                    'network':
-                        get_network(context.properties),
-                    'project':
+    bgp = properties.get('bgp', {'asn': properties.get('asn')})
+
+    router = {
+        'name': context.env['name'],
+        # https://cloud.google.com/compute/docs/reference/rest/v1/routers
+        'type': 'gcp-types/compute-v1:routers',
+        'properties':
+            {
+                'name':
+                    name,
+                'project':
+                    project_id,
+                'region':
+                    properties['region'],
+                'network':
+                    properties.get('networkURL', generate_network_uri(
                         project_id,
-                    'region':
-                        context.properties['region'],
-                    'nats': [{
-                        "name": context.properties['nat-name'],
-                        "natIpAllocateOption": "AUTO_ONLY",
-                        "sourceSubnetworkIpRangesToNat": "LIST_OF_SUBNETWORKS",
-                        "subnetworks": [{
-                            "name": context.properties['subnet'],
-                            "sourceIpRangesToNat": ["PRIMARY_IP_RANGE"]
-                        }]
-                    }]
-                }
+                        properties.get('network', ''))),
         }
+    }
+
+    if properties.get('bgp'):
+        router['properties']['bgp'] = bgp
+
+    optional_properties = [
+        'description',
+        'bgpPeers',
+        'interfaces',
+        'nats',
     ]
 
+    for prop in optional_properties:
+        append_optional_property(router, properties, prop)
+
     return {
-        'resources':
-            resources,
+        'resources': [router],
         'outputs':
             [
                 {
@@ -68,5 +71,14 @@ def generate_config(context):
                     'value':
                         '$(ref.' + context.env['name'] + '.creationTimestamp)'
                 }
-            ]
+        ]
     }
+
+
+def generate_network_uri(project_id, network):
+    """Format the network name as a network URI."""
+
+    return 'projects/{}/global/networks/{}'.format(
+        project_id,
+        network
+    )

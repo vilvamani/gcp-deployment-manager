@@ -95,6 +95,19 @@ resources:
         members:
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
 
+- name: {{ deployment }}-cloud-nat-router
+  type: cloud_router.py
+  properties:
+    name: cloud-nat-router
+    network: properties["network"]
+    region: us-east1
+    nats:
+      - name: cloud-nat
+        sourceSubnetworkIpRangesToNat: LIST_OF_SUBNETWORKS
+        natIpAllocateOption: AUTO_ONLY
+        subnetworks:
+          - name: {{ gkeSubetwork }}
+
 - name: {{ deployment }}-firewall
   type: firewall.py
   properties:

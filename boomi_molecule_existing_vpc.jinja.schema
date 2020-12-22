@@ -24,6 +24,9 @@ imports:
 - name: network.py
   path: templates/network/network.py
 
+- name: cloud_router.py
+  path: templates/network/cloud_router.py
+
 - name: firewall.py
   path: templates/network/firewall.py
     
