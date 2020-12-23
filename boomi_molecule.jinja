@@ -30,10 +30,6 @@
 {% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
 
 resources:
-
-- name: {{ deployment }}-static-ip
-  type: static_address.py
-
 - name: {{ deployment }}-bastion-sa
   type: iam.v1.serviceAccount
   properties:
@@ -371,7 +367,7 @@ resources:
           - --namespace
           - default
           - --set
-          - secrets.username={{ boomiUserEmailID }},secrets.password={{ boomiPassword }},secrets.account={{ boomiAccountID }},volume.server=$(ref.{{ deployment }}-cloud-filestore.fileShareIp),storage.network={{ network }},ingress.staticIpName=$(ref.{{ deployment }}-static-ip.staticIpName)
+          - secrets.username={{ boomiUserEmailID }},secrets.password={{ boomiPassword }},secrets.account={{ boomiAccountID }},volume.server=$(ref.{{ deployment }}-cloud-filestore.fileShareIp),storage.network={{ network }}
           - '.'
         dir: quick_start/kubernetes/boomi-molecule
         env:
