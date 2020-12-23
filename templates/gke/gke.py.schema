@@ -1084,6 +1084,9 @@ properties:
           the ILB VIP. This field is deprecated, use privateClusterConfig.master_ipv4_cidr_block instead.
 outputs:
   properties:
+    - name:
+        type: string
+        description: Name of the GKE Cluster.
     - selfLink:
         type: string
         description: The server-defined resource URL.

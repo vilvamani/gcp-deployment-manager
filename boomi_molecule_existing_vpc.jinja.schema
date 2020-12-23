@@ -160,10 +160,6 @@ properties:
       gceFirewallRange:
         firewallProperty: enableTcp443
 
-  enableRegionalGKECluster:
-    type: boolean
-    default: True
-
   gkeMachineType:
     type: string
     default: n1-standard-1

@@ -8,6 +8,7 @@ def generate_config(context):
 
     resources = []
     outputs = []
+    cluster_type = ''
     properties = context.properties
     name = properties['cluster'].get('name', context.env['name'])
     project_id = properties.get('project', context.env['project'])
@@ -34,9 +35,11 @@ def generate_config(context):
         gke_cluster['type'] = 'gcp-types/container-v1beta1:projects.zones.clusters'
         # TODO: remove, this is a bug
         gke_cluster['properties']['zone'] = properties.get('zone')
+        cluster_type = 'Zonal'
     else:
         # https://cloud.google.com/kubernetes-engine/docs/reference/rest/v1beta1/projects.locations.clusters
         gke_cluster['type'] = 'gcp-types/container-v1beta1:projects.locations.clusters'
+        cluster_type = 'Regional'
 
     req_props = ['network', 'subnetwork']
 
@@ -97,6 +100,7 @@ def generate_config(context):
 
     # Output variables
     output_props = [
+        'name',
         'selfLink',
         'endpoint',
         'instanceGroupUrls',

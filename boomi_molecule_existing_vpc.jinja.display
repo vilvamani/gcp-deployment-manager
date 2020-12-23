@@ -64,10 +64,6 @@ input:
       placeholder: '0.0.0.0/0, 192.169.0.2/24'
       section: NETWORKING
 
-    - name: enableRegionalGKECluster
-      title: Enable Reginoal GKE Cluster
-      tooltip: 'GKE Cluster: Regional (or) Zonal'
-      section: GKE_CLUSTER
     - name: gkeClusterAuthorizedNetworkCidr
       title: GKE Cluster Master Authorized Networks CIDR
       tooltip: 'Authorized network cidr with in your VPC range'

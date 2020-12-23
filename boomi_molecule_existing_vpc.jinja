@@ -9,7 +9,6 @@
 {% set machineType = properties["machineType"] %}
 {% set bootDiskType = properties["bootDiskType"] %}
 
-{% set enableRegionalGKECluster = "Regional" if properties["enableRegionalGKECluster"] else "Zonal" %}
 {% set gkeMachineType = properties["gkeMachineType"] %}
 {% set maxNodePerZone = properties["maxNodePerZone"] %}
 {% set diskSizeGb = properties["diskSizeGb"] %}
@@ -197,9 +196,7 @@ resources:
 - name: {{ deployment }}-gke-cluster
   type: gke.py
   properties:
-    clusterLocationType: {{ enableRegionalGKECluster }}
     region: {{ region }}
-    zone: {{ zone }}
     cluster:
       name: {{ deployment }}-gke-cluster
       description: {{ deployment }} k8s Cluster
@@ -211,11 +208,7 @@ resources:
           disabled: false
       nodePools:
         - name: {{ deployment }}-gke-pool
-          {% if properties["enableRegionalGKECluster"] == True %}
           initialNodeCount: 1
-          {% else %}
-          initialNodeCount: 3
-          {% endif %}
           version: 1.17.14-gke.1200
           config:
             machineType: {{ gkeMachineType }}
@@ -229,17 +222,11 @@ resources:
               - 'https://www.googleapis.com/auth/logging.write'
               - 'https://www.googleapis.com/auth/monitoring.write'
               - 'https://www.googleapis.com/auth/cloudruntimeconfig'
-            {% if properties["enableRegionalGKECluster"] == True %}
             workloadMetadataConfig:
               nodeMetadata: SECURE
-            {% endif %}
           autoscaling:
             enabled: True
-            {% if properties["enableRegionalGKECluster"] == True %}
             minNodeCount: 1
-            {% else %}
-            minNodeCount: 3
-            {% endif %}
             maxNodeCount: {{ maxNodePerZone }}
           management:
             autoUpgrade: true
