@@ -22,6 +22,10 @@
 {% set subnetCidrOne = properties["subnetCidrOne"] %}
 {% set subnetCidrTwo = properties["subnetCidrTwo"] %}
 
+{% set network = env["deployment"] + "-gke-vpc" %}
+{% set vmSubetworkName = env["deployment"] + "-" + path_utils.zoneToRegion(properties["zone"]) + "-vm-subnet" %}
+{% set gkeSubetworkName = env["deployment"] + "-" + path_utils.zoneToRegion(properties["zone"]) + "-gke-subnet" %}
+
 {% set externalIPs = properties["externalIP"] %}
 {% set bootDiskType = properties["bootDiskType"] %}
 {% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
@@ -101,16 +105,99 @@ resources:
 - name: {{ deployment }}-network
   type: network.py
   properties:
-    name: {{ deployment }}-network
+    name: {{ network }}
     autoCreateSubnetworks: false
     subnetworks:
-      - name: {{ deployment }}-{{ region }}-vm-subnet
+      - name: {{ vmSubetworkName }}
         region: {{ region }}
         ipCidrRange: {{ subnetCidrOne }}
         privateIpGoogleAccess: true
         enableFlowLogs: false
-      - name: {{ deployment }}-{{ region }}-gke-subnet
+      - name: {{ gkeSubetworkName }}
         region: {{ region }}
         ipCidrRange: {{ subnetCidrTwo }}
         privateIpGoogleAccess: true
         enableFlowLogs: false
+
+- name: {{ deployment }}-cloud-nat-router
+  type: cloud_router.py
+  properties:
+    name: {{ deployment }}-cloud-nat-router
+    network: {{ network }}
+    region: {{ region }}
+    nats:
+      - name: {{ deployment }}-cloud-nat
+        sourceSubnetworkIpRangesToNat: LIST_OF_SUBNETWORKS
+        natIpAllocateOption: AUTO_ONLY
+        subnetworks:
+          - name: $(ref.subnetwork-2.selfLink)
+
+- name: {{ deployment }}-firewall
+  type: firewall.py
+  properties:
+    network: {{ network }}
+    rules:
+      - name: {{ deployment }}-allow-ssh-to-bastion
+        description: Allow SSH from anywhere to Bastion
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "22"
+              - "3389"
+        direction: INGRESS
+        sourceRanges:
+          - 0.0.0.0/0
+        targetTags:
+          - bastion
+      {% if properties["enableTcp80"] %}
+      - name: {{ deployment }}-allow-http
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "80"
+        direction: INGRESS
+        {% if properties.get("tcp80SourceRanges") %}
+        sourceRanges:
+          {% for source in properties["tcp80SourceRanges"].split(',') %}
+          - '{{ source | trim }}'
+          {% endfor %}
+        {% else %}
+        sourceRanges:
+          - 0.0.0.0/0
+        {% endif %}
+      {% endif %}
+      {% if properties["enableTcp443"] %}
+      - name: {{ deployment }}-allow-https
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "443"
+        direction: INGRESS
+        {% if properties.get("tcp443SourceRanges") %}
+        sourceRanges:
+          {% for source in properties["tcp443SourceRanges"].split(',') %}
+          - '{{ source | trim }}'
+          {% endfor %}
+        {% else %}
+        sourceRanges:
+          - 0.0.0.0/0
+        {% endif %}
+      {% endif %}
+      - name: {{ deployment }}-out-https
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "443"
+        direction: EGRESS
+        destinationRanges:
+          - 0.0.0.0/0
+      - name: {{ deployment }}-allow-icmp
+        description: Allow ICMP from anywhere
+        allowed:
+          - IPProtocol: ICMP
+        direction: INGRESS
+        sourceRanges:
+          - 0.0.0.0/0
