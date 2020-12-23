@@ -63,6 +63,10 @@ resources:
         serviceName: gkeconnect.googleapis.com
       - name: computeApi
         serviceName: compute.googleapis.com
+      - name: computeIgmApi
+        serviceName: replicapool.googleapis.com
+      - name: CloudBuildApi
+        serviceName: cloudbuild.googleapis.com
       - name: secretApi
         serviceName: secretmanager.googleapis.com
 
@@ -98,11 +102,11 @@ resources:
 - name: {{ deployment }}-cloud-nat-router
   type: cloud_router.py
   properties:
-    name: cloud-nat-router
-    network: properties["network"]
-    region: us-east1
+    name: {{ deployment }}-cloud-nat-router
+    network: {{ properties["network"] }}
+    region: {{ region }}
     nats:
-      - name: cloud-nat
+      - name: {{ deployment }}-cloud-nat
         sourceSubnetworkIpRangesToNat: LIST_OF_SUBNETWORKS
         natIpAllocateOption: AUTO_ONLY
         subnetworks:

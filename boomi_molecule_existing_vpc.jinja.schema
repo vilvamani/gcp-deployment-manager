@@ -24,9 +24,6 @@ imports:
 - name: network.py
   path: templates/network/network.py
 
-- name: cloud_router.py
-  path: templates/network/cloud_router.py
-
 - name: firewall.py
   path: templates/network/firewall.py
     
@@ -68,6 +65,7 @@ properties:
     default: us-central1-a
     x-googleProperty:
       type: GCE_ZONE
+
   machineType:
     type: string
     default: g1-small

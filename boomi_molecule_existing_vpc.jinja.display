@@ -24,7 +24,7 @@ input:
       title: Zone
 
     - name: machineType
-      title: Machine type
+      title: Bastion Machine type
     - name: bootDiskType
       title: Boot disk type
       section: BOOT_DISK
@@ -33,13 +33,15 @@ input:
       section: BOOT_DISK
 
     - name: network
-      title: GKE Network name
+      title: GCP VPC Network name
       section: NETWORKING
     - name: vmSubnetwork
-      title: VM Subnetwork name
+      title: VM Subnet name
+
       section: NETWORKING
     - name: gkeSubetwork
-      title: GKE Subnetwork name
+      title: GKE Subnet name
+
       section: NETWORKING
     - name: externalIP
       title: External IP

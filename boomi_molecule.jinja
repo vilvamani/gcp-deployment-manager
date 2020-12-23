@@ -22,7 +22,14 @@
 {% set subnetCidrOne = properties["subnetCidrOne"] %}
 {% set subnetCidrTwo = properties["subnetCidrTwo"] %}
 
+{% set externalIPs = properties["externalIP"] %}
+{% set bootDiskType = properties["bootDiskType"] %}
+{% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
+
 resources:
+
+- name: {{ deployment }}-static-ip
+  type: static_address.py
 
 - name: {{ deployment }}-bastion-sa
   type: iam.v1.serviceAccount
@@ -55,6 +62,10 @@ resources:
         serviceName: gkeconnect.googleapis.com
       - name: computeApi
         serviceName: compute.googleapis.com
+      - name: computeIgmApi
+        serviceName: replicapool.googleapis.com
+      - name: CloudBuildApi
+        serviceName: cloudbuild.googleapis.com
       - name: secretApi
         serviceName: secretmanager.googleapis.com
 
@@ -67,6 +78,11 @@ resources:
           - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
           - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - role: roles/container.clusterAdmin
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
       - role: roles/compute.instanceAdmin
         members:
           - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
@@ -76,6 +92,9 @@ resources:
           - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
           - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
       - role: roles/secretmanager.secretAccessor
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - role: roles/editor
         members:
           - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
 
@@ -95,209 +114,3 @@ resources:
         ipCidrRange: {{ subnetCidrTwo }}
         privateIpGoogleAccess: true
         enableFlowLogs: false
-
-- name: {{ deployment }}-firewall
-  type: firewall.py
-  properties:
-    network: $(ref.{{ deployment }}-network.selfLink)
-    rules:
-      - name: {{ deployment }}-allow-ssh-to-bastion
-        description: Allow SSH from anywhere to Bastion
-        allowed:
-          - IPProtocol: tcp
-            ports:
-              - "22"
-              - "3389"
-        direction: INGRESS
-        sourceRanges:
-          - 0.0.0.0/0
-        targetTags:
-          - bastion
-      - name: {{ deployment }}-allow-http
-        description: Allow HTTP/HTTPS from anywhere
-        allowed:
-          - IPProtocol: tcp
-            ports:
-              - "80"
-        direction: INGRESS
-        {% if properties.get("tcp80SourceRanges") %}
-        sourceRanges:
-          {% for source in properties["tcp80SourceRanges"].split(',') %}
-          - '{{ source | trim }}'
-          {% endfor %}
-        {% else %}
-        sourceRanges:
-          - 0.0.0.0/0
-        {% endif %}
-      - name: {{ deployment }}-allow-https
-        description: Allow HTTP/HTTPS from anywhere
-        allowed:
-          - IPProtocol: tcp
-            ports:
-              - "443"
-        direction: INGRESS
-        {% if properties.get("tcp443SourceRanges") %}
-        sourceRanges:
-          {% for source in properties["tcp443SourceRanges"].split(',') %}
-          - '{{ source | trim }}'
-          {% endfor %}
-        {% else %}
-        sourceRanges:
-          - 0.0.0.0/0
-        {% endif %}
-      - name: {{ deployment }}-allow-icmp
-        description: Allow ICMP from anywhere
-        allowed:
-          - IPProtocol: ICMP
-        direction: INGRESS
-        sourceRanges:
-          - 0.0.0.0/0
-
-- name: {{ deployment }}-{{ region }}-cloud-router
-  type: cloud_router.py
-  properties:
-    name: {{ deployment }}-{{ region }}-cloud-router
-    network: $(ref.{{ deployment }}-network.selfLink)
-    region: {{ region }}
-    nat-name: {{ deployment }}-{{ region }}-nat
-    subnet: $(ref.{{ deployment }}-{{ region }}-gke-subnet.selfLink)
-
-- name: {{ deployment }}-cloud-filestore
-  type: cloud_filestore.py
-  properties:
-    description: {{ deployment }} File Store
-    location: {{ zone }}
-    tier: STANDARD
-    fileShares:
-      - name: boomifileshare
-        capacityGb: 1024
-    networks:
-      - network: $(ref.{{ deployment }}-network.vpcName)
-
-- name: {{ deployment }}-gke-cluster
-  type: gke.py
-  properties:
-    clusterLocationType: {{ enableRegionalGKECluster }}
-    region: {{ region }}
-    zone: {{ zone }}
-    cluster:
-      name: {{ deployment }}-gke-cluster
-      description: {{ deployment }} k8s Cluster
-      network: $(ref.{{ deployment }}-network.vpcName)
-      subnetwork: $(ref.{{ deployment }}-{{ region }}-gke-subnet.selfLink)
-      initialClusterVersion: 1.17.14-gke.1200
-      addonsConfig:
-        httpLoadBalancing:
-          disabled: false
-      nodePools:
-        - name: {{ deployment }}-gke-pool
-          {% if properties["enableRegionalGKECluster"] == True %}
-          initialNodeCount: 1
-          {% else %}
-          initialNodeCount: 3
-          {% endif %}
-          version: 1.17.14-gke.1200
-          config:
-            machineType: {{ gkeMachineType }}
-            diskSizeGb: {{ diskSizeGb }}
-            serviceAccount: $(ref.{{ deployment }}-gke-sa.email)
-            oauthScopes:
-              - https://www.googleapis.com/auth/cloud-platform
-            {% if properties["enableRegionalGKECluster"] == True %}
-            workloadMetadataConfig:
-              nodeMetadata: SECURE
-            {% endif %}
-          autoscaling:
-            enabled: True
-            {% if properties["enableRegionalGKECluster"] == True %}
-            minNodeCount: 1
-            {% else %}
-            minNodeCount: 3
-            {% endif %}
-            maxNodeCount: {{ maxNodePerZone }}
-          management:
-            autoUpgrade: true
-            autoRepair: true
-      loggingService: logging.googleapis.com/kubernetes
-      monitoringService: monitoring.googleapis.com/kubernetes
-      privateClusterConfig:
-        enablePrivateNodes: true
-        enablePrivateEndpoint: false
-        masterIpv4CidrBlock: 192.168.16.0/28
-      masterAuthorizedNetworksConfig: 
-        enabled: false
-        cidrBlocks: []
-      ipAllocationPolicy:
-        useIpAliases: true
-      masterAuth:
-        clientCertificateConfig:
-          issueClientCertificate: false
-      workloadIdentityConfig:
-        workloadPool: {{ project }}.svc.id.goog
-      networkPolicy:
-        enabled: true
-      maintenancePolicy:
-        window:
-          recurringWindow:
-            window:
-              startTime: "2020-11-01T07:00:25Z"
-              endTime: "2025-12-31T07:00:25Z"
-            recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
-
-- name: {{ deployment }}-gke-cloudbuild
-  type: cloudbuild.jinja
-  properties:
-    {% if properties["enableRegionalGKECluster"] == True %}
-    region: {{ region }}
-    {% else %}
-    region: {{ zone }}
-    {% endif %}
-    helmGITRepoURL: {{ helmGITRepoURL }}
-    boomiUserEmailID: {{ boomiUserEmailID }}
-    boomiPassword: {{ boomiPassword }}
-    boomiAccountID: {{ boomiAccountID }}
-    network: $(ref.{{ deployment }}-network.vpcName)
-    CLUSTER_NAME: $(ref.{{ deployment }}-gke-cluster.name)
-    ipaddress: $(ref.{{ deployment }}-cloud-filestore.fileShareIp)
-    ingressStaticIpName: $(ref.{{ deployment }}-network.staticIpName)
-
-- name: {{ deployment }}-bastion-instance
-  type: bastion_instance.py
-  properties:
-    network: $(ref.{{ deployment }}-network.selfLink)
-    publicSubnet: $(ref.{{ deployment }}-{{ region }}-vm-subnet.selfLink)
-    region: {{ region }}
-    machineType: {{ machineType }}
-    machineImage: centos-cloud/global/images/family/centos-7
-    minSize: 1
-    maxSize: 2
-    serviceAccountEmail: $(ref.{{ deployment }}-bastion-sa.email)
-    serviceAccountScopes:
-      - https://www.googleapis.com/auth/compute
-      - https://www.googleapis.com/auth/devstorage.read_only
-      - https://www.googleapis.com/auth/logging.write
-      - https://www.googleapis.com/auth/monitoring
-    tags:
-      items:
-        - bastion
-    startupScript: |
-      #!/bin/bash
-      #### Log the execution to a file ####
-      exec 3>&1 4>&2
-      trap 'exec 2>&4 1>&3' 0 1 2 3 RETURN
-      exec 1>/var/log/configure-bastion.log 2>&1
-
-      set -x
-      #install kubectl
-      curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
-      chmod +x ./kubectl
-      sudo mv ./kubectl /usr/local/bin/kubectl
-      kubectl version --client
-
-      #mount filestore
-      sudo yum -y update && sudo yum -y install nfs-utils
-      sudo mkdir -p /mnt/boominfs
-      sudo mount $(ref.{{ deployment }}-cloud-filestore.fileShareIp):/boomifileshare /mnt/boominfs
-
-      export HOME='whoami'
-      export KUBECONFIG=$HOME/.kube/config
