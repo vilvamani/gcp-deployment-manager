@@ -39,9 +39,6 @@ imports:
 - name: gke.py
   path: templates/gke/gke.py
 
-- name: cloudbuild.jinja
-  path: templates/cloudbuild/cloudbuild.jinja
-
 - name: cloudbuild.py
   path: templates/cloudbuild/cloudbuild.py
 
