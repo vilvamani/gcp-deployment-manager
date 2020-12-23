@@ -1,6 +1,4 @@
-# Copyright 2020 Dell Boomi. All rights reserved.
-
-# limitations under the License.
+# Copyright 2018 Google Inc. All rights reserved.
 
 info:
   title: Google Kubernetes Engine (GKE)
@@ -875,27 +873,39 @@ properties:
               If enabled, all container images will be validated by Google Binauthz.
       maintenancePolicy:
         type: object
-        additionalProperties: false
         description: |
           The configuration of the maintenance policy for the cluster.
         properties:
           window:
             type: object
-            additionalProperties: false
             description: |
               The time window within which maintenance may be performed.
             properties:
-              dailyMaintenanceWindow:
+              recurringWindow:
                 type: object
-                additionalProperties: false
                 description: The daily maintenance operation window.
                 properties:
-                  startTime:
+                  recurrence:
                     type: string
                     description: |
-                      Time within the maintenance window to start the 
-                      maintenance operations. It must be in the HH:MM
-                      format, where HH 00-23 and MM 00-59 GMT.
+                      The time window within which maintenance may be performed.
+                  window:
+                    type: object
+                    description: |
+                      The time window within which maintenance may be performed.
+                    properties:
+                      startTime:
+                        type: string
+                        description: |
+                          Time within the maintenance window to start the
+                          maintenance operations. It must be in the HH:MM
+                          format, where HH 00-23 and MM 00-59 GMT.
+                      endTime:
+                        type: string
+                        description: |
+                          Time within the maintenance window to start the
+                          maintenance operations. It must be in the HH:MM
+                          format, where HH 00-23 and MM 00-59 GMT.
       defaultMaxPodsConstraint:
         type: object
         additionalProperties: false
