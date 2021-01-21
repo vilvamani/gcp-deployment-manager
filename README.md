@@ -56,14 +56,14 @@ To deploy your resources, use the `gcloud` command-line tool to create a new
 deployment, using your configuration file:
 
 ```sh
-gcloud deployment-manager deployments create boomi-quickstart --config=test_data/config.yaml --labels Environment=dev,Owner=BoomiMolecule
+gcloud deployment-manager deployments create boomi-quickstart --config=test_data/config.yaml --labels environment=dev,owner=boomi_molecule
 ```
 
 To deploy your resources in the existing network, use the `gcloud` command-line tool to create a new
 deployment, using your configuration file:
 
 ```sh
-gcloud deployment-manager deployments create boomi-quickstart --config=test_data/config_existing_vpc.yaml --labels Environment=dev,Owner=BoomiMolecule
+gcloud deployment-manager deployments create boomi-quickstart --config=test_data/config_existing_vpc.yaml --labels environment=dev,owner=boomi_molecule
 ```
 
 ## Check on your deployment
