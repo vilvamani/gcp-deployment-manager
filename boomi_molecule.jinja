@@ -183,6 +183,23 @@ resources:
           - 0.0.0.0/0
         {% endif %}
       {% endif %}
+      - name: {{ deployment }}-allow-icmp
+        description: Allow ICMP from anywhere
+        allowed:
+          - IPProtocol: ICMP
+        direction: INGRESS
+        sourceRanges:
+          - 0.0.0.0/0
+      - name: {{ deployment }}-allow-k8s-serviceport
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "30000-32767"
+        direction: INGRESS
+        sourceRanges:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
       - name: {{ deployment }}-out-https
         description: Allow HTTP/HTTPS from anywhere
         allowed:
@@ -191,13 +208,6 @@ resources:
               - "443"
         direction: EGRESS
         destinationRanges:
-          - 0.0.0.0/0
-      - name: {{ deployment }}-allow-icmp
-        description: Allow ICMP from anywhere
-        allowed:
-          - IPProtocol: ICMP
-        direction: INGRESS
-        sourceRanges:
           - 0.0.0.0/0
 
 - name: {{ deployment }}-cloud-filestore
