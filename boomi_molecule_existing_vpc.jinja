@@ -163,15 +163,6 @@ resources:
           - 0.0.0.0/0
         {% endif %}
       {% endif %}
-      - name: {{ deployment }}-out-https
-        description: Allow HTTP/HTTPS from anywhere
-        allowed:
-          - IPProtocol: tcp
-            ports:
-              - "443"
-        direction: EGRESS
-        destinationRanges:
-          - 0.0.0.0/0
       - name: {{ deployment }}-allow-icmp
         description: Allow ICMP from anywhere
         allowed:
@@ -189,6 +180,16 @@ resources:
           - 10.0.0.0/8
           - 172.16.0.0/12
           - 192.168.0.0/16
+      - name: {{ deployment }}-out-https
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "443"
+              - "80"
+        direction: EGRESS
+        destinationRanges:
+          - 0.0.0.0/0
 
 - name: {{ deployment }}-cloud-filestore
   type: cloud_filestore.py
