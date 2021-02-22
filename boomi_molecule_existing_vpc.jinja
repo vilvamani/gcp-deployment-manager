@@ -264,14 +264,14 @@ resources:
       description: {{ deployment }} k8s Cluster
       network: {{ properties["network"] }}
       subnetwork: {{ gkeSubetwork }}
-      initialClusterVersion: 1.17.14-gke.1200
+      initialClusterVersion: 1.18.12-gke.1205
       addonsConfig:
         httpLoadBalancing:
           disabled: false
       nodePools:
         - name: {{ deployment }}-gke-pool
           initialNodeCount: 1
-          version: 1.17.14-gke.1200
+          version: 1.18.12-gke.1205
           config:
             machineType: {{ gkeMachineType }}
             diskSizeGb: {{ diskSizeGb }}
