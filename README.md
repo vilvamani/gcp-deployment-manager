@@ -20,7 +20,9 @@
    gcloud services enable compute.googleapis.com deploymentmanager.googleapis.com
    ```
 
-## Adding IAM SecurityAdmin Role to [project-no]@cloudservices.gserviceaccount.com
+## Prerequisite
+
+### Adding IAM SecurityAdmin Role to [project-no]@cloudservices.gserviceaccount.com
 
 ```
 gcloud projects add-iam-policy-binding [project-id] --member=serviceAccount:[project-no]@cloudservices.gserviceaccount.com --role=roles/iam.securityAdmin
