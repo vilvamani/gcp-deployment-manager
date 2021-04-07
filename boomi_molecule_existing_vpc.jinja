@@ -19,7 +19,7 @@
 {% set boomiAccountID = properties["boomiAccountID"] %}
 {% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
-{% set network = path_utils.networkPath(properties["vpcName"]) %}
+{% set vpcNetwork = path_utils.networkPath(properties["vpcName"]) %}
 {% set gkeSubetwork = path_utils.subnetworkPath(zone, properties["gkeSubnetName"]) %}
 {% set vmSubnetwork = path_utils.subnetworkPath(zone, properties["vmSubnetName"]) %}
 
@@ -102,7 +102,7 @@ resources:
   type: cloud_router.py
   properties:
     name: {{ deployment }}-cloud-nat-router
-    network: {{ properties["network"] }}
+    network: {{ properties["vpcName"] }}
     region: {{ region }}
     nats:
       - name: {{ deployment }}-cloud-nat
@@ -114,7 +114,7 @@ resources:
 - name: {{ deployment }}-firewall
   type: firewall.py
   properties:
-    network: {{ network }}
+    network: {{ vpcNetwork }}
     rules:
       - name: {{ deployment }}-allow-ssh-to-bastion
         description: Allow SSH from anywhere to Bastion
@@ -202,12 +202,12 @@ resources:
       - name: boomifileshare
         capacityGb: 1024
     networks:
-      - network: {{ properties["network"] }}
+      - network: {{ properties["vpcName"] }}
 
 - name: {{ deployment }}-bastion-instance
   type: bastion_instance.py
   properties:
-    network: {{ network }}
+    network: {{ vpcNetwork }}
     subnetworks: {{ vmSubnetwork }}
     {% if externalIPs is defined and externalIPs %}
     externalIPs:
@@ -263,7 +263,7 @@ resources:
     cluster:
       name: {{ deployment }}-gke-cluster
       description: {{ deployment }} k8s Cluster
-      network: {{ properties["network"] }}
+      network: {{ properties["vpcName"] }}
       subnetwork: {{ gkeSubetwork }}
       initialClusterVersion: {{ gkeEngineVersion }}
       addonsConfig:
@@ -362,7 +362,7 @@ resources:
           - --namespace
           - default
           - --set
-          - secrets.username={{ boomiUserEmailID }},secrets.password={{ boomiPassword }},secrets.account={{ boomiAccountID }},volume.server=$(ref.{{ deployment }}-cloud-filestore.fileShareIp),storage.network={{ properties["network"] }},ingress.staticIpName=$(ref.{{ deployment }}-static-ip.staticIpName)
+          - secrets.username={{ boomiUserEmailID }},secrets.password={{ boomiPassword }},secrets.account={{ boomiAccountID }},volume.server=$(ref.{{ deployment }}-cloud-filestore.fileShareIp),storage.network={{ properties["vpcName"] }},ingress.staticIpName=$(ref.{{ deployment }}-static-ip.staticIpName)
           - '.'
         dir: quick_start/kubernetes/boomi-molecule
         env:
