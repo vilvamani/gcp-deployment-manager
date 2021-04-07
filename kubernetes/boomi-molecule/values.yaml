@@ -1,8 +1,12 @@
 ---
+auth:
+  type: password
+
 secrets:
+  account: testaccount
   username: testuser
   password: testpassword
-  account: testaccount
+  token: testtoken
 
 volume:
   path: /boomifileshare
