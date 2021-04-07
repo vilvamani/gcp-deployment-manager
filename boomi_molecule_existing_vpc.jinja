@@ -19,9 +19,9 @@
 {% set boomiAccountID = properties["boomiAccountID"] %}
 {% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
-{% set network = path_utils.networkPath(properties["network"]) %}
-{% set gkeSubetwork = path_utils.subnetworkPath(zone, properties["gkeSubetwork"]) %}
-{% set vmSubnetwork = path_utils.subnetworkPath(zone, properties["vmSubnetwork"]) %}
+{% set network = path_utils.networkPath(properties["vpcName"]) %}
+{% set gkeSubetwork = path_utils.subnetworkPath(zone, properties["gkeSubnetName"]) %}
+{% set vmSubnetwork = path_utils.subnetworkPath(zone, properties["vmSubnetName"]) %}
 
 {% set externalIPs = properties["externalIP"] %}
 {% set bootDiskType = properties["bootDiskType"] %}

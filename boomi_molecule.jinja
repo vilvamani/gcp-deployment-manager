@@ -19,10 +19,10 @@
 {% set boomiAccountID = properties["boomiAccountID"] %}
 {% set helmGITRepoURL = properties["helmGITRepoURL"] %}
 
-{% set subnetCidrOne = properties["subnetCidrOne"] %}
-{% set subnetCidrTwo = properties["subnetCidrTwo"] %}
+{% set gkeSubnetCidr = properties["gkeSubnetCidr"] %}
+{% set vmSubnetCidr = properties["vmSubnetCidr"] %}
 
-{% set network = env["deployment"] + "-gke-vpc" %}
+{% set network = env["deployment"] + "-gke-qs-vpc" %}
 {% set vmSubetworkName = env["deployment"] + "-" + path_utils.zoneToRegion(properties["zone"]) + "-vm-subnet" %}
 {% set gkeSubetworkName = env["deployment"] + "-" + path_utils.zoneToRegion(properties["zone"]) + "-gke-subnet" %}
 
@@ -110,14 +110,14 @@ resources:
     name: {{ network }}
     autoCreateSubnetworks: false
     subnetworks:
-      - name: {{ vmSubetworkName }}
-        region: {{ region }}
-        ipCidrRange: {{ subnetCidrOne }}
-        privateIpGoogleAccess: true
-        enableFlowLogs: false
       - name: {{ gkeSubetworkName }}
         region: {{ region }}
-        ipCidrRange: {{ subnetCidrTwo }}
+        ipCidrRange: {{ gkeSubnetCidr }}
+        privateIpGoogleAccess: true
+        enableFlowLogs: false
+      - name: {{ vmSubetworkName }}
+        region: {{ region }}
+        ipCidrRange: {{ vmSubnetCidr }}
         privateIpGoogleAccess: true
         enableFlowLogs: false
 

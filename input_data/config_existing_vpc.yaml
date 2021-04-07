@@ -6,9 +6,9 @@ resources:
   type: boomi_molecule_existing_vpc.jinja
   properties:
     zone: us-central1-a
-    network: test-vpc
-    vmSubnetwork: vm-subnet
-    gkeSubetwork: gke-subnet
+    vpcName: test-vpc
+    vmSubnetName: vm-subnet
+    gkeSubnetName: gke-subnet
     gkeClusterAuthorizedNetworkCidr: 172.16.254.0/28
     boomiUserEmailID: boomiUserEmailID
     boomiPassword: boomiPassword

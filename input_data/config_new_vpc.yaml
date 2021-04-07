@@ -6,8 +6,8 @@ resources:
   type: boomi_molecule.jinja
   properties:
     zone: us-central1-a
-    subnetCidrOne: 192.168.0.0/21
-    subnetCidrTwo: 192.168.8.0/21
+    vmSubnetCidr: 192.168.0.0/21
+    gkeSubnetCidr: 192.168.8.0/21
     gkeClusterAuthorizedNetworkCidr: 192.168.253.0/28
     boomiUserEmailID: boomiUserEmailID
     boomiPassword: boomiPassword

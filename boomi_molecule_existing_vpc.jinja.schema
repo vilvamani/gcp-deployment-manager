@@ -72,7 +72,7 @@ properties:
       gceMachineType:
         minCpu: 1
         minRamGb: 3.75
-  network:
+  vpcName:
     type: string
     default: default
     minItems: 1
@@ -82,7 +82,7 @@ properties:
       gceNetwork:
         allowSharedVpcs: True
         machineTypeProperty: machineType
-  vmSubnetwork:
+  vmSubnetName:
     type: string
     default: default
     minItems: 1
@@ -92,7 +92,7 @@ properties:
       zoneProperty: zone
       gceSubnetwork:
         networkProperty: network
-  gkeSubetwork:
+  gkeSubnetName:
     type: string
     default: default
     minItems: 1

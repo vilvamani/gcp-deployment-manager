@@ -33,11 +33,11 @@ input:
       section: BOOT_DISK
 
 
-    - name: subnetCidrOne
+    - name: vmSubnetCidr
       title: VM Subnet CIRD Range
       placeholder: 'Example: 192.168.0.0/21'
       section: NETWORKING
-    - name: subnetCidrTwo
+    - name: gkeSubnetCidr
       title: GKE Subnet CIRD Range
       placeholder: 'Example: 192.168.0.0/21'
       section: NETWORKING

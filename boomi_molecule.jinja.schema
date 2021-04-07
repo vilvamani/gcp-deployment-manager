@@ -72,12 +72,12 @@ properties:
         minCpu: 1
         minRamGb: 3.75
 
-  subnetCidrOne:
+  vmSubnetCidr:
     type: string
     default: '192.168.0.0/21'
     pattern: ^(?!0\.0\.0\.0/0)([0-9]{1,3}\.){3}[0-9]{1,3}/([0-9]|[1-2][0-9]|3[0-2])|$
 
-  subnetCidrTwo:
+  gkeSubnetCidr:
     type: string
     default: '192.168.8.0/21'
     pattern: ^(?!0\.0\.0\.0/0)([0-9]{1,3}\.){3}[0-9]{1,3}/([0-9]|[1-2][0-9]|3[0-2])|$

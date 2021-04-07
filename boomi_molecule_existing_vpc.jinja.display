@@ -32,14 +32,13 @@ input:
       title: Boot disk size in GB
       section: BOOT_DISK
 
-    - name: network
+    - name: vpcName
       title: GCP VPC Network name
       section: NETWORKING
-    - name: vmSubnetwork
+    - name: vmSubnetName
       title: VM Subnet name
-
       section: NETWORKING
-    - name: gkeSubetwork
+    - name: gkeSubnetName
       title: GKE Subnet name
 
       section: NETWORKING
