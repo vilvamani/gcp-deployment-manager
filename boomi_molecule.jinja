@@ -1,0 +1,408 @@
+# Copyright 2020 Dell Boomi. All rights reserved.
+
+{% import "path_utils.jinja" as path_utils with context %}
+
+{% set project = env["project"] %}
+{% set deployment = env["deployment"] %}
+{% set region = path_utils.zoneToRegion(properties["zone"]) %}
+{% set zone = properties["zone"] %}
+{% set machineType = properties["machineType"] %}
+{% set bootDiskType = properties["bootDiskType"] %}
+
+{% set gkeMachineType = properties["gkeMachineType"] %}
+{% set maxNodePerZone = properties["maxNodePerZone"] %}
+{% set diskSizeGb = properties["diskSizeGb"] %}
+
+{% set boomiUserEmailID = properties["boomiUserEmailID"] %}
+{% set boomiPassword = properties["boomiPassword"] %}
+{% set boomiAccountID = properties["boomiAccountID"] %}
+{% set helmGITRepoURL = properties["helmGITRepoURL"] %}
+
+{% set subnetCidrOne = properties["subnetCidrOne"] %}
+{% set subnetCidrTwo = properties["subnetCidrTwo"] %}
+
+{% set network = env["deployment"] + "-gke-vpc" %}
+{% set vmSubetworkName = env["deployment"] + "-" + path_utils.zoneToRegion(properties["zone"]) + "-vm-subnet" %}
+{% set gkeSubetworkName = env["deployment"] + "-" + path_utils.zoneToRegion(properties["zone"]) + "-gke-subnet" %}
+
+{% set externalIPs = properties["externalIP"] %}
+{% set bootDiskType = properties["bootDiskType"] %}
+{% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
+
+resources:
+- name: {{ deployment }}-static-ip
+  type: static_address.py
+
+- name: {{ deployment }}-bastion-sa
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: {{ deployment }}-bastion
+    projectId: {{ project }}
+    displayName: Bastion Service Account
+
+- name: {{ deployment }}-gke-sa
+  type: iam.v1.serviceAccount
+  properties:
+    accountId: {{ deployment }}-gke-cluster
+    projectId: {{ project }}
+    displayName: GKE Cluster Service Account
+
+- name: {{ deployment }}-enableApis
+  type: apis.py
+  properties:
+    consumerId: {{ 'project:' + env['project'] }}
+    apis:
+      - name: cloudResourceManagerApi
+        serviceName: cloudresourcemanager.googleapis.com
+      - name: endpointsApi
+        serviceName: endpoints.googleapis.com
+      - name: iamApi
+        serviceName: iam.googleapis.com
+      - name: containerApi
+        serviceName: container.googleapis.com
+      - name: gkeconnectApi
+        serviceName: gkeconnect.googleapis.com
+      - name: computeApi
+        serviceName: compute.googleapis.com
+      - name: computeIgmApi
+        serviceName: replicapool.googleapis.com
+      - name: CloudBuildApi
+        serviceName: cloudbuild.googleapis.com
+      - name: secretApi
+        serviceName: secretmanager.googleapis.com
+
+- name: {{ deployment }}-iam-member
+  type: iam_member.py
+  properties:
+    roles:
+      - role: roles/container.admin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - role: roles/container.clusterAdmin
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+      - role: roles/compute.instanceAdmin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+      - role: roles/storage.admin
+        members:
+          - "serviceAccount:$(ref.{{ deployment }}-bastion-sa.email)"
+          - "serviceAccount:$(ref.{{ deployment }}-gke-sa.email)"
+      - role: roles/secretmanager.secretAccessor
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - role: roles/editor
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+      - role: roles/containerthreatdetection.serviceAgent
+        members:
+          - {{ 'serviceAccount:' + env['project_number'] + '@cloudbuild.gserviceaccount.com' }}
+
+- name: {{ network }}
+  type: network.py
+  properties:
+    name: {{ network }}
+    autoCreateSubnetworks: false
+    subnetworks:
+      - name: {{ vmSubetworkName }}
+        region: {{ region }}
+        ipCidrRange: {{ subnetCidrOne }}
+        privateIpGoogleAccess: true
+        enableFlowLogs: false
+      - name: {{ gkeSubetworkName }}
+        region: {{ region }}
+        ipCidrRange: {{ subnetCidrTwo }}
+        privateIpGoogleAccess: true
+        enableFlowLogs: false
+
+- name: {{ deployment }}-cloud-nat-router
+  type: cloud_router.py
+  properties:
+    name: {{ deployment }}-cloud-nat-router
+    network: $(ref.{{ network }}.name)
+    region: {{ region }}
+    nats:
+      - name: {{ deployment }}-cloud-nat
+        sourceSubnetworkIpRangesToNat: LIST_OF_SUBNETWORKS
+        natIpAllocateOption: AUTO_ONLY
+        subnetworks:
+          - name: $(ref.subnetwork-2.selfLink)
+
+- name: {{ deployment }}-firewall
+  type: firewall.py
+  properties:
+    network: $(ref.{{ network }}.selfLink)
+    rules:
+      - name: {{ deployment }}-allow-ssh-to-bastion
+        description: Allow SSH from anywhere to Bastion
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "22"
+              - "3389"
+        direction: INGRESS
+        sourceRanges:
+          - 0.0.0.0/0
+        targetTags:
+          - bastion
+      {% if properties["enableTcp80"] %}
+      - name: {{ deployment }}-allow-http
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "80"
+        direction: INGRESS
+        {% if properties.get("tcp80SourceRanges") %}
+        sourceRanges:
+          {% for source in properties["tcp80SourceRanges"].split(',') %}
+          - '{{ source | trim }}'
+          {% endfor %}
+        {% else %}
+        sourceRanges:
+          - 0.0.0.0/0
+        {% endif %}
+      {% endif %}
+      {% if properties["enableTcp443"] %}
+      - name: {{ deployment }}-allow-https
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "443"
+        direction: INGRESS
+        {% if properties.get("tcp443SourceRanges") %}
+        sourceRanges:
+          {% for source in properties["tcp443SourceRanges"].split(',') %}
+          - '{{ source | trim }}'
+          {% endfor %}
+        {% else %}
+        sourceRanges:
+          - 0.0.0.0/0
+        {% endif %}
+      {% endif %}
+      - name: {{ deployment }}-allow-icmp
+        description: Allow ICMP from anywhere
+        allowed:
+          - IPProtocol: ICMP
+        direction: INGRESS
+        sourceRanges:
+          - 0.0.0.0/0
+      - name: {{ deployment }}-allow-k8s-serviceport
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "30000-32767"
+        direction: INGRESS
+        sourceRanges:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+          - 192.168.0.0/16
+      - name: {{ deployment }}-out-https
+        description: Allow HTTP/HTTPS from anywhere
+        allowed:
+          - IPProtocol: tcp
+            ports:
+              - "443"
+        direction: EGRESS
+        destinationRanges:
+          - 0.0.0.0/0
+
+- name: {{ deployment }}-cloud-filestore
+  type: cloud_filestore.py
+  properties:
+    description: {{ deployment }} File Store
+    location: {{ zone }}
+    tier: STANDARD
+    fileShares:
+      - name: boomifileshare
+        capacityGb: 1024
+    networks:
+      - network: $(ref.{{ network }}.name)
+
+- name: {{ deployment }}-bastion-instance
+  type: bastion_instance.py
+  properties:
+    network: $(ref.{{ network }}.selfLink)
+    subnetworks:  $(ref.subnetwork-1.selfLink)
+    {% if externalIPs is defined and externalIPs %}
+    externalIPs:
+      {% for externalIP in externalIPs %}
+      - {{ externalIP }}
+      {% endfor %}
+    {% endif %}
+    region: {{ region }}
+    machineType: {{ machineType }}
+    machineImage: centos-cloud/global/images/family/centos-7
+    minSize: 1
+    maxSize: 2
+    bootDiskType: {{ bootDiskType }}
+    bootDiskSizeGb: {{ bootDiskSizeGb }}
+    serviceAccountEmail: $(ref.{{ deployment }}-bastion-sa.email)
+    serviceAccountScopes:
+      - 'https://www.googleapis.com/auth/cloud-platform'
+      - 'https://www.googleapis.com/auth/compute'
+      - 'https://www.googleapis.com/auth/cloud.useraccounts.readonly'
+      - 'https://www.googleapis.com/auth/devstorage.read_only'
+      - 'https://www.googleapis.com/auth/logging.write'
+      - 'https://www.googleapis.com/auth/monitoring.write'
+      - 'https://www.googleapis.com/auth/cloudruntimeconfig'
+    tags:
+      items:
+        - bastion
+    startupScript: |
+      #!/bin/bash
+      #### Log the execution to a file ####
+      exec 3>&1 4>&2
+      trap 'exec 2>&4 1>&3' 0 1 2 3 RETURN
+      exec 1>/var/log/configure-bastion.log 2>&1
+
+      set -x
+      #install kubectl
+      curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+      chmod +x ./kubectl
+      sudo mv ./kubectl /usr/local/bin/kubectl
+      kubectl version --client
+
+      #mount filestore
+      sudo yum -y update && sudo yum -y install nfs-utils
+      sudo mkdir -p /mnt/boominfs
+      sudo mount $(ref.{{ deployment }}-cloud-filestore.fileShareIp):/boomifileshare /mnt/boominfs
+
+      export HOME='whoami'
+      export KUBECONFIG=$HOME/.kube/config
+
+- name: {{ deployment }}-gke-cluster
+  type: gke.py
+  properties:
+    region: {{ region }}
+    cluster:
+      name: {{ deployment }}-gke-cluster
+      description: {{ deployment }} k8s Cluster
+      network: $(ref.{{ network }}.name)
+      subnetwork: $(ref.subnetwork-2.selfLink)
+      initialClusterVersion: {{ gkeEngineVersion }}
+      addonsConfig:
+        httpLoadBalancing:
+          disabled: false
+      nodePools:
+        - name: {{ deployment }}-gke-pool
+          initialNodeCount: 1
+          version: {{ gkeEngineVersion }}
+          config:
+            machineType: {{ gkeMachineType }}
+            diskSizeGb: {{ diskSizeGb }}
+            serviceAccount: $(ref.{{ deployment }}-gke-sa.email)
+            oauthScopes:
+              - 'https://www.googleapis.com/auth/cloud-platform'
+              - 'https://www.googleapis.com/auth/compute'
+              - 'https://www.googleapis.com/auth/cloud.useraccounts.readonly'
+              - 'https://www.googleapis.com/auth/devstorage.read_only'
+              - 'https://www.googleapis.com/auth/logging.write'
+              - 'https://www.googleapis.com/auth/monitoring.write'
+              - 'https://www.googleapis.com/auth/cloudruntimeconfig'
+            workloadMetadataConfig:
+              nodeMetadata: SECURE
+          autoscaling:
+            enabled: True
+            minNodeCount: 1
+            maxNodeCount: {{ maxNodePerZone }}
+          management:
+            autoUpgrade: true
+            autoRepair: true
+      loggingService: logging.googleapis.com/kubernetes
+      monitoringService: monitoring.googleapis.com/kubernetes
+      privateClusterConfig:
+        enablePrivateNodes: true
+        enablePrivateEndpoint: false
+        masterIpv4CidrBlock: {{ properties["gkeClusterAuthorizedNetworkCidr"] }}
+      masterAuthorizedNetworksConfig: 
+        enabled: false
+        cidrBlocks: []
+      ipAllocationPolicy:
+        useIpAliases: True
+      masterAuth:
+        clientCertificateConfig:
+          issueClientCertificate: false
+      workloadIdentityConfig:
+        workloadPool: {{ project }}.svc.id.goog
+      networkPolicy:
+        enabled: true
+      maintenancePolicy:
+        window:
+          recurringWindow:
+            window:
+              startTime: "2020-11-01T07:00:25Z"
+              endTime: "2030-12-31T07:00:25Z"
+            recurrence: "FREQ=MONTHLY;BYSETPOS=1;BYDAY=SA,SU"
+
+- name: {{ deployment }}-gke-cloudbuild
+  type: cloudbuild.py
+  properties:
+    steps:
+      - id: git_clone,
+        name: 'gcr.io/cloud-builders/git'
+        args:
+          - clone
+          - -b
+          - main
+          - https://github.com/vilvamani/gcp-deployment-manager.git
+          - quick_start
+
+      - id: build_image,
+        name: 'gcr.io/cloud-builders/docker'
+        args: ['build', '--tag=gcr.io/$PROJECT_ID/helm:${_HELM_VERSION}', '--tag=gcr.io/$PROJECT_ID/helm:latest', '--build-arg', 'HELM_VERSION=v${_HELM_VERSION}', '.']
+        dir: quick_start/kubernetes
+    
+      - id: helm_nfs_deployment
+        name: 'gcr.io/$PROJECT_ID/helm:latest'
+        args:
+          - upgrade
+          - --install
+          - nfsprovisioner
+          - --set
+          - nfs.server=$(ref.{{ deployment }}-cloud-filestore.fileShareIp),nfs.path=/boomifileshare,storageClass.defaultClass=true,storageClass.reclaimPolicy=Retain,storageClass.accessModes=ReadWriteMany
+          - '.'
+        dir: quick_start/kubernetes/nfs-client-provisioner
+        env:
+          - CLOUDSDK_COMPUTE_REGION={{ region }}
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ deployment }}-gke-cluster.name)
+          - KUBECONFIG=/workspace/.kube/config
+
+      - id: helm_boomi_deployment
+        name: 'gcr.io/$PROJECT_ID/helm:latest'
+        args: 
+          - upgrade
+          - --install
+          - boomimolecule
+          - --namespace
+          - default
+          - --set
+          - secrets.username={{ boomiUserEmailID }},secrets.password={{ boomiPassword }},secrets.account={{ boomiAccountID }},volume.server=$(ref.{{ deployment }}-cloud-filestore.fileShareIp),storage.network={{ network }},ingress.staticIpName=$(ref.{{ deployment }}-static-ip.staticIpName)
+          - '.'
+        dir: quick_start/kubernetes/boomi-molecule
+        env:
+          - CLOUDSDK_COMPUTE_REGION={{ region }}
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ deployment }}-gke-cluster.name)
+          - KUBECONFIG=/workspace/.kube/config
+
+      - id: kubectl_hpa_deployment
+        name: 'gcr.io/cloud-builders/kubectl'
+        args: 
+          - apply
+          - --filename=./templates/boomi_molecule_gke_hpa.yaml
+          - --validate=false
+        dir: quick_start/kubernetes/boomi-molecule
+        env:
+          - CLOUDSDK_COMPUTE_REGION={{ region }}
+          - CLOUDSDK_CONTAINER_CLUSTER=$(ref.{{ deployment }}-gke-cluster.name)
+          - KUBECONFIG=/workspace/.kube/config
+
+    timeout: 600s
+    substitutions:
+      _HELM_VERSION: 3.2.0

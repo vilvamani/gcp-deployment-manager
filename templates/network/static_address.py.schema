@@ -1,0 +1,34 @@
+
+# Copyright 2020 Dell Boomi. All rights reserved.
+
+info:
+  title: Static Address
+  author: Sourced Group Inc.
+  description: |
+    Deploys a Static Address.
+
+    For more information on this resource:
+    https://cloud.google.com/router/docs/
+
+imports:
+  - path: static_address.py
+
+properties:
+  name:
+    type: string
+    description: TName of the resource.
+  ipVersion:
+    type: string
+    description: The IP version that will be used by this address. Valid options are IPV4 or IPV6.
+  networkTier:
+    type: string
+    description: This signifies the networking tier used for configuring this address and can only take the following values PREMIUM or STANDARD.
+
+outputs:
+  properties:
+    - name:
+        type: string
+        description: The name of the static address resource.
+    - staticIpName:
+        type: string
+        description: The static ip address.

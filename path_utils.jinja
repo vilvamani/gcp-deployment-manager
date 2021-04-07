@@ -1,0 +1,31 @@
+# Copyright 2020 Dell Boomi. All rights reserved.
+#
+# path_utils.jinja
+#
+# Jinja macros for expanding short resource names into full paths
+# Must have reference to the global env object, so when including this file,
+# use the jinja import "with context" option.
+
+{% macro projectPrefix() -%}
+{{ "https://www.googleapis.com/compute/v1/projects/%s"|format(env["project"]) }}
+{%- endmacro %}
+
+{% macro networkPath(network) -%}
+{% if network.startswith("https://") or network.startswith("$(ref.") -%}
+{{ network }}
+{% else -%}
+{{ "%s/global/networks/%s"|format(projectPrefix(), network) }}
+{% endif -%}
+{%- endmacro %}
+
+{% macro subnetworkPath(zone, subnetwork) -%}
+{% if subnetwork is none or subnetwork.startswith("https://") -%}
+{{ subnetwork }}
+{% else -%}
+{{ "%s/regions/%s/subnetworks/%s"|format(projectPrefix(), zoneToRegion(zone), subnetwork) }}
+{% endif -%}
+{%- endmacro %}
+
+{% macro zoneToRegion(zone) -%}
+{{ zone.split('-')[0:2]|join('-') }}
+{%- endmacro %}

@@ -1,0 +1,16 @@
+imports:
+- path: ../boomi_molecule_existing_vpc.jinja
+
+resources:
+- name: boomi-gke-quickstart
+  type: boomi_molecule_existing_vpc.jinja
+  properties:
+    zone: us-central1-a
+    network: test-vpc
+    vmSubnetwork: vm-subnet
+    gkeSubetwork: gke-subnet
+    gkeClusterAuthorizedNetworkCidr: 172.16.254.0/28
+    boomiUserEmailID: boomiUserEmailID
+    boomiPassword: boomiPassword
+    boomiAccountID: boomiAccountID
+
