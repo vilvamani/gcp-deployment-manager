@@ -34,20 +34,24 @@ To begin, run these commands to open the quickstart
 git clone -b main https://github.com/vilvamani/gcp-deployment-manager.git  boomi_quickstart && cd boomi_quickstart
 ```
 
-## Update Boomi Username, Password and Account details in the config.jinja file or config.jinja.schema.
+## Update Boomi Username, Password and Account details in the input_data/config_new_vpc.yaml or input_data/config_existing_vpc.yaml.
 
 ```
-  secretEmailID:
-    type: string
-    default: boomiUserEmailID
+imports:
+- path: ../boomi_molecule.jinja
 
-  secretPassword:
-    type: string
-    default: boomiPassword
+resources:
+- name: boomi-gke-quickstart
+  type: boomi_molecule.jinja
+  properties:
+    zone: us-central1-a
+    vmSubnetCidr: 192.168.0.0/21
+    gkeSubnetCidr: 192.168.8.0/21
+    gkeClusterAuthorizedNetworkCidr: 192.168.253.0/28
+    boomiUserEmailID: boomiUserEmailID
+    boomiPassword: boomiPassword
+    boomiAccountID: boomiAccountID
 
-  secretAccountID:
-    type: string
-    default: boomiAccountID
 ```
 
 ## Deploy the resources
