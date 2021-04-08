@@ -168,7 +168,15 @@ properties:
     default: 2
     minimum: 2
     maximum: 100
-    
+
+  boomiAuthenticationType:
+    type: string
+    default: password
+
+  boomiMFAInstallToken:
+    type: string
+    default: molecule-test
+
   boomiUserEmailID:
     type: string
     default: vilvamani007@gmail.com
