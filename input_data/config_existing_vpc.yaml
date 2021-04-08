@@ -10,6 +10,8 @@ resources:
     vmSubnetName: vm-subnet
     gkeSubnetName: gke-subnet
     gkeClusterAuthorizedNetworkCidr: 172.16.254.0/28
+    boomiAuthenticationType: token
+    boomiMFAInstallToken: molecule-test
     boomiUserEmailID: boomiUserEmailID
     boomiPassword: boomiPassword
     boomiAccountID: boomiAccountID

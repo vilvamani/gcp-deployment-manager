@@ -36,7 +36,7 @@ To begin, run these commands to open the quickstart
 git clone -b main https://github.com/vilvamani/gcp-deployment-manager.git  boomi_quickstart && cd boomi_quickstart
 ```
 
-## Update Boomi Username, Password and Account details in the input_data/config_new_vpc.yaml or input_data/config_existing_vpc.yaml.
+## Update Boomi platform login credentials details in the input_data/config_new_vpc.yaml or input_data/config_existing_vpc.yaml.
 
 ```
 imports:
@@ -50,6 +50,8 @@ resources:
     vmSubnetCidr: 192.168.0.0/21
     gkeSubnetCidr: 192.168.8.0/21
     gkeClusterAuthorizedNetworkCidr: 192.168.253.0/28
+    boomiAuthenticationType: token
+    boomiMFAInstallToken: molecule-test
     boomiUserEmailID: boomiUserEmailID
     boomiPassword: boomiPassword
     boomiAccountID: boomiAccountID

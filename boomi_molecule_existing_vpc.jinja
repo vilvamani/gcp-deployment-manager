@@ -14,6 +14,8 @@
 {% set maxNodePerZone = properties["maxNodePerZone"] %}
 {% set diskSizeGb = properties["diskSizeGb"] %}
 
+{% set boomiAuthenticationType = properties["boomiAuthenticationType"] %}
+{% set boomiMFAInstallToken = properties["boomiMFAInstallToken"] %}
 {% set boomiUserEmailID = properties["boomiUserEmailID"] %}
 {% set boomiPassword = properties["boomiPassword"] %}
 {% set boomiAccountID = properties["boomiAccountID"] %}
@@ -360,7 +362,7 @@ resources:
           - --namespace
           - default
           - --set
-          - secrets.username={{ boomiUserEmailID }},secrets.password={{ boomiPassword }},secrets.account={{ boomiAccountID }},volume.server=$(ref.{{ deployment }}-cloud-filestore.fileShareIp),storage.network={{ properties["vpcName"] }},ingress.staticIpName=$(ref.{{ deployment }}-static-ip.staticIpName)
+          - auth.type={{ boomiAuthenticationType }},secrets.token={{ boomiMFAInstallToken }},secrets.username={{ boomiUserEmailID }},secrets.password={{ boomiPassword }},secrets.account={{ boomiAccountID }},volume.server=$(ref.{{ deployment }}-cloud-filestore.fileShareIp),storage.network={{ properties["vpcName"] }},ingress.staticIpName=$(ref.{{ deployment }}-static-ip.staticIpName)
           - '.'
         dir: quick_start/kubernetes/boomi-molecule
         env:

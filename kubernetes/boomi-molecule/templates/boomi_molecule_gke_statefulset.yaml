@@ -84,6 +84,13 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        {{ if eq "token" .Values.auth.type }}
+        - name: INSTALL_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: boomi-secret
+              key: token
+        {{ else }}
         - name: BOOMI_ACCOUNTID
           valueFrom:
             secretKeyRef:
@@ -99,6 +106,7 @@ spec:
             secretKeyRef:
               name: boomi-secret
               key: password
+        {{ end }}
         - name: BOOMI_CONTAINERNAME
           value: "boomi-molecule-gke"
         - name: INSTALLATION_DIRECTORY
